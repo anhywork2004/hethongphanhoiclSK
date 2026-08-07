@@ -1,0 +1,2 @@
+# Claude Code local state (worktrees, skills cache, scheduled task locks) — not project source
+.claude/

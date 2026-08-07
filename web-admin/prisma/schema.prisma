@@ -1,0 +1,310 @@
+// Prisma schema cho hệ thống Quản trị Máy móc & Bảo trì
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+// Client riêng cho Cloudflare Workers: dùng wasm-compiler-edge (import file .wasm thật)
+// thay vì decode base64 + WebAssembly.Module() lúc runtime — cách này bị workerd chặn
+// (CompileError: Wasm code generation disallowed by embedder).
+generator clientWorkerd {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma-workerd"
+  runtime  = "workerd"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum Role {
+  OPERATOR
+  MAINTENANCE
+  ADMIN
+}
+
+enum CategoryType {
+  AREA // Khu vực / Xưởng
+  PRODUCTION_LINE // Chuyền
+  TEAM // Tổ
+  MAINTENANCE_PERIOD // Bảo trì định kỳ
+  MACHINE_STATUS // Trạng thái máy
+  MACHINE_TYPE // Phân loại máy
+}
+
+// Dùng riêng cho danh mục MACHINE_STATUS. Danh sách trạng thái là tự do hoàn toàn (thêm/
+// xoá/sửa tên thoải mái, không giới hạn số lượng) — statusKind CHỈ được gán cho tối đa 1
+// mục mỗi loại, đóng vai trò "mặc định hệ thống" để logic KPI/cảnh báo/mobile app (tự đổi
+// trạng thái khi báo sự cố / sửa xong) biết mục nào đại diện cho Hoạt động/Dừng/Bảo trì.
+// Mục không được gán (statusKind = null) chỉ là nhãn hiển thị thêm, không ảnh hưởng logic.
+enum StatusKind {
+  ACTIVE
+  STOPPED
+  MAINTENANCE
+}
+
+// Danh mục dùng chung cho: Khu vực/Xưởng, Chuyền, Tổ, Bảo trì định kỳ, Trạng thái máy.
+// Danh mục Hư (FailureCategory) giữ nguyên bảng riêng vì đã có sẵn API/mobile app dùng.
+model Category {
+  id         String       @id @default(cuid())
+  type       CategoryType
+  name       String
+  days       Int? // MAINTENANCE_PERIOD: số ngày định kỳ (null = không tính được hạn)
+  statusKind StatusKind? // MACHINE_STATUS: nhóm gốc để tính KPI
+  isDefault  Boolean      @default(false) // MACHINE_STATUS: mục mặc định trong nhóm (mobile app dùng)
+  colorHex   String? // Màu hiển thị cho biểu đồ/badge
+  order      Int          @default(0)
+  createdAt  DateTime     @default(now())
+
+  machinesByArea              Machine[] @relation("MachineArea")
+  machinesByTeam              Machine[] @relation("MachineTeam")
+  machinesByProductionLine    Machine[] @relation("MachineProductionLine")
+  machinesByStatus            Machine[] @relation("MachineStatus")
+  machinesByMaintenancePeriod Machine[] @relation("MachineMaintenancePeriod")
+  machinesByType              Machine[] @relation("MachineType")
+  usersByArea                 User[]    @relation("UserArea")
+
+  @@unique([type, name])
+  @@map("categories")
+}
+
+enum IncidentStatus {
+  PENDING
+  ACCEPTED
+  DONE
+}
+
+enum ChatMessageType {
+  TEXT
+  INCIDENT_ALERT
+  SYSTEM
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum RatingStatus {
+  PENDING
+  SUBMITTED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  employeeCode String   @unique
+  name         String
+  phone        String?
+  passwordHash String
+  avatarUrl    String?
+  pushToken    String? // Expo push token của thiết bị đang đăng nhập gần nhất
+  role         Role     @default(OPERATOR)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  reportedIncidents   Incident[]        @relation("Reporter")
+  assignedIncidents   Incident[]        @relation("AssignedTo")
+  areaId String? // Khu vực / Xưởng — dùng để tự động xếp nhóm chat bảo trì theo khu vực
+  area   Category? @relation("UserArea", fields: [areaId], references: [id])
+
+  maintenanceLogs     MaintenanceLog[]
+  chatMemberships     ChatGroupMember[]
+  chatMessages        ChatMessage[]
+  receivedInvitations GroupInvitation[] @relation("InvitedUser")
+  sentInvitations     GroupInvitation[] @relation("InvitedBy")
+  announcements       Announcement[]
+  ratingRequests      RatingRequest[]
+
+  @@map("users")
+}
+
+model Machine {
+  id              String  @id @default(cuid())
+  code            String  @unique // Mã tài sản
+  serialNumber    String? // Số seri
+  name            String
+  location        String // Vị trí chi tiết
+  latitude        Float? // Vĩ độ GPS
+  longitude       Float? // Kinh độ GPS
+  model           String?
+  manufacturer    String? // Hãng sản xuất
+  origin          String? // Xuất xứ
+  manufactureYear Int? // Năm sản xuất
+  yearInUse       Int? // Năm đưa vào sử dụng
+  specs           String?
+
+  areaId String?
+  area   Category? @relation("MachineArea", fields: [areaId], references: [id])
+
+  teamId String?
+  team   Category? @relation("MachineTeam", fields: [teamId], references: [id])
+
+  productionLineId String?
+  productionLine   Category? @relation("MachineProductionLine", fields: [productionLineId], references: [id])
+
+  statusId String
+  status   Category @relation("MachineStatus", fields: [statusId], references: [id])
+
+  maintenancePeriodId String?
+  maintenancePeriod   Category? @relation("MachineMaintenancePeriod", fields: [maintenancePeriodId], references: [id])
+
+  machineTypeId String? // Phân loại máy
+  machineType   Category? @relation("MachineType", fields: [machineTypeId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  incidents       Incident[]
+  maintenanceLogs MaintenanceLog[]
+
+  @@map("machines")
+}
+
+model FailureCategory {
+  id        String   @id @default(cuid())
+  name      String
+  isOther   Boolean  @default(false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  incidents Incident[]
+
+  @@map("failure_categories")
+}
+
+model Incident {
+  id          String         @id @default(cuid())
+  machine     Machine        @relation(fields: [machineId], references: [id])
+  machineId   String
+  reporter    User           @relation("Reporter", fields: [reporterId], references: [id])
+  reporterId  String
+  images      String? // JSON array các đường dẫn ảnh
+  description String
+  status      IncidentStatus @default(PENDING)
+
+  category           FailureCategory? @relation(fields: [categoryId], references: [id])
+  categoryId         String?
+  customCategoryText String?
+
+  assignedTo   User?     @relation("AssignedTo", fields: [assignedToId], references: [id])
+  assignedToId String?
+  acceptedAt   DateTime?
+  completedAt  DateTime?
+
+  resendCount        Int       @default(0) // Số lần đã gửi lại cảnh báo do chưa ai nhận việc
+  lastResendAt       DateTime?
+  lastCompletionPingAt DateTime? // Lần gần nhất nhắc người đã nhận việc xác nhận hoàn thành
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  maintenanceLogs MaintenanceLog[]
+  chatMessages    ChatMessage[]
+
+  @@map("incidents")
+}
+
+model MaintenanceLog {
+  id                String    @id @default(cuid())
+  incident          Incident  @relation(fields: [incidentId], references: [id])
+  incidentId        String
+  machine           Machine   @relation(fields: [machineId], references: [id])
+  machineId         String
+  technician        User      @relation(fields: [technicianId], references: [id])
+  technicianId      String
+  startTime         DateTime
+  endTime           DateTime
+  durationMinutes   Int
+  repairDetail      String
+  partsReplaced     String?
+  proofImages       String? // JSON array các đường dẫn ảnh minh chứng
+  skillRating       Int? // Nhân viên vận hành đánh giá sau khi nhận thông báo hoàn thành
+  ratingSubmittedAt DateTime?
+  createdAt         DateTime  @default(now())
+
+  ratingRequest RatingRequest?
+
+  @@map("maintenance_logs")
+}
+
+model RatingRequest {
+  id               String         @id @default(cuid())
+  maintenanceLog   MaintenanceLog @relation(fields: [maintenanceLogId], references: [id])
+  maintenanceLogId String         @unique
+  operator         User           @relation(fields: [operatorId], references: [id])
+  operatorId       String
+  status           RatingStatus   @default(PENDING)
+  createdAt        DateTime       @default(now())
+  respondedAt      DateTime?
+
+  @@map("rating_requests")
+}
+
+model ChatGroup {
+  id        String   @id @default(cuid())
+  name      String
+  image     String?
+  createdAt DateTime @default(now())
+
+  members     ChatGroupMember[]
+  messages    ChatMessage[]
+  invitations GroupInvitation[]
+
+  @@map("chat_groups")
+}
+
+model ChatGroupMember {
+  id       String    @id @default(cuid())
+  group    ChatGroup @relation(fields: [groupId], references: [id])
+  groupId  String
+  user     User      @relation(fields: [userId], references: [id])
+  userId   String
+  joinedAt DateTime  @default(now())
+
+  @@unique([groupId, userId])
+  @@map("chat_group_members")
+}
+
+model ChatMessage {
+  id         String          @id @default(cuid())
+  group      ChatGroup       @relation(fields: [groupId], references: [id])
+  groupId    String
+  sender     User?           @relation(fields: [senderId], references: [id])
+  senderId   String?
+  type       ChatMessageType @default(TEXT)
+  content    String
+  incident   Incident?       @relation(fields: [incidentId], references: [id])
+  incidentId String?
+  createdAt  DateTime        @default(now())
+
+  @@map("chat_messages")
+}
+
+model GroupInvitation {
+  id            String           @id @default(cuid())
+  group         ChatGroup        @relation(fields: [groupId], references: [id])
+  groupId       String
+  invitedUser   User             @relation("InvitedUser", fields: [invitedUserId], references: [id])
+  invitedUserId String
+  invitedBy     User             @relation("InvitedBy", fields: [invitedById], references: [id])
+  invitedById   String
+  status        InvitationStatus @default(PENDING)
+  createdAt     DateTime         @default(now())
+  respondedAt   DateTime?
+
+  @@map("group_invitations")
+}
+
+model Announcement {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  image       String?
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdById String
+  createdAt   DateTime @default(now())
+
+  @@map("announcements")
+}

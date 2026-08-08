@@ -88,7 +88,7 @@ export const issues = sqliteTable("issues", {
   createdByName: text("created_by_name").notNull(),
   createdAt: text("created_at").notNull(),
   
-  // Advanced Phase 2/3 Fields
+  // Advanced Phase 2/3 & 2-Stage Closure Fields
   investigationDeadline: text("investigation_deadline"),
   slaDeadline: text("sla_deadline"),
   escalatedLevel: integer("escalated_level").default(0),
@@ -98,6 +98,15 @@ export const issues = sqliteTable("issues", {
   assignedTechnicianId: text("assigned_technician_id"),
   resolvedAt: text("resolved_at"),
   monitoringDeadline: text("monitoring_deadline"),
+
+  // 2-Stage Closure (Đóng Lần 1 & Đóng Lần 2) & AI 5M+1E Fields
+  initialDefectQty: integer("initial_defect_qty").default(0),
+  repairedDefectQty: integer("repaired_defect_qty").default(0),
+  closedOnceAt: text("closed_once_at"),
+  closedTwiceAt: text("closed_twice_at"),
+  repairedImages: text("repaired_images"), // JSON string array of proof images after repair
+  aiCauseDiagnosis: text("ai_cause_diagnosis"), // AI 5M+1E analysis summary
+  testRunHours: integer("test_run_hours").default(3), // 3 to 48 hours
 });
 
 // 5. Issue Images Table

@@ -35,7 +35,7 @@ async function getIssueDetail(id: string) {
     return {
       ...issueItem,
       affectedSizes: parsedSizes,
-      initialImages: imgRes.map((img) => img.imageUrl),
+      initialImages: imgRes.map((img) => img.imageUrl).filter((url): url is string => Boolean(url)),
       repairedImages: parsedRepairedImgs,
     };
   } catch {

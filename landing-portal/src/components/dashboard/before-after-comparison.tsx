@@ -7,8 +7,8 @@ interface BeforeAfterComparisonProps {
   repairedQty: number;
   initialImages?: string[];
   repairedImages?: string[];
-  closedOnceAt?: string;
-  closedTwiceAt?: string;
+  closedOnceAt?: string | null;
+  closedTwiceAt?: string | null;
 }
 
 export function BeforeAfterComparison({

@@ -51,8 +51,23 @@ export function LeftBar({ user, counts = { cho_xu_ly: 0, dang_xu_ly: 0, da_xu_ly
   const [collapsed, setCollapsed] = useState(false);
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(true);
 
-  // Roles allowed to view BI Overview
-  const biRoles = ["truong_phong_ban", "giam_doc", "tong_giam_doc", "admin"];
+  // Roles allowed to view BI Overview (Hidden for worker & handler)
+  const biRoles = [
+    "line_leader",
+    "team_leader",
+    "qa",
+    "technology",
+    "dept_head",
+    "director",
+    "general_director",
+    "admin",
+    "truong_line",
+    "to_truong",
+    "cong_nghe",
+    "truong_phong_ban",
+    "giam_doc",
+    "tong_giam_doc",
+  ];
   const canViewBI = user.role ? biRoles.includes(user.role) : false;
 
   const roleLabelMap: Record<string, string> = {

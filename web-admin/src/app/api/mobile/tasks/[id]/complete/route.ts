@@ -3,8 +3,6 @@ import { requireMobileAuth } from "@/lib/require-mobile-auth";
 import { sendPushToUsersByRoleInArea } from "@/lib/push";
 import { NextResponse } from "next/server";
 
-const VERIFY_WINDOW_MS = 48 * 60 * 60 * 1000;
-
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { payload, response } = requireMobileAuth(req);
   if (response) return response;
@@ -42,14 +40,22 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         partsReplaced: partsReplaced ? JSON.stringify(partsReplaced) : null,
         imagesBefore: JSON.stringify(imagesBefore),
         imagesAfter: JSON.stringify(imagesAfter),
-        verifyDeadline: new Date(now.getTime() + VERIFY_WINDOW_MS),
+        // Reset về trạng thái chờ Trưởng line xác nhận "xong/chưa" — 48h theo dõi chỉ bắt đầu
+        // sau khi Trưởng line xác nhận sửa chữa đạt yêu cầu (xem /confirm-repair).
+        monitoringStartedAt: null,
+        verifyDeadline: null,
+        verifiedStatus: "PENDING",
+        verifiedAt: null,
+        verifiedById: null,
       },
     }),
   ]);
 
-  await sendPushToUsersByRoleInArea(prisma, ["LINE_LEADER"], task.issue.areaId, {
+  // Cả Trưởng line (người xác nhận) và Trưởng phòng ban (người giao việc) đều được báo khi bảo
+  // trì hoàn thành.
+  await sendPushToUsersByRoleInArea(prisma, ["LINE_LEADER", "DEPARTMENT_HEAD"], task.issue.areaId, {
     title: `Đã hoàn thành sửa chữa — PO ${task.issue.poCode}`,
-    body: `${payload.name} đã hoàn thành. Vào xác nhận sau 3 giờ.`,
+    body: `${payload.name} đã hoàn thành. Trưởng line vào kiểm tra xem đã đạt yêu cầu chưa.`,
     data: { type: "TASK_DONE", issueId: task.issueId, taskId: id },
   });
 

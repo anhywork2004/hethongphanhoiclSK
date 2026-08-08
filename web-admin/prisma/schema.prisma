@@ -26,6 +26,7 @@ enum Role {
   TECHNOLOGY // Công nghệ — điều tra 5M+1E
   DEPARTMENT_HEAD // Trưởng phòng ban — phân việc cho bảo trì, 1-1 với khu vực
   MAINTENANCE // Bảo trì — nhận việc, sửa chữa
+  DIRECTOR // Giám đốc — chỉ nhận thông báo khi 1 sự cố đã hoàn thành, phạm vi toàn nhà máy (không gắn khu vực)
 }
 
 enum CategoryType {
@@ -202,11 +203,19 @@ model MaintenanceTask {
   completedAt  DateTime?
 
   repairDetail   String?
-  partsReplaced  String? // JSON array [{ partCategoryId, note? }]
+  partsReplaced  String? // JSON array [{ partCategoryId, quantity, note? }]
   imagesBefore   String? // JSON array đường dẫn ảnh
   imagesAfter    String? // JSON array đường dẫn ảnh
 
-  verifyDeadline        DateTime? // completedAt + 48h
+  // Bước 1 (ngay khi bảo trì bấm Hoàn thành, không giới hạn giờ): Trưởng line xác nhận sửa chữa
+  // đạt yêu cầu hay chưa. monitoringStartedAt = null → đang chờ bước này. Nếu "Chưa" → task quay
+  // lại ACCEPTED để bảo trì làm lại. Nếu "Xong" → set monitoringStartedAt = lúc xác nhận, bắt đầu
+  // đếm giờ theo dõi 3-48h (bước 2).
+  monitoringStartedAt DateTime?
+
+  // Bước 2 (trong cửa sổ 3-48h sau monitoringStartedAt): Trưởng line bấm "Đóng vấn đề" (verifiedStatus=CONFIRMED_DONE)
+  // hoặc "Kiểm tra lại" (verifiedStatus=REJECTED, quay lại cho 3 role điều tra 5M+1E).
+  verifyDeadline        DateTime? // monitoringStartedAt + 48h
   lastVerifyPingAt      DateTime? // Lần gần nhất nhắc Trưởng line xác nhận (mỗi 20 phút trong cửa sổ 3-48h, tái dùng pattern reminder-sweep)
   verifiedStatus         VerifyStatus @default(PENDING)
   verifiedAt             DateTime?

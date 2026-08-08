@@ -3,7 +3,7 @@ import { requireMobileAuth } from "@/lib/require-mobile-auth";
 import { NextResponse } from "next/server";
 
 const INVESTIGATOR_ROLES = ["QA", "LINE_LEADER", "TECHNOLOGY"];
-const GEMINI_MODEL = "gemini-2.5-flash";
+const GROQ_MODEL = "llama-3.3-70b-versatile";
 const MAX_QUESTIONS = 5;
 
 type ChatTurn = { role: "user" | "model"; text: string };
@@ -30,8 +30,10 @@ Nhiệm vụ của bạn:
 - Mỗi lượt, hỏi ĐÚNG 1 câu hỏi duy nhất, ngắn gọn, rõ ràng, bằng tiếng Việt, đào sâu kiểu "Tại sao"
   dựa trên câu trả lời gần nhất của người dùng, để lần theo chuỗi nhân quả tới nguyên nhân gốc rễ
   thực sự — không dừng lại ở nguyên nhân bề mặt.
-- Tối đa ${MAX_QUESTIONS} câu hỏi. Nếu đã đủ rõ nguyên nhân gốc rễ trước khi hỏi hết ${MAX_QUESTIONS}
-  câu, hãy chốt luôn, không cần hỏi cho đủ số lượng.
+- BẮT BUỘC phải hỏi đủ ĐÚNG ${MAX_QUESTIONS} câu hỏi (5 lượt "Tại sao" liên tiếp, mỗi câu đào sâu
+  hơn câu trước) trước khi được phép chốt nguyên nhân gốc — KHÔNG được chốt sớm hơn dù cảm thấy đã
+  đủ rõ. Chỉ trả lời dạng "conclusion" sau khi đã hỏi đủ ${MAX_QUESTIONS} câu và người dùng đã trả
+  lời đủ ${MAX_QUESTIONS} lần.
 - Khi đã chốt được nguyên nhân gốc rễ, hãy tổng hợp lại toàn bộ cuộc hội thoại và điền vào đúng
   mô hình 5M+1E (Man - con người, Machine - máy móc, Material - nguyên liệu, Method - phương pháp,
   Measurement - đo lường, Environment - môi trường): với mục nào liên quan trực tiếp tới nguyên nhân
@@ -62,58 +64,88 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   });
   if (!issue) return NextResponse.json({ error: "Không tìm thấy sự cố" }, { status: 404 });
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
     return NextResponse.json(
-      { error: "Chưa cấu hình GEMINI_API_KEY trên server. Vui lòng liên hệ Admin." },
+      { error: "Chưa cấu hình GROQ_API_KEY trên server. Vui lòng liên hệ Admin." },
       { status: 503 },
     );
   }
 
   const { history } = (await req.json()) as { history?: ChatTurn[] };
-  const contents = (history ?? []).map((h) => ({ role: h.role, parts: [{ text: h.text }] }));
-  if (contents.length === 0) {
-    contents.push({ role: "user", parts: [{ text: "Bắt đầu điều tra nguyên nhân." }] });
-  }
+  const turns = (history ?? []).length > 0 ? history! : [{ role: "user" as const, text: "Bắt đầu điều tra nguyên nhân." }];
 
-  let geminiRes: Response;
-  try {
-    geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          systemInstruction: {
-            parts: [{ text: buildSystemInstruction(issue.description, issue.failureCategory?.name ?? null) }],
-          },
-          contents,
-          generationConfig: { responseMimeType: "application/json", temperature: 0.4 },
-        }),
+  // Số câu hỏi AI đã hỏi = số lượt "model" đã có trong lịch sử.
+  const questionsAskedSoFar = turns.filter((t) => t.role === "model").length;
+
+  const baseMessages = [
+    { role: "system", content: buildSystemInstruction(issue.description, issue.failureCategory?.name ?? null) },
+    ...turns.map((h) => ({ role: h.role === "model" ? "assistant" : "user", content: h.text })),
+  ];
+
+  async function callGroq(messages: typeof baseMessages) {
+    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
       },
-    );
-  } catch {
-    return NextResponse.json({ error: "Không thể kết nối tới dịch vụ AI, thử lại sau" }, { status: 502 });
+      body: JSON.stringify({
+        model: GROQ_MODEL,
+        messages,
+        response_format: { type: "json_object" },
+        temperature: 0.4,
+      }),
+    });
+    if (!res.ok) {
+      const errText = await res.text().catch(() => "");
+      throw new Error(`Lỗi gọi AI: ${errText.slice(0, 300)}`);
+    }
+    const data = (await res.json()) as { choices?: { message?: { content?: string } }[] };
+    const text = data.choices?.[0]?.message?.content;
+    if (!text) throw new Error("AI không phản hồi được, thử lại");
+    return JSON.parse(text) as Question | Conclusion;
   }
 
-  if (!geminiRes.ok) {
-    const errText = await geminiRes.text().catch(() => "");
-    return NextResponse.json({ error: `Lỗi gọi AI: ${errText.slice(0, 300)}` }, { status: 502 });
-  }
-
-  const data = (await geminiRes.json()) as {
-    candidates?: { content?: { parts?: { text?: string }[] } }[];
-  };
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) {
-    return NextResponse.json({ error: "AI không phản hồi được, thử lại" }, { status: 502 });
-  }
+  // Câu hỏi dự phòng dùng khi AI vẫn cố chốt sớm dù đã nhắc — đảm bảo CHẮC CHẮN đủ MAX_QUESTIONS
+  // câu, không phụ thuộc việc AI có tuân thủ prompt hay không.
+  const FALLBACK_QUESTIONS = [
+    "Bạn có thể giải thích rõ hơn nguyên nhân sâu xa hơn dẫn đến điều vừa nêu không?",
+    "Vì sao tình trạng đó lại xảy ra — có yếu tố nào phía sau chưa được nhắc tới không?",
+    "Nếu truy tiếp một bước nữa, điều gì là nguyên nhân gốc dẫn đến việc đó?",
+  ];
 
   let parsed: Question | Conclusion;
   try {
-    parsed = JSON.parse(text);
-  } catch {
-    return NextResponse.json({ error: "AI trả lời sai định dạng, thử lại" }, { status: 502 });
+    parsed = await callGroq(baseMessages);
+
+    // Bảo hiểm: nếu AI chốt sớm khi chưa hỏi đủ MAX_QUESTIONS câu, ép hỏi tiếp — thử nhắc AI 1
+    // lần, nếu AI vẫn không tuân thủ thì dùng câu hỏi dự phòng để đảm bảo đủ số lượng.
+    if (parsed.type === "conclusion" && questionsAskedSoFar < MAX_QUESTIONS) {
+      try {
+        const retried = await callGroq([
+          ...baseMessages,
+          {
+            role: "system",
+            content: `Bạn mới chỉ hỏi ${questionsAskedSoFar}/${MAX_QUESTIONS} câu — CHƯA đủ. Hãy tiếp tục hỏi thêm 1 câu "Tại sao" đào sâu hơn dựa trên câu trả lời gần nhất, KHÔNG được chốt nguyên nhân lúc này. Trả lời đúng dạng {"type":"question","text":"..."}.`,
+          },
+        ]);
+        parsed = retried.type === "question" ? retried : {
+          type: "question",
+          text: FALLBACK_QUESTIONS[questionsAskedSoFar % FALLBACK_QUESTIONS.length],
+        };
+      } catch {
+        parsed = {
+          type: "question",
+          text: FALLBACK_QUESTIONS[questionsAskedSoFar % FALLBACK_QUESTIONS.length],
+        };
+      }
+    }
+  } catch (e) {
+    return NextResponse.json(
+      { error: e instanceof Error ? e.message : "Không thể kết nối tới dịch vụ AI, thử lại sau" },
+      { status: 502 },
+    );
   }
 
   return NextResponse.json(parsed);

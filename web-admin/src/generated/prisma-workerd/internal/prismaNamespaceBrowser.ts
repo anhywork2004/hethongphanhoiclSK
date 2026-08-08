@@ -178,6 +178,7 @@ export const MaintenanceTaskScalarFieldEnum = {
   partsReplaced: 'partsReplaced',
   imagesBefore: 'imagesBefore',
   imagesAfter: 'imagesAfter',
+  monitoringStartedAt: 'monitoringStartedAt',
   verifyDeadline: 'verifyDeadline',
   lastVerifyPingAt: 'lastVerifyPingAt',
   verifiedStatus: 'verifiedStatus',

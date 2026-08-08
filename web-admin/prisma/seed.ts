@@ -59,6 +59,7 @@ async function main() {
     { code: "CN001", name: "Phạm Văn Công Nghệ", role: "TECHNOLOGY", phone: "0900000005", areaId: areaA.id },
     { code: "TP001", name: "Hoàng Văn Trưởng Phòng", role: "DEPARTMENT_HEAD", phone: "0900000006", areaId: areaA.id },
     { code: "BT001", name: "Đỗ Văn Bảo Trì", role: "MAINTENANCE", phone: "0900000007", areaId: areaA.id },
+    { code: "GD001", name: "Vũ Thị Giám Đốc", role: "DIRECTOR", phone: "0900000008" },
   ];
 
   for (const u of users) {

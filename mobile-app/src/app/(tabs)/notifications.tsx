@@ -55,11 +55,29 @@ const KIND_META: Record<
     badgeBg: colors.statusDoneBg,
     badgeColor: colors.statusDoneText,
   },
-  NEED_VERIFY: {
-    icon: "⏳",
-    title: "Cần xác nhận hoàn thành",
+  NEED_REPAIR_REVIEW: {
+    icon: "🔎",
+    title: "Xác nhận sửa chữa đạt yêu cầu?",
     badgeBg: colors.statusPendingBg,
     badgeColor: colors.statusPendingText,
+  },
+  NEED_VERIFY: {
+    icon: "⏳",
+    title: "Đang theo dõi — Đóng vấn đề?",
+    badgeBg: colors.statusPendingBg,
+    badgeColor: colors.statusPendingText,
+  },
+  TASK_DONE_INFO: {
+    icon: "🔧",
+    title: "Bảo trì đã hoàn thành sửa chữa",
+    badgeBg: colors.statusDoneBg,
+    badgeColor: colors.statusDoneText,
+  },
+  ISSUE_RESOLVED: {
+    icon: "🎉",
+    title: "Sự cố đã hoàn thành",
+    badgeBg: colors.statusDoneBg,
+    badgeColor: colors.statusDoneText,
   },
 };
 
@@ -176,6 +194,12 @@ export default function NotificationsScreen() {
                 )}
                 {item.kind === "NEED_ROOT_CAUSE" && <Row label="Trạng thái" value="Đủ dữ liệu 5M+1E" />}
                 {item.kind === "NEED_ASSIGN" && <Row label="Nguyên nhân gốc" value={issue.rootCause || ""} />}
+                {item.kind === "TASK_DONE_INFO" && task?.assignee && (
+                  <Row label="Bảo trì" value={`${task.assignee.name} đã hoàn thành sửa chữa`} />
+                )}
+                {item.kind === "ISSUE_RESOLVED" && (
+                  <Row label="Trạng thái" value="Đã xác nhận hoàn thành toàn bộ luồng xử lý" />
+                )}
               </PressableScale>
             </Animated.View>
           );

@@ -124,8 +124,56 @@ export async function GET(req: Request) {
     });
   }
 
-  // 6. Trưởng line: việc đã hoàn thành, chờ xác nhận (cửa sổ 3-48h).
+  // 6a. Trưởng line: bảo trì vừa hoàn thành, chưa xác nhận sửa chữa đạt yêu cầu hay chưa (bước 1,
+  // không giới hạn giờ).
   if (me.role === "LINE_LEADER") {
+    const tasks = await prisma.maintenanceTask.findMany({
+      where: {
+        status: "DONE",
+        verifiedStatus: "PENDING",
+        monitoringStartedAt: null,
+        issue: { areaId: me.areaId },
+      },
+      include: { issue: { include: issueInclude }, assignee: { select: userPublicSelect } },
+      orderBy: { completedAt: "desc" },
+      take: 30,
+    });
+    for (const task of tasks) {
+      items.push({
+        kind: "NEED_REPAIR_REVIEW",
+        id: `repair-review-${task.id}`,
+        createdAt: task.completedAt,
+        task,
+      });
+    }
+  }
+
+  // 6b. Trưởng line: đang trong giai đoạn theo dõi 3-48h, chờ Đóng vấn đề/Kiểm tra lại (bước 2).
+  if (me.role === "LINE_LEADER") {
+    const tasks = await prisma.maintenanceTask.findMany({
+      where: {
+        status: "DONE",
+        verifiedStatus: "PENDING",
+        monitoringStartedAt: { not: null },
+        issue: { areaId: me.areaId },
+      },
+      include: { issue: { include: issueInclude }, assignee: { select: userPublicSelect } },
+      orderBy: { monitoringStartedAt: "desc" },
+      take: 30,
+    });
+    for (const task of tasks) {
+      items.push({
+        kind: "NEED_VERIFY",
+        id: `verify-${task.id}`,
+        createdAt: task.monitoringStartedAt,
+        task,
+      });
+    }
+  }
+
+  // 7. Trưởng phòng ban: việc bảo trì vừa hoàn thành (khu vực mình) — chỉ để biết, không có hành
+  // động (chỉ Trưởng line mới xác nhận Đã/Chưa hoàn thành).
+  if (me.role === "DEPARTMENT_HEAD") {
     const tasks = await prisma.maintenanceTask.findMany({
       where: { status: "DONE", verifiedStatus: "PENDING", issue: { areaId: me.areaId } },
       include: { issue: { include: issueInclude }, assignee: { select: userPublicSelect } },
@@ -134,10 +182,28 @@ export async function GET(req: Request) {
     });
     for (const task of tasks) {
       items.push({
-        kind: "NEED_VERIFY",
-        id: `verify-${task.id}`,
+        kind: "TASK_DONE_INFO",
+        id: `task-done-info-${task.id}`,
         createdAt: task.completedAt,
         task,
+      });
+    }
+  }
+
+  // 8. Giám đốc: sự cố đã hoàn thành toàn bộ luồng xử lý (phạm vi toàn nhà máy).
+  if (me.role === "DIRECTOR") {
+    const issues = await prisma.qualityIssue.findMany({
+      where: { status: "DONE" },
+      include: issueInclude,
+      orderBy: { updatedAt: "desc" },
+      take: 30,
+    });
+    for (const issue of issues) {
+      items.push({
+        kind: "ISSUE_RESOLVED",
+        id: `resolved-${issue.id}`,
+        createdAt: issue.updatedAt,
+        issue,
       });
     }
   }

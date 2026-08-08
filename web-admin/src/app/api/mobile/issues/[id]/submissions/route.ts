@@ -1,5 +1,6 @@
 import { getPrisma } from "@/lib/prisma";
 import { requireMobileAuth } from "@/lib/require-mobile-auth";
+import { sendPushToUsersByRoleInArea } from "@/lib/push";
 import { NextResponse } from "next/server";
 
 const INVESTIGATOR_ROLES = ["QA", "LINE_LEADER", "TECHNOLOGY"];
@@ -67,6 +68,17 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
   if (issue.status === "REPORTED") {
     await prisma.qualityIssue.update({ where: { id }, data: { status: "INVESTIGATING" } });
+  }
+
+  // Đủ cả 3 bản 5M+1E (QA + Trưởng line + Công nghệ) — báo cho Trưởng line vào tổng hợp nguyên
+  // nhân + giải pháp.
+  const submissionCount = await prisma.fiveMOneESubmission.count({ where: { issueId: id } });
+  if (submissionCount >= 3) {
+    await sendPushToUsersByRoleInArea(prisma, ["LINE_LEADER"], issue.areaId, {
+      title: `Đủ 3 bản 5M+1E — PO ${issue.poCode}`,
+      body: "Vào tổng hợp nguyên nhân gốc và giải pháp.",
+      data: { type: "NEED_ROOT_CAUSE", issueId: id },
+    });
   }
 
   return NextResponse.json(submission, { status: 201 });

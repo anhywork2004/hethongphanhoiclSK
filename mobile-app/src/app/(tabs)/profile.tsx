@@ -13,7 +13,12 @@ import { PressableScale } from "@/components/pressable-scale";
 
 const roleLabel: Record<string, string> = {
   OPERATOR: "Nhân viên vận hành",
+  QA: "QA",
+  LINE_LEADER: "Trưởng line",
+  TECHNOLOGY: "Công nghệ",
+  DEPARTMENT_HEAD: "Trưởng phòng ban",
   MAINTENANCE: "Nhân viên bảo trì",
+  DIRECTOR: "Giám đốc",
   ADMIN: "Admin",
 };
 

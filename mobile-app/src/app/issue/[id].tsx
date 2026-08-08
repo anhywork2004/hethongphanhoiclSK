@@ -74,6 +74,34 @@ function useImagePicker(token: string | null) {
   return { pick, uploading };
 }
 
+function formatElapsed(ms: number) {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const h = Math.floor(totalSeconds / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = totalSeconds % 60;
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${pad(h)}:${pad(m)}:${pad(s)}`;
+}
+
+// Đồng hồ đếm giờ làm việc — hiển thị trên thẻ việc từ lúc bảo trì bấm "Nhận việc" đến khi
+// hoàn thành, tự cập nhật mỗi giây.
+function ElapsedTimer({ since }: { since: string }) {
+  const [now, setNow] = useState(Date.now());
+
+  useEffect(() => {
+    const interval = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const elapsed = now - new Date(since).getTime();
+
+  return (
+    <View style={styles.elapsedTimerWrap}>
+      <Text style={styles.elapsedTimerText}>⏱ Đang xử lý: {formatElapsed(elapsed)}</Text>
+    </View>
+  );
+}
+
 function ImageRow({ images, onAdd, uploading }: { images: string[]; onAdd: () => void; uploading: boolean }) {
   return (
     <View style={styles.pillRow}>
@@ -93,6 +121,7 @@ export default function IssueDetailScreen() {
   const { token, user } = useAuth();
   const [issue, setIssue] = useState<QualityIssue | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showInvestigate, setShowInvestigate] = useState(false);
 
   const load = useCallback(async () => {
     if (!token || !id) return;
@@ -143,7 +172,7 @@ export default function IssueDetailScreen() {
     issue.status !== "ASSIGNED" &&
     issue.status !== "IN_PROGRESS" &&
     issue.status !== "DONE" &&
-    issue.submissions.length > 0;
+    (issue.submissions.length >= 3 || issue.investigationLocked);
 
   const canAssign = user?.role === "DEPARTMENT_HEAD" && issue.status === "ROOT_CAUSE_FOUND";
 
@@ -181,7 +210,17 @@ export default function IssueDetailScreen() {
           )}
         </View>
 
-        {canSubmit5M1E && <FiveMOneEForm token={token} issueId={issue.id} onDone={load} />}
+        {canSubmit5M1E && !showInvestigate && (
+          <View style={styles.card}>
+            <Text style={styles.sectionTitle}>Sự cố này cần bạn điều tra nguyên nhân</Text>
+            <PressableScale style={styles.primaryBtn} onPress={() => setShowInvestigate(true)}>
+              <Text style={styles.primaryBtnText}>🔍 Kiểm tra sự cố</Text>
+            </PressableScale>
+          </View>
+        )}
+        {canSubmit5M1E && showInvestigate && (
+          <FiveMOneEForm token={token} issueId={issue.id} onDone={load} />
+        )}
 
         {issue.submissions.length > 0 && (
           <View>
@@ -461,12 +500,15 @@ function RootCauseForm({ token, issueId, onDone }: { token: string | null; issue
 
   return (
     <View style={styles.card}>
-      <Text style={styles.sectionTitle}>Chốt nguyên nhân gốc</Text>
+      <Text style={styles.sectionTitle}>🧩 Tổng hợp nguyên nhân & Giải pháp</Text>
+      <Text style={styles.cardMeta}>
+        Xem lại 3 bản 5M+1E ở trên, viết nguyên nhân gốc rễ cuối cùng và giải pháp xử lý.
+      </Text>
       <LabeledArea label="Nguyên nhân gốc" value={rootCause} onChangeText={setRootCause} />
       <LabeledArea label="Giải pháp đề xuất (không bắt buộc)" value={solution} onChangeText={setSolution} />
       {error && <Text style={styles.errorText}>{error}</Text>}
       <PressableScale style={[styles.primaryBtn, submitting && { opacity: 0.6 }]} onPress={handleSubmit} disabled={submitting}>
-        <Text style={styles.primaryBtnText}>{submitting ? "Đang gửi..." : "Chốt nguyên nhân"}</Text>
+        <Text style={styles.primaryBtnText}>{submitting ? "Đang gửi..." : "Chốt nguyên nhân & Giải pháp"}</Text>
       </PressableScale>
     </View>
   );
@@ -571,6 +613,7 @@ function TaskCard({
           Đã nhận lúc {new Date(task.acceptedAt).toLocaleString("vi-VN")}
         </Text>
       )}
+      {task.status === "ACCEPTED" && task.acceptedAt && <ElapsedTimer since={task.acceptedAt} />}
 
       {isMine && task.status === "PENDING" && <AcceptButton token={token} taskId={task.id} onDone={onDone} />}
       {isMine && task.status === "ACCEPTED" && <CompleteForm token={token} taskId={task.id} onDone={onDone} />}
@@ -581,15 +624,35 @@ function TaskCard({
             Hoàn thành lúc {task.completedAt ? new Date(task.completedAt).toLocaleString("vi-VN") : "-"}
           </Text>
           {task.repairDetail && <Text style={styles.cardDesc}>Đã sửa: {task.repairDetail}</Text>}
+          {task.monitoringStartedAt && (
+            <Text style={styles.cardMeta}>
+              Bắt đầu theo dõi lúc {new Date(task.monitoringStartedAt).toLocaleString("vi-VN")}
+            </Text>
+          )}
         </View>
       )}
 
-      {user?.role === "LINE_LEADER" && task.status === "DONE" && task.verifiedStatus === "PENDING" && (
-        <VerifyButtons token={token} taskId={task.id} completedAt={task.completedAt} onDone={onDone} />
-      )}
+      {user?.role === "LINE_LEADER" &&
+        task.status === "DONE" &&
+        !task.monitoringStartedAt &&
+        task.verifiedStatus === "PENDING" && (
+          <RepairReviewButtons token={token} taskId={task.id} onDone={onDone} />
+        )}
+
+      {user?.role === "LINE_LEADER" &&
+        task.status === "DONE" &&
+        task.monitoringStartedAt &&
+        task.verifiedStatus === "PENDING" && (
+          <VerifyButtons
+            token={token}
+            taskId={task.id}
+            monitoringStartedAt={task.monitoringStartedAt}
+            onDone={onDone}
+          />
+        )}
 
       {task.verifiedStatus === "CONFIRMED_DONE" && (
-        <Text style={[styles.cardMeta, { color: colors.statusDoneText, marginTop: 6 }]}>✓ Đã xác nhận hoàn thành</Text>
+        <Text style={[styles.cardMeta, { color: colors.statusDoneText, marginTop: 6 }]}>✓ Đã đóng vấn đề</Text>
       )}
     </View>
   );
@@ -629,7 +692,7 @@ function CompleteForm({ token, taskId, onDone }: { token: string | null; taskId:
   const [repairDetail, setRepairDetail] = useState("");
   const [imagesBefore, setImagesBefore] = useState<string[]>([]);
   const [imagesAfter, setImagesAfter] = useState<string[]>([]);
-  const [parts, setParts] = useState<{ partCategoryId: string; note: string }[]>([]);
+  const [parts, setParts] = useState<{ partCategoryId: string; quantity: string; note: string }[]>([]);
   const [partCategories, setPartCategories] = useState<PartCategory[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -639,13 +702,16 @@ function CompleteForm({ token, taskId, onDone }: { token: string | null; taskId:
   }, [token]);
 
   function addRow() {
-    setParts((prev) => [...prev, { partCategoryId: "", note: "" }]);
+    setParts((prev) => [...prev, { partCategoryId: "", quantity: "1", note: "" }]);
   }
   function removeRow(index: number) {
     setParts((prev) => prev.filter((_, i) => i !== index));
   }
   function setRowPart(index: number, partCategoryId: string) {
     setParts((prev) => prev.map((p, i) => (i === index ? { ...p, partCategoryId } : p)));
+  }
+  function setRowQuantity(index: number, quantity: string) {
+    setParts((prev) => prev.map((p, i) => (i === index ? { ...p, quantity } : p)));
   }
   function setRowNote(index: number, note: string) {
     setParts((prev) => prev.map((p, i) => (i === index ? { ...p, note } : p)));
@@ -662,7 +728,13 @@ function CompleteForm({ token, taskId, onDone }: { token: string | null; taskId:
     try {
       await api.completeTask(token, taskId, {
         repairDetail: repairDetail.trim(),
-        partsReplaced: parts.filter((p) => p.partCategoryId),
+        partsReplaced: parts
+          .filter((p) => p.partCategoryId)
+          .map((p) => ({
+            partCategoryId: p.partCategoryId,
+            quantity: Math.max(1, parseInt(p.quantity, 10) || 1),
+            note: p.note || undefined,
+          })),
         imagesBefore,
         imagesAfter,
       });
@@ -700,6 +772,15 @@ function CompleteForm({ token, taskId, onDone }: { token: string | null; taskId:
               </TouchableOpacity>
             ))}
           </View>
+          <View style={styles.partQtyRow}>
+            <Text style={styles.formLabel}>Số lượng</Text>
+            <TextInput
+              value={row.quantity}
+              onChangeText={(t) => setRowQuantity(i, t.replace(/[^0-9]/g, ""))}
+              keyboardType="number-pad"
+              style={[styles.input, styles.partQtyInput]}
+            />
+          </View>
           <TextInput
             value={row.note}
             onChangeText={(t) => setRowNote(i, t)}
@@ -735,24 +816,78 @@ function CompleteForm({ token, taskId, onDone }: { token: string | null; taskId:
   );
 }
 
-function VerifyButtons({
+// Bước 1 — ngay khi bảo trì bấm Hoàn thành (không giới hạn giờ): Trưởng line xác nhận sửa chữa
+// đạt yêu cầu hay chưa. "Chưa" → trả lại cho bảo trì làm lại. "Xong" → bắt đầu theo dõi 3-48h.
+function RepairReviewButtons({
   token,
   taskId,
-  completedAt,
   onDone,
 }: {
   token: string | null;
   taskId: string;
-  completedAt: string | null;
   onDone: () => Promise<void>;
 }) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const completedMs = completedAt ? new Date(completedAt).getTime() : null;
+  async function handleReview(adequate: boolean) {
+    if (!token) return;
+    setSubmitting(true);
+    setError(null);
+    try {
+      await api.confirmRepair(token, taskId, adequate);
+      await onDone();
+    } catch (e) {
+      setError(e instanceof ApiError ? e.message : "Không thể xác nhận");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <View style={{ marginTop: 10 }}>
+      <Text style={styles.cardMeta}>Sửa chữa đã đạt yêu cầu chưa?</Text>
+      {error && <Text style={styles.errorText}>{error}</Text>}
+      <View style={{ flexDirection: "row", gap: 10, marginTop: 8 }}>
+        <PressableScale
+          style={[styles.verifyBtnDone, submitting && { opacity: 0.5 }]}
+          onPress={() => handleReview(true)}
+          disabled={submitting}
+        >
+          <Text style={styles.primaryBtnText}>✅ Xong</Text>
+        </PressableScale>
+        <PressableScale
+          style={[styles.verifyBtnReject, submitting && { opacity: 0.5 }]}
+          onPress={() => handleReview(false)}
+          disabled={submitting}
+        >
+          <Text style={styles.verifyBtnRejectText}>❌ Chưa xong, làm lại</Text>
+        </PressableScale>
+      </View>
+    </View>
+  );
+}
+
+// Bước 2 — trong cửa sổ 3-48h sau khi bắt đầu theo dõi (monitoringStartedAt): Trưởng line bấm
+// "Đóng vấn đề" (kết thúc hẳn) hoặc "Kiểm tra lại" (sự cố còn tái diễn, quay lại 5M+1E).
+function VerifyButtons({
+  token,
+  taskId,
+  monitoringStartedAt,
+  onDone,
+}: {
+  token: string | null;
+  taskId: string;
+  monitoringStartedAt: string | null;
+  onDone: () => Promise<void>;
+}) {
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const startedMs = monitoringStartedAt ? new Date(monitoringStartedAt).getTime() : null;
   const now = Date.now();
-  const windowStart = completedMs ? completedMs + 3 * 60 * 60 * 1000 : null;
-  const windowEnd = completedMs ? completedMs + 48 * 60 * 60 * 1000 : null;
+  const windowStart = startedMs ? startedMs + 3 * 60 * 60 * 1000 : null;
+  const windowEnd = startedMs ? startedMs + 48 * 60 * 60 * 1000 : null;
   const canVerify = windowStart !== null && windowEnd !== null && now >= windowStart && now <= windowEnd;
 
   async function handleVerify(confirmed: boolean) {
@@ -771,11 +906,12 @@ function VerifyButtons({
 
   return (
     <View style={{ marginTop: 10 }}>
+      <Text style={styles.cardMeta}>Đang trong giai đoạn theo dõi (3-48h sau khi xác nhận sửa chữa đạt yêu cầu).</Text>
       {!canVerify && (
         <Text style={styles.cardMeta}>
           {windowStart && now < windowStart
             ? `Chỉ có thể xác nhận sau ${new Date(windowStart).toLocaleString("vi-VN")}`
-            : "Đã quá hạn xác nhận, hệ thống sẽ tự động hoàn thành"}
+            : "Đã quá hạn theo dõi, hệ thống sẽ tự động đóng vấn đề"}
         </Text>
       )}
       {error && <Text style={styles.errorText}>{error}</Text>}
@@ -785,14 +921,14 @@ function VerifyButtons({
           onPress={() => handleVerify(true)}
           disabled={!canVerify || submitting}
         >
-          <Text style={styles.primaryBtnText}>Đã hoàn thành</Text>
+          <Text style={styles.primaryBtnText}>Đóng vấn đề</Text>
         </PressableScale>
         <PressableScale
           style={[styles.verifyBtnReject, (!canVerify || submitting) && { opacity: 0.5 }]}
           onPress={() => handleVerify(false)}
           disabled={!canVerify || submitting}
         >
-          <Text style={styles.verifyBtnRejectText}>Chưa hoàn thành</Text>
+          <Text style={styles.verifyBtnRejectText}>Kiểm tra lại</Text>
         </PressableScale>
       </View>
     </View>
@@ -889,6 +1025,20 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   removeRowText: { color: colors.danger, fontSize: 12, marginTop: 6 },
+  partQtyRow: { flexDirection: "row", alignItems: "center", gap: 8, marginTop: 6 },
+  partQtyInput: { flex: 0, width: 70, marginTop: 0, textAlign: "center" },
+  elapsedTimerWrap: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    backgroundColor: colors.statusPendingBg,
+    borderRadius: radius.sm,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    marginTop: 6,
+    alignSelf: "flex-start",
+  },
+  elapsedTimerText: { color: colors.statusPendingText, fontWeight: "700", fontSize: 13 },
   addRowBtn: { marginTop: 8, alignSelf: "flex-start" },
   addRowBtnText: { color: colors.primary, fontWeight: "600", fontSize: 13 },
   verifyBtnDone: {

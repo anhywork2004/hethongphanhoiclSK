@@ -2,6 +2,7 @@ import { getPrisma } from "@/lib/prisma";
 import { requireMobileAuth } from "@/lib/require-mobile-auth";
 import { userPublicSelect } from "@/lib/selects";
 import { sendPushToUsersByRoleInArea } from "@/lib/push";
+import type { Prisma } from "@/generated/prisma/client";
 import { NextResponse } from "next/server";
 
 const INVESTIGATION_WINDOW_MS = 15 * 60 * 1000;
@@ -22,15 +23,34 @@ const issueInclude = {
   },
 } as const;
 
-// Danh sách phiếu liên quan tới người dùng hiện tại — dùng cho "Hoạt động sự cố gần đây" +
-// "Lịch sử báo lỗi của bạn" ở Trang chủ (chính là các phiếu do họ báo cáo).
+// Danh sách phiếu liên quan tới người dùng hiện tại — dùng cho "Hoạt động sự cố gần đây" ở Trang
+// chủ. Phạm vi mở rộng theo vai trò để nhóm điều tra/xử lý cũng thấy được sự cố cần họ xử lý,
+// không chỉ phiếu do chính họ báo cáo:
+// - Vận hành: chỉ phiếu do chính mình báo cáo.
+// - QA/Trưởng line/Công nghệ/Trưởng phòng ban: phiếu tự báo cáo + mọi phiếu trong khu vực mình.
+// - Bảo trì: phiếu tự báo cáo + phiếu đang/đã được giao cho mình.
+// - Giám đốc: toàn bộ phiếu (không giới hạn khu vực).
 export async function GET(req: Request) {
   const { payload, response } = requireMobileAuth(req);
   if (response) return response;
   const prisma = await getPrisma();
 
+  const me = await prisma.user.findUnique({
+    where: { id: payload.userId },
+    select: { areaId: true },
+  });
+
+  let where: Prisma.QualityIssueWhereInput = { reporterId: payload.userId };
+  if (payload.role === "DIRECTOR") {
+    where = {};
+  } else if (["QA", "LINE_LEADER", "TECHNOLOGY", "DEPARTMENT_HEAD"].includes(payload.role) && me?.areaId) {
+    where = { OR: [{ reporterId: payload.userId }, { areaId: me.areaId }] };
+  } else if (payload.role === "MAINTENANCE") {
+    where = { OR: [{ reporterId: payload.userId }, { task: { assigneeId: payload.userId } }] };
+  }
+
   const issues = await prisma.qualityIssue.findMany({
-    where: { reporterId: payload.userId },
+    where,
     include: issueInclude,
     orderBy: { createdAt: "desc" },
     take: 50,

@@ -58,26 +58,27 @@ async function lockExpiredInvestigations(prisma: PrismaClient, now: number) {
   }
 }
 
-// Trong cửa sổ 3h-48h sau khi bảo trì hoàn thành, nhắc Trưởng line xác nhận mỗi 20 phút.
+// Trong cửa sổ 3h-48h theo dõi sau khi Trưởng line xác nhận sửa chữa đạt yêu cầu, nhắc Trưởng
+// line vào "Đóng vấn đề"/"Kiểm tra lại" mỗi 20 phút.
 async function pingUnconfirmedVerifications(prisma: PrismaClient, now: number) {
   const candidates = await prisma.maintenanceTask.findMany({
-    where: { status: "DONE", verifiedStatus: "PENDING" },
+    where: { status: "DONE", verifiedStatus: "PENDING", monitoringStartedAt: { not: null } },
     include: { issue: true },
   });
 
   for (const task of candidates) {
-    if (!task.completedAt || !task.verifyDeadline) continue;
-    const completedAtMs = task.completedAt.getTime();
+    if (!task.monitoringStartedAt || !task.verifyDeadline) continue;
+    const startedAtMs = task.monitoringStartedAt.getTime();
     const verifyDeadlineMs = task.verifyDeadline.getTime();
-    if (now < completedAtMs + VERIFY_MIN_MS) continue; // chưa tới 3h
+    if (now < startedAtMs + VERIFY_MIN_MS) continue; // chưa tới 3h
     if (now > verifyDeadlineMs) continue; // đã quá 48h, xử lý ở autoConfirm
 
-    const lastPingAt = (task.lastVerifyPingAt ?? task.completedAt).getTime();
+    const lastPingAt = (task.lastVerifyPingAt ?? task.monitoringStartedAt).getTime();
     if (now - lastPingAt < VERIFY_PING_INTERVAL_MS) continue;
 
     await sendPushToUsersByRoleInArea(asSharedPrisma(prisma), ["LINE_LEADER"], task.issue.areaId, {
-      title: "Cần xác nhận hoàn thành",
-      body: `Việc sửa chữa cho phiếu PO ${task.issue.poCode} đã xong — vào xác nhận Đã/Chưa hoàn thành.`,
+      title: "Cần xác nhận theo dõi",
+      body: `Phiếu PO ${task.issue.poCode} đang trong giai đoạn theo dõi — vào Đóng vấn đề hoặc Kiểm tra lại.`,
       data: { type: "VERIFY_PING", issueId: task.issueId, taskId: task.id },
     });
 
@@ -88,12 +89,13 @@ async function pingUnconfirmedVerifications(prisma: PrismaClient, now: number) {
   }
 }
 
-// Quá 48h không ai xác nhận → tự động coi là Đã hoàn thành.
+// Quá 48h theo dõi không ai xác nhận → tự động Đóng vấn đề (coi là Đã hoàn thành).
 async function autoConfirmExpiredVerifications(prisma: PrismaClient, now: number) {
   const candidates = await prisma.maintenanceTask.findMany({
     where: {
       status: "DONE",
       verifiedStatus: "PENDING",
+      monitoringStartedAt: { not: null },
       verifyDeadline: { not: null, lt: new Date(now) },
     },
     include: { issue: true },
@@ -115,6 +117,12 @@ async function autoConfirmExpiredVerifications(prisma: PrismaClient, now: number
       title: "Đã tự động xác nhận hoàn thành",
       body: `Phiếu PO ${task.issue.poCode} đã tự động chuyển Hoàn thành sau 48h không có phản hồi.`,
       data: { type: "AUTO_CONFIRMED", issueId: task.issueId, taskId: task.id },
+    });
+
+    await sendPushToUsersByRoleInArea(asSharedPrisma(prisma), ["DIRECTOR"], null, {
+      title: `Đã hoàn thành — PO ${task.issue.poCode}`,
+      body: `Sự cố đã được xử lý xong (tự động xác nhận sau 48h): ${task.issue.description}`,
+      data: { type: "ISSUE_RESOLVED", issueId: task.issueId },
     });
   }
 }

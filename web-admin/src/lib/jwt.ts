@@ -5,7 +5,15 @@ const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-me";
 export type MobileTokenPayload = {
   userId: string;
   employeeCode: string;
-  role: "ADMIN" | "OPERATOR" | "QA" | "LINE_LEADER" | "TECHNOLOGY" | "DEPARTMENT_HEAD" | "MAINTENANCE";
+  role:
+    | "ADMIN"
+    | "OPERATOR"
+    | "QA"
+    | "LINE_LEADER"
+    | "TECHNOLOGY"
+    | "DEPARTMENT_HEAD"
+    | "MAINTENANCE"
+    | "DIRECTOR";
   name: string;
 };
 

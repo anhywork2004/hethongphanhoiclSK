@@ -1,6 +1,14 @@
 const API_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:3001";
 
-export type Role = "ADMIN" | "OPERATOR" | "QA" | "LINE_LEADER" | "TECHNOLOGY" | "DEPARTMENT_HEAD" | "MAINTENANCE";
+export type Role =
+  | "ADMIN"
+  | "OPERATOR"
+  | "QA"
+  | "LINE_LEADER"
+  | "TECHNOLOGY"
+  | "DEPARTMENT_HEAD"
+  | "MAINTENANCE"
+  | "DIRECTOR";
 
 export type User = {
   id: string;
@@ -71,6 +79,7 @@ export type MaintenanceTask = {
   partsReplaced: string | null;
   imagesBefore: string | null;
   imagesAfter: string | null;
+  monitoringStartedAt: string | null;
   verifyDeadline: string | null;
   verifiedStatus: VerifyStatus;
   verifiedAt: string | null;
@@ -105,7 +114,10 @@ export type NotificationItem =
   | { kind: "NEED_ASSIGN"; id: string; createdAt: string; issue: QualityIssue }
   | { kind: "TASK_ASSIGNED"; id: string; createdAt: string; task: MaintenanceTask & { issue: QualityIssue } }
   | { kind: "TASK_ACCEPTED"; id: string; createdAt: string; task: MaintenanceTask & { issue: QualityIssue } }
-  | { kind: "NEED_VERIFY"; id: string; createdAt: string; task: MaintenanceTask & { issue: QualityIssue } };
+  | { kind: "NEED_REPAIR_REVIEW"; id: string; createdAt: string; task: MaintenanceTask & { issue: QualityIssue } }
+  | { kind: "NEED_VERIFY"; id: string; createdAt: string; task: MaintenanceTask & { issue: QualityIssue } }
+  | { kind: "TASK_DONE_INFO"; id: string; createdAt: string; task: MaintenanceTask & { issue: QualityIssue } }
+  | { kind: "ISSUE_RESOLVED"; id: string; createdAt: string; issue: QualityIssue };
 
 class ApiError extends Error {
   status: number;
@@ -237,7 +249,7 @@ export const api = {
     taskId: string,
     payload: {
       repairDetail: string;
-      partsReplaced?: { partCategoryId: string; note?: string }[];
+      partsReplaced?: { partCategoryId: string; quantity: number; note?: string }[];
       imagesBefore: string[];
       imagesAfter: string[];
     },
@@ -246,6 +258,13 @@ export const api = {
       method: "POST",
       token,
       body: payload,
+    }),
+
+  confirmRepair: (token: string, taskId: string, adequate: boolean) =>
+    request<MaintenanceTask>(`/api/mobile/tasks/${taskId}/confirm-repair`, {
+      method: "POST",
+      token,
+      body: { adequate },
     }),
 
   verifyTask: (token: string, taskId: string, confirmed: boolean) =>

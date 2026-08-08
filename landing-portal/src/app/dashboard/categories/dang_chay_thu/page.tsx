@@ -66,8 +66,9 @@ export default async function ChayThuCategoryPage() {
                 <span className="px-2.5 py-1 rounded-full bg-purple-50 text-purple-900 text-[10px] font-black border border-purple-200">
                   {item.issueCode}
                 </span>
-                <CountdownTimer targetMinutes={(item.testRunHours || 3) * 60} createdTimeStr={item.closedOnceAt || item.createdAt} label="Chạy Thử" />
+                <CountdownTimer targetMinutes={180} createdTimeStr={new Date(item.createdAt * 1000).toISOString()} label="Chạy Thử 3h" />
               </div>
+
 
               <div>
                 <h3 className="text-sm font-bold text-slate-900 group-hover:text-purple-700 transition-colors line-clamp-1">

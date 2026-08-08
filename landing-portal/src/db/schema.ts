@@ -1,282 +1,344 @@
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
-// Roles enum values for Phase 1
-export const PHASE1_ROLES = [
-  "worker",
-  "line_leader",
-  "team_leader",
-  "qa",
-  "technology",
-  "dept_head",
-  "handler",
-  "director",
-  "general_director",
-  "admin",
+// ==========================================
+// 1. ENUMS & CONSTANTS
+// ==========================================
+export const ROLES = [
+  "admin", // Quản trị hệ thống
+  "worker", // Cán bộ sản xuất / Công nhân
+  "qa", // Nhân viên QA
+  "line_leader", // Line Leader / Trưởng line
+  "technology", // Kỹ thuật công nghệ (CN)
+  "dept_head", // Trưởng các phòng ban (TP)
+  "handler", // Người thực thi sửa chữa (Bảo trì / Kỹ thuật)
+  "director", // Ban giám đốc / Giám đốc xưởng
+  "general_director", // Tổng giám đốc
 ] as const;
 
-export type Phase1Role = (typeof PHASE1_ROLES)[number];
+export type Role = (typeof ROLES)[number];
 
-// Issue status enum values for Phase 1
-export const PHASE1_ISSUE_STATUSES = [
-  "pending", // Chờ xử lý (báo lỗi 15p)
-  "processing", // Đang xử lý (5M+1E + Phân công)
-  "monitoring", // Theo dõi (3h - 48h)
-  "resolved", // Đã xử lý xong
-  "cannot_resolve", // Không thể xử lý
+export const ISSUE_STATUSES = [
+  "reported", // Vừa báo cáo (15 phút SLA)
+  "investigating", // Đang điều tra 5M+1E (QA, LL, CN)
+  "root_cause_found", // Đã có nguyên nhân (LL đã tổng hợp)
+  "assigned", // Đã giao việc (TP đã giao cho kỹ thuật)
+  "in_progress", // Đang xử lý (Kỹ thuật đã nhận việc, đếm giờ)
+  "monitoring", // Đang theo dõi (3h - 48h sau khi sửa)
+  "completed", // Đã hoàn thành (Đóng sau theo dõi)
+  "phase2", // Phase 2 (Không giải quyết được, chuyển GĐ/TGĐ)
 ] as const;
 
-export type Phase1IssueStatus = (typeof PHASE1_ISSUE_STATUSES)[number];
+export type IssueStatus = (typeof ISSUE_STATUSES)[number];
 
-// Issue severity enum values
-export const ISSUE_SEVERITIES = ["low", "medium", "high", "urgent"] as const;
-export type IssueSeverity = (typeof ISSUE_SEVERITIES)[number];
+export const FIVE_M_ONE_E_GROUPS = [
+  "Man", // Con người
+  "Machine", // Máy móc / Thiết bị
+  "Material", // Nguyên vật liệu
+  "Method", // Phương pháp thao tác (SOP)
+  "Measurement", // Đo lường / Hiệu chuẩn
+  "Environment", // Môi trường xưởng
+] as const;
 
-// 3.1 employees (users)
-export const employees = sqliteTable("employees", {
+export type FiveMOneEGroup = (typeof FIVE_M_ONE_E_GROUPS)[number];
+
+// ==========================================
+// 2. ORGANIZATIONAL HIERARCHY (MULTI-TENANT)
+// ==========================================
+
+// 2.1 Factories (Nhà máy)
+export const factories = sqliteTable("factories", {
   id: text("id").primaryKey(),
-  mnv: text("mnv").notNull().unique(),
-  passwordHash: text("password_hash").notNull(),
-  fullName: text("full_name").notNull(),
-  position: text("position"),
-  workshopId: text("workshop_id"),
-  department: text("department"),
-  phone: text("phone"),
-  zaloId: text("zalo_id"),
-  role: text("role"),
+  code: text("code").notNull().unique(),
+  name: text("name").notNull(),
+  address: text("address"),
   isActive: integer("is_active").default(1),
-  createdAt: integer("created_at"),
+  createdAt: integer("created_at").notNull(),
 });
 
-// Alias users table for compatibility
-export const users = employees;
-
-// 3.2 user_roles
-export const userRoles = sqliteTable("user_roles", {
+// 2.2 Areas (Xưởng -> Tổ -> Chuyền)
+export const areas = sqliteTable("areas", {
   id: text("id").primaryKey(),
-  employeeId: text("employee_id").notNull().references(() => employees.id, { onDelete: "cascade" }),
-  role: text("role").notNull().$type<Phase1Role>(),
+  factoryId: text("factory_id").notNull(),
+  parentId: text("parent_id"), // workshop -> null, team -> workshopId, line -> teamId
+  type: text("type").notNull(), // 'workshop' | 'team' | 'line'
+  name: text("name").notNull(),
+  code: text("code").notNull(),
+  order: integer("order").default(0),
+  isActive: integer("is_active").default(1),
+  createdAt: integer("created_at").notNull(),
 });
 
-// 3.3 workshops (Phân xưởng)
-export const workshops = sqliteTable("workshops", {
+// 2.3 Departments (Phòng ban linh hoạt)
+export const departments = sqliteTable("departments", {
   id: text("id").primaryKey(),
-  name: text("name"),
+  factoryId: text("factory_id"),
+  name: text("name").notNull(),
   code: text("code"),
-  workshopName: text("workshop_name"),
-  workshopCode: text("workshop_code"),
   description: text("description"),
   isActive: integer("is_active").default(1),
-  createdAt: text("created_at"),
+  createdAt: integer("created_at").notNull(),
 });
 
-// 3.4 product_sizes
+// 2.4 Users (Tài khoản người dùng)
+export const users = sqliteTable("users", {
+  id: text("id").primaryKey(),
+  factoryId: text("factory_id"),
+  departmentId: text("department_id"),
+  areaId: text("area_id"), // Gắn với khu vực/xưởng cụ thể
+  mnv: text("mnv").notNull().unique(), // Mã đăng nhập
+  fullName: text("full_name").notNull(),
+  phone: text("phone"),
+  zaloId: text("zalo_id"),
+  email: text("email"),
+  position: text("position"),
+  passwordHash: text("password_hash").notNull(),
+  role: text("role").notNull().$type<Role>(),
+  isActive: integer("is_active").default(1),
+  createdAt: integer("created_at").notNull(),
+});
+
+// Alias employees to users for compatibility
+export const employees = users;
+
+// 2.5 User Roles (Hỗ trợ đa vai trò)
+export const userRoles = sqliteTable("user_roles", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  role: text("role").notNull().$type<Role>(),
+});
+
+// ==========================================
+// 3. CATEGORIES & SPARE PARTS
+// ==========================================
+
+// 3.1 Issue Categories (Danh mục lỗi - Admin CRUD)
+export const issueCategories = sqliteTable("issue_categories", {
+  id: text("id").primaryKey(),
+  factoryId: text("factory_id"),
+  name: text("name").notNull(),
+  code: text("code"),
+  description: text("description"),
+  order: integer("order").default(0),
+  isActive: integer("is_active").default(1),
+  createdAt: integer("created_at").notNull(),
+});
+
+// 3.2 Part Categories (Danh mục linh kiện thay thế - Admin CRUD)
+export const partCategories = sqliteTable("part_categories", {
+  id: text("id").primaryKey(),
+  factoryId: text("factory_id"),
+  name: text("name").notNull(),
+  code: text("code"),
+  unit: text("unit").default("Cái"),
+  inStock: integer("in_stock").default(100),
+  isActive: integer("is_active").default(1),
+  createdAt: integer("created_at").notNull(),
+});
+
+// 3.3 Product Sizes
 export const productSizes = sqliteTable("product_sizes", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
 });
 
-// Alias sizes table for compatibility
-export const sizes = sqliteTable("sizes", {
-  id: text("id").primaryKey(),
-  sizeCode: text("size_code").notNull().unique(),
-  sizeName: text("size_name").notNull(),
-  isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
-  createdAt: text("created_at").notNull(),
-});
+// ==========================================
+// 4. CORE INCIDENT WORKFLOW (7 STEPS + PHASE 2)
+// ==========================================
 
-// 3.5 departments (Phòng ban)
-export const departments = sqliteTable("departments", {
+// 4.1 Quality Issues (Phiếu sự cố chất lượng)
+export const qualityIssues = sqliteTable("quality_issues", {
   id: text("id").primaryKey(),
-  name: text("name").notNull(),
-  code: text("code"),
-  isActive: integer("is_active").default(1),
-});
-
-// 3.6 issues (Phiếu vấn đề — Bảng trung tâm)
-export const issues = sqliteTable("issues", {
-  id: text("id").primaryKey(),
-  issueCode: text("issue_code").notNull().unique(),
-  productCode: text("product_code").notNull(),
-  productName: text("product_name").notNull(),
-  affectedSizes: text("affected_sizes").notNull(), // JSON string array of size ids/codes
-  workshopId: text("workshop_id").references(() => workshops.id),
+  factoryId: text("factory_id"),
+  issueCode: text("issue_code").notNull().unique(), // VD: CLSK-20260808-1234
+  areaId: text("area_id"), // Chuyền / Tổ / Xưởng
+  workshopId: text("workshop_id"),
   workshopName: text("workshop_name"),
+  teamName: text("team_name"),
+  lineName: text("line_name"),
+  categoryId: text("category_id"),
+  categoryName: text("category_name"),
+  poCode: text("po_code").notNull(),
+  productCode: text("product_code"),
+  productName: text("product_name"),
+  affectedSizes: text("affected_sizes").default("[]"), // JSON string array
   detectionStage: text("detection_stage").notNull(),
   description: text("description").notNull(),
-  severity: text("severity").notNull().$type<IssueSeverity>().default("medium"),
-  status: text("status").notNull().$type<Phase1IssueStatus>().default("pending"),
-  escalatedLevel: integer("escalated_level").default(0),
-  reportedBy: text("reported_by").references(() => employees.id),
-  createdByMnv: text("created_by_mnv"),
-  createdByName: text("created_by_name"),
-  reportedAt: integer("reported_at"),
-  form15Deadline: integer("form15_deadline"),
-  form15SubmittedAt: integer("form15_submitted_at"),
-  createdAt: text("created_at").notNull(),
-  updatedAt: text("updated_at"),
+  severity: text("severity").default("medium"), // 'low' | 'medium' | 'high' | 'urgent'
+  images: text("images").default("[]"), // JSON array of initial images
+  status: text("status").notNull().$type<IssueStatus>().default("reported"),
 
-  // Backward compatibility fields
-  initialDefectQty: integer("initial_defect_qty").default(0),
-  repairedDefectQty: integer("repaired_defect_qty").default(0),
-  closedOnceAt: text("closed_once_at"),
-  closedTwiceAt: text("closed_twice_at"),
-  repairedImages: text("repaired_images"),
-  aiCauseDiagnosis: text("ai_cause_diagnosis"),
-  testRunHours: integer("test_run_hours").default(3),
-  qaApproverMnv: text("qa_approver_mnv"),
-  qaApprovedAt: text("qa_approved_at"),
-  resolvedAt: text("resolved_at"),
+  // Step 1: Reporter Info & 15m Deadline
+  reportedById: text("reported_by_id"),
+  reportedByName: text("reported_by_name"),
+  reportedByMnv: text("reported_by_mnv"),
+  reportedAt: integer("reported_at").notNull(),
+  form15Deadline: integer("form15_deadline").notNull(), // reportedAt + 15*60
+  form15Locked: integer("form15_locked").default(0),
+  form15LockedAt: integer("form15_locked_at"),
+
+  // Step 2 Submission Flags
+  qaSubmitted: integer("qa_submitted").default(0),
+  llSubmitted: integer("ll_submitted").default(0),
+  cnSubmitted: integer("cn_submitted").default(0),
+
+  // Step 3: LL Root Cause Synthesis & Solution
+  rootCauseSummary: text("root_cause_summary"),
+  proposedSolution: text("proposed_solution"),
+  rootCauseDecidedById: text("root_cause_decided_by_id"),
+  rootCauseDecidedByName: text("root_cause_decided_by_name"),
+  rootCauseDecidedAt: integer("root_cause_decided_at"),
+
+  // Phase 2: For Directors
+  phase2Status: text("phase2_status"), // 'pending' | 'handled' | 'closed'
+  phase2Notes: text("phase2_notes"),
+  phase2HandledById: text("phase2_handled_by_id"),
+  phase2HandledByName: text("phase2_handled_by_name"),
+  phase2HandledAt: integer("phase2_handled_at"),
+
+  createdAt: integer("created_at").notNull(),
+  updatedAt: integer("updated_at"),
 });
 
-// 3.7 issue_images
-export const issueImages = sqliteTable("issue_images", {
-  id: text("id").primaryKey(),
-  issueId: text("issue_id").notNull().references(() => issues.id, { onDelete: "cascade" }),
-  r2Key: text("r2_key").notNull(),
-  imageUrl: text("image_url"),
-  stage: text("stage").notNull(), // 'report' | 'before_fix' | 'after_fix'
-  uploadedBy: text("uploaded_by").references(() => employees.id),
-  uploadedAt: integer("uploaded_at"),
-  createdAt: text("created_at"),
-});
+// Alias issues to qualityIssues
+export const issues = qualityIssues;
 
-// 3.8 issue_5m1e (Form 15 phút)
-export const issue5m1e = sqliteTable("issue_5m1e", {
+// 4.2 Investigation Forms (3 form 5M+1E độc lập của QA, LL, CN)
+export const investigationForms = sqliteTable("investigation_forms", {
   id: text("id").primaryKey(),
-  issueId: text("issue_id").notNull().references(() => issues.id, { onDelete: "cascade" }),
-  poNumber: text("po_number"),
-  defectQuantity: integer("defect_quantity"),
+  issueId: text("issue_id").notNull(),
+  userId: text("user_id").notNull(),
+  userName: text("user_name"),
+  userMnv: text("user_mnv"),
+  userRole: text("user_role").notNull(), // 'qa' | 'line_leader' | 'technology'
+  poCode: text("po_code"),
+  images: text("images").default("[]"), // JSON string array
+  whysDialogJson: text("whys_dialog_json"), // JSON string array of 5 Whys dialogue turns
   man: text("man"),
   machine: text("machine"),
   material: text("material"),
   method: text("method"),
   measurement: text("measurement"),
   environment: text("environment"),
-  rootCause: text("root_cause"),
-  proposedSolution: text("proposed_solution"),
-  submittedBy: text("submitted_by").references(() => employees.id),
-  submittedAt: integer("submitted_at"),
+  rootCauseCategory: text("root_cause_category").$type<FiveMOneEGroup>(),
+  rootCauseConclusion: text("root_cause_conclusion").notNull(),
+  submittedAt: integer("submitted_at").notNull(),
 });
 
-// 3.9 issue_department_decisions
-export const issueDepartmentDecisions = sqliteTable("issue_department_decisions", {
+// 4.3 Maintenance Tasks (Nhiệm vụ sửa chữa do TP giao)
+export const maintenanceTasks = sqliteTable("maintenance_tasks", {
   id: text("id").primaryKey(),
-  issueId: text("issue_id").notNull().references(() => issues.id, { onDelete: "cascade" }),
-  department: text("department").notNull(),
-  decision: text("decision").notNull(), // 'agree_solution' | 'cannot_resolve'
-  reason: text("reason"),
-  decidedBy: text("decided_by").references(() => employees.id),
-  decidedAt: integer("decided_at"),
-});
-
-// 3.10 issue_assignments
-export const issueAssignments = sqliteTable("issue_assignments", {
-  id: text("id").primaryKey(),
-  issueId: text("issue_id").notNull().references(() => issues.id, { onDelete: "cascade" }),
-  department: text("department").notNull(),
-  assignedDeptHead: text("assigned_dept_head").references(() => employees.id),
-  handlerId: text("handler_id").references(() => employees.id),
-  mnvConfirmed: integer("mnv_confirmed").default(0),
-  confirmedAt: integer("confirmed_at"),
-  assignedAt: integer("assigned_at"),
-});
-
-// 3.11 issue_resolutions
-export const issueResolutions = sqliteTable("issue_resolutions", {
-  id: text("id").primaryKey(),
-  issueId: text("issue_id").notNull().references(() => issues.id, { onDelete: "cascade" }),
-  handlerId: text("handler_id").references(() => employees.id),
-  startedAt: integer("started_at"),
-  partsUsed: text("parts_used"),
+  issueId: text("issue_id").notNull().unique(),
+  departmentId: text("department_id").notNull(),
+  departmentName: text("department_name"),
+  assignedById: text("assigned_by_id").notNull(), // TP
+  assignedByName: text("assigned_by_name"),
+  assignedToId: text("assigned_to_id").notNull(), // Nhân viên bảo trì / kỹ thuật
+  assignedToName: text("assigned_to_name"),
+  assignedToMnv: text("assigned_to_mnv"),
+  assignedAt: integer("assigned_at").notNull(),
+  acceptedAt: integer("accepted_at"),
   completedAt: integer("completed_at"),
   durationSeconds: integer("duration_seconds"),
-  hasNewIssue: integer("has_new_issue").default(0),
+  status: text("status").notNull().default("pending"), // 'pending' | 'accepted' | 'done'
+  repairDescription: text("repair_description"),
+  partsUsedJson: text("parts_used_json").default("[]"), // JSON array of { partId, partName, quantity, note }
+  imagesBeforeJson: text("images_before_json").default("[]"),
+  imagesAfterJson: text("images_after_json").default("[]"),
 });
 
-// 3.12 issue_monitoring (Giai đoạn theo dõi 3h-48h)
-export const issueMonitoring = sqliteTable("issue_monitoring", {
+// 4.4 Monitoring Windows (Giai đoạn theo dõi 3h - 48h)
+export const monitoringWindows = sqliteTable("monitoring_windows", {
   id: text("id").primaryKey(),
-  issueId: text("issue_id").notNull().references(() => issues.id, { onDelete: "cascade" }),
-  monitoringStartedAt: integer("monitoring_started_at"),
-  minDeadline: integer("min_deadline"), // startedAt + 3h
-  maxDeadline: integer("max_deadline"), // startedAt + 48h
-  reportEnabledAt: integer("report_enabled_at"),
-  isOverdue: integer("is_overdue").default(0),
-  qtyBefore: integer("qty_before"),
-  qtyAfter: integer("qty_after"),
-  imagesBefore: text("images_before"), // JSON array
-  imagesAfter: text("images_after"), // JSON array
-  closedBy: text("closed_by").references(() => employees.id),
+  issueId: text("issue_id").notNull().unique(),
+  confirmedByLlId: text("confirmed_by_ll_id"),
+  confirmedByLlName: text("confirmed_by_ll_name"),
+  confirmedAt: integer("confirmed_at").notNull(),
+  minDeadline: integer("min_deadline").notNull(), // confirmedAt + 3*3600
+  maxDeadline: integer("max_deadline").notNull(), // confirmedAt + 48*3600
+  status: text("status").notNull().default("monitoring"), // 'monitoring' | 'closed_done' | 'reinvestigate_requested' | 'auto_closed'
+  closedById: text("closed_by_id"),
+  closedByName: text("closed_by_name"),
   closedAt: integer("closed_at"),
+  reinvestigateReason: text("reinvestigate_reason"),
 });
 
-// 3.13 issue_escalations
-export const issueEscalations = sqliteTable("issue_escalations", {
-  id: text("id").primaryKey(),
-  issueId: text("issue_id").notNull().references(() => issues.id, { onDelete: "cascade" }),
-  type: text("type").notNull(), // 'form15_timeout' | 'monitoring_overdue'
-  escalatedTo: text("escalated_to").references(() => employees.id),
-  escalatedAt: integer("escalated_at"),
-  note: text("note"),
-});
+// ==========================================
+// 5. NOTIFICATIONS & AUDIT LOGS
+// ==========================================
 
-// 3.14 notifications (In-app notification)
+// 5.1 Notifications (In-App + Zalo OA + Email logging)
 export const notifications = sqliteTable("notifications", {
   id: text("id").primaryKey(),
-  employeeId: text("employee_id").references(() => employees.id, { onDelete: "cascade" }),
-  issueId: text("issue_id").references(() => issues.id, { onDelete: "cascade" }),
+  userId: text("user_id"),
+  roleTarget: text("role_target"),
+  areaId: text("area_id"),
+  issueId: text("issue_id"),
   type: text("type").notNull(),
   title: text("title").notNull(),
   message: text("message").notNull(),
+  channel: text("channel").notNull().default("in_app"), // 'in_app' | 'zalo' | 'email'
+  status: text("status").notNull().default("sent"), // 'sent' | 'failed' | 'simulated'
   isRead: integer("is_read").default(0),
-  createdAt: integer("created_at"),
+  createdAt: integer("created_at").notNull(),
 });
 
-// 3.15 issue_status_history
-export const issueStatusHistory = sqliteTable("issue_status_history", {
+// 5.2 Audit Logs (Lịch sử thao tác từng phiếu)
+export const auditLogs = sqliteTable("audit_logs", {
   id: text("id").primaryKey(),
-  issueId: text("issue_id").notNull().references(() => issues.id, { onDelete: "cascade" }),
+  issueId: text("issue_id"),
+  userId: text("user_id"),
+  userMnv: text("user_mnv"),
+  userName: text("user_name"),
+  action: text("action").notNull(),
   fromStatus: text("from_status"),
-  toStatus: text("to_status").notNull(),
-  changedBy: text("changed_by").references(() => employees.id),
-  changedAt: integer("changed_at").notNull(),
-  note: text("note"),
+  toStatus: text("to_status"),
+  detailsJson: text("details_json"),
+  createdAt: integer("created_at").notNull(),
 });
 
-// Homepage Settings (CMS)
+// 5.3 System Settings (Cấu hình mốc thời gian & thông báo)
+export const systemSettings = sqliteTable("system_settings", {
+  id: text("id").primaryKey().default("main"),
+  form15TimeoutMinutes: integer("form15_timeout_minutes").default(15),
+  minMonitoringHours: integer("min_monitoring_hours").default(3),
+  maxMonitoringHours: integer("max_monitoring_hours").default(48),
+  zaloEnabled: integer("zalo_enabled").default(0),
+  emailEnabled: integer("email_enabled").default(0),
+  updatedAt: integer("updated_at").notNull(),
+});
+
+// 5.4 Homepage CMS Settings
 export const homepageSettings = sqliteTable("homepage_settings", {
-  id: text("id").primaryKey(),
+  id: text("id").primaryKey().default("main"),
   heroTitle: text("hero_title").notNull(),
   heroSubtitle: text("hero_subtitle").notNull(),
   bannerImageUrl: text("banner_image_url"),
   kpiMetricsJson: text("kpi_metrics_json"),
-  workshopsJson: text("workshops_json"),
   announcementTicker: text("announcement_ticker"),
-  updatedAt: text("updated_at").notNull(),
+  updatedAt: integer("updated_at").notNull(),
 });
 
-// Zalo Group Types & Compatibility Tables
-export const ZALO_GROUP_TYPES = [
-  "truc_tiep_xu_ly",
-  "dua_giai_phap",
-  "tiep_nhan_thong_tin",
-] as const;
-export type ZaloGroupType = (typeof ZALO_GROUP_TYPES)[number];
-
-export const zaloGroupMembers = sqliteTable("zalo_group_members", {
+// ==========================================
+// BACKWARD COMPATIBILITY ALIASES & EXPORTS
+// ==========================================
+export const workshops = areas;
+export const sizes = productSizes;
+export const issueEscalations = auditLogs;
+export const zaloGroupMembers = users;
+export const zaloNotificationLog = notifications;
+export const issueImages = sqliteTable("issue_images_legacy", {
   id: text("id").primaryKey(),
-  userId: text("user_id").notNull(),
-  groupType: text("group_type").notNull().$type<ZaloGroupType>(),
-  workshopId: text("workshop_id"),
-  createdAt: text("created_at").notNull(),
+  issueId: text("issue_id"),
+  imageUrl: text("image_url"),
+  name: text("name"),
+  createdAt: integer("created_at"),
 });
+export const issueResolutions = maintenanceTasks;
+export const issueAssignments = maintenanceTasks;
+export const issueMonitoring = monitoringWindows;
+export const issueStatusHistory = auditLogs;
+export const issueDepartmentDecisions = auditLogs;
 
-export const zaloNotificationLog = sqliteTable("zalo_notification_log", {
-  id: text("id").primaryKey(),
-  issueId: text("issue_id").notNull(),
-  userId: text("user_id"),
-  groupType: text("group_type").notNull().$type<ZaloGroupType>(),
-  status: text("status").notNull(),
-  errorMessage: text("error_message"),
-  sentAt: text("sent_at").notNull(),
-});
+export type ZaloGroupType = "khu_vuc" | "phong_ban" | "qa" | "giam_doc" | "toan_nha_may";
+
+

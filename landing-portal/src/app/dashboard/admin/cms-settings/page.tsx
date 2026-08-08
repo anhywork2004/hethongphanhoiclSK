@@ -64,7 +64,7 @@ export default async function CMSAdminPage() {
               heroSubtitle,
               bannerImageUrl,
               announcementTicker,
-              updatedAt: new Date().toISOString(),
+              updatedAt: Math.floor(Date.now() / 1000),
             })
             .where(eq(homepageSettings.id, "main"));
         } else {
@@ -74,9 +74,10 @@ export default async function CMSAdminPage() {
             heroSubtitle,
             bannerImageUrl,
             announcementTicker,
-            updatedAt: new Date().toISOString(),
+            updatedAt: Math.floor(Date.now() / 1000),
           });
         }
+
       }
     } catch (e) {
       console.error("CMS update error:", e);

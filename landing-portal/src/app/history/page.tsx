@@ -12,7 +12,7 @@ export default async function RepairHistoryPage() {
     const env = ctx.env as unknown as CloudflareEnv;
     if (env.DB) {
       const db = drizzle(env.DB);
-      historyList = await db.select().from(issueStatusHistory).orderBy(desc(issueStatusHistory.changedAt)).limit(50);
+      historyList = await db.select().from(issueStatusHistory).orderBy(desc(issueStatusHistory.createdAt)).limit(50);
     }
   } catch {
     historyList = [];
@@ -48,19 +48,20 @@ export default async function RepairHistoryPage() {
                         {item.fromStatus || "mới"} → {item.toStatus}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-700 font-medium mt-1">{item.note || "Đã cập nhật trạng thái phiếu xử lý."}</p>
+                    <p className="text-xs text-slate-700 font-medium mt-1">{item.action || "Đã cập nhật trạng thái phiếu xử lý."}</p>
                   </div>
                 </div>
 
                 <div className="text-right shrink-0">
                   <span className="text-[11px] font-mono text-slate-400">
-                    {new Date(item.changedAt * 1000).toLocaleString("vi-VN")}
+                    {item.createdAt ? new Date(item.createdAt * 1000).toLocaleString("vi-VN") : "-"}
                   </span>
                 </div>
               </div>
             ))}
           </div>
         ) : (
+
           <div className="p-8 text-center space-y-2">
             <ClipboardList className="w-8 h-8 text-slate-300 mx-auto" />
             <p className="text-xs font-bold text-slate-500">Chưa có nhật ký sửa chữa nào ghi nhận.</p>

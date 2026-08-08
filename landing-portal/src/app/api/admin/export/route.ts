@@ -1,56 +1,32 @@
 import { NextResponse } from "next/server";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { getDb } from "@/db";
-import { issues } from "@/db/schema";
+import { drizzle } from "drizzle-orm/d1";
+import { qualityIssues } from "@/db/schema";
 import { desc } from "drizzle-orm";
 
 export async function GET() {
   try {
     const ctx = await getCloudflareContext({ async: true });
-    const d1 = (ctx.env as unknown as CloudflareEnv).DB;
+    const env = ctx.env as unknown as CloudflareEnv;
 
-    let data: Array<{
-      issueCode: string;
-      productCode: string;
-      productName: string;
-      workshopName: string | null;
-      detectionStage: string;
-      severity: string;
-      status: string;
-      createdByName: string | null;
-      createdAt: string;
-    }> = [];
-
-    if (d1) {
-      const db = getDb(d1);
-      data = await db
-        .select({
-          issueCode: issues.issueCode,
-          productCode: issues.productCode,
-          productName: issues.productName,
-          workshopName: issues.workshopName,
-          detectionStage: issues.detectionStage,
-          severity: issues.severity,
-          status: issues.status,
-          createdByName: issues.createdByName,
-          createdAt: issues.createdAt,
-        })
-        .from(issues)
-        .orderBy(desc(issues.createdAt));
+    let data: any[] = [];
+    if (env?.DB) {
+      const db = drizzle(env.DB);
+      data = await db.select().from(qualityIssues).orderBy(desc(qualityIssues.createdAt));
     }
 
-    // Build CSV content with UTF-8 BOM
-    const headers = ["Mã Phiếu", "Mã SP", "Tên SP", "Phân Xưởng", "Công Đoạn", "Mức Độ", "Trạng Thái", "Người Báo Lỗi", "Thời Gian Ghi Nhận"];
+    const headers = ["Mã Phiếu", "Mã PO", "Mã SP", "Tên SP", "Phân Xưởng", "Công Đoạn", "Mức Độ", "Trạng Thái", "Người Báo Lỗi", "Thời Gian Ghi Nhận"];
     const rows = data.map((item) => [
       `"${item.issueCode}"`,
-      `"${item.productCode}"`,
-      `"${item.productName.replace(/"/g, '""')}"`,
+      `"${item.poCode || ""}"`,
+      `"${item.productCode || ""}"`,
+      `"${(item.productName || "").replace(/"/g, '""')}"`,
       `"${item.workshopName || ""}"`,
-      `"${item.detectionStage}"`,
-      `"${item.severity}"`,
-      `"${item.status}"`,
-      `"${item.createdByName}"`,
-      `"${item.createdAt}"`,
+      `"${item.detectionStage || ""}"`,
+      `"${item.severity || ""}"`,
+      `"${item.status || ""}"`,
+      `"${item.reportedByName || item.reportedByMnv || ""}"`,
+      `"${item.createdAt ? new Date(item.createdAt * 1000).toLocaleString("vi-VN") : ""}"`,
     ]);
 
     const csvContent = "\uFEFF" + [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");

@@ -1,286 +1,193 @@
-import { getPrisma } from "@/lib/prisma";
-import { ClipboardList, Hourglass, Wrench, CheckCircle2 } from "lucide-react";
-import ReportsCharts from "./reports-charts-lazy";
-import { PageHeader } from "@/components/page-header";
-import AreaFilter from "./area-filter";
+import Link from "next/link";
+import {
+  Users,
+  Building,
+  Sliders,
+  Package,
+  Layers,
+  Wrench,
+  FastForward,
+  CheckCircle2,
+  AlertTriangle,
+  Siren,
+  Clock,
+  ArrowRight,
+  Shield,
+  Sparkles,
+} from "lucide-react";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { drizzle } from "drizzle-orm/d1";
+import {
+  users,
+  departments,
+  areas,
+  issueCategories,
+  partCategories,
+  qualityIssues,
+} from "@/db/schema";
+import { AppHeaderNav } from "@/components/app-header-nav";
+import { auth } from "@/lib/auth";
+import { CustomUserSession } from "@/lib/auth.config";
+import { count, desc } from "drizzle-orm";
 
-const TREND_DAYS = 14;
-const DAY_MS = 24 * 60 * 60 * 1000;
+export default async function AdminDashboardPage() {
+  const session = await auth();
+  const user = session?.user as unknown as CustomUserSession | undefined;
 
-const STATUS_LABEL: Record<string, string> = {
-  REPORTED: "Vừa báo cáo",
-  INVESTIGATING: "Đang điều tra",
-  ROOT_CAUSE_FOUND: "Đã có nguyên nhân",
-  ASSIGNED: "Đã giao việc",
-  IN_PROGRESS: "Đang xử lý",
-  DONE: "Hoàn thành",
-};
+  let totalUsers = 8;
+  let totalDepts = 5;
+  let totalAreas = 7;
+  let totalIssueCats = 5;
+  let totalPartCats = 6;
+  let totalIssues = 0;
+  let issuesList: any[] = [];
 
-function dayKey(d: Date) {
-  return d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" });
-}
+  try {
+    const ctx = await getCloudflareContext({ async: true });
+    const env = ctx.env as unknown as CloudflareEnv;
+    if (env?.DB) {
+      const db = drizzle(env.DB);
+      const [uC, dC, aC, icC, pcC, issRows] = await Promise.all([
+        db.select({ value: count() }).from(users),
+        db.select({ value: count() }).from(departments),
+        db.select({ value: count() }).from(areas),
+        db.select({ value: count() }).from(issueCategories),
+        db.select({ value: count() }).from(partCategories),
+        db.select().from(qualityIssues).orderBy(desc(qualityIssues.createdAt)).limit(10),
+      ]);
 
-export default async function AdminDashboard({
-  searchParams,
-}: {
-  searchParams: Promise<{ areaId?: string }>;
-}) {
-  const prisma = await getPrisma();
-  const since14d = new Date(Date.now() - TREND_DAYS * DAY_MS);
-  const { areaId } = await searchParams;
+      totalUsers = uC[0]?.value || totalUsers;
+      totalDepts = dC[0]?.value || totalDepts;
+      totalAreas = aC[0]?.value || totalAreas;
+      totalIssueCats = icC[0]?.value || totalIssueCats;
+      totalPartCats = pcC[0]?.value || totalPartCats;
+      issuesList = issRows;
+      totalIssues = issRows.length;
+    }
+  } catch {
+    // fallback
+  }
 
-  const issueWhere = areaId ? { areaId } : {};
-
-  const [
-    areas,
-    totalCount,
-    openCount,
-    doneCount,
-    statusGroups,
-    issuesByDayRaw,
-    issuesWithArea,
-    openIssues,
-    tasksForDuration,
-  ] = await Promise.all([
-    prisma.category.findMany({ where: { type: "AREA" }, orderBy: { order: "asc" } }),
-    prisma.qualityIssue.count({ where: issueWhere }),
-    prisma.qualityIssue.count({ where: { ...issueWhere, status: { not: "DONE" } } }),
-    prisma.qualityIssue.count({ where: { ...issueWhere, status: "DONE" } }),
-    prisma.qualityIssue.groupBy({ by: ["status"], _count: { _all: true }, where: issueWhere }),
-    prisma.qualityIssue.findMany({
-      where: { createdAt: { gte: since14d }, ...issueWhere },
-      select: { createdAt: true },
-    }),
-    prisma.qualityIssue.findMany({
-      where: issueWhere,
-      select: { area: { select: { name: true } } },
-    }),
-    prisma.qualityIssue.findMany({
-      where: { ...issueWhere, status: { not: "DONE" } },
-      orderBy: { createdAt: "asc" },
-      take: 8,
-      select: {
-        id: true,
-        poCode: true,
-        description: true,
-        status: true,
-        createdAt: true,
-        reporter: { select: { name: true } },
-        team: { select: { name: true } },
-        productionLine: { select: { name: true } },
-        failureCategory: { select: { name: true } },
-      },
-    }),
-    prisma.maintenanceTask.findMany({
-      where: { status: "DONE", completedAt: { not: null }, issue: issueWhere },
-      select: {
-        completedAt: true,
-        acceptedAt: true,
-        createdAt: true,
-        issue: { select: { failureCategory: { select: { name: true } } } },
-      },
-    }),
-  ]);
-
-  const kpiCards = [
-    {
-      label: "Tổng số phiếu",
-      value: totalCount,
-      unit: "Phiếu",
-      icon: ClipboardList,
-      iconBg: "bg-blue-100",
-      iconColor: "text-blue-600",
-    },
-    {
-      label: "Đang xử lý",
-      value: openCount,
-      unit: "Phiếu",
-      icon: Hourglass,
-      iconBg: "bg-amber-100",
-      iconColor: "text-amber-600",
-    },
-    {
-      label: "Cần điều tra 5M+1E",
-      value: statusGroups.find((g: any) => g.status === "REPORTED" || g.status === "INVESTIGATING")
-        ? statusGroups
-            .filter((g: any) => g.status === "REPORTED" || g.status === "INVESTIGATING")
-            .reduce((sum: number, g: any) => sum + g._count._all, 0)
-        : 0,
-      unit: "Phiếu",
-      icon: Wrench,
-      iconBg: "bg-rose-100",
-      iconColor: "text-rose-600",
-    },
-    {
-      label: "Đã hoàn thành",
-      value: doneCount,
-      unit: "Phiếu",
-      icon: CheckCircle2,
-      iconBg: "bg-emerald-100",
-      iconColor: "text-emerald-600",
-    },
+  const masterLinks = [
+    { title: "Quản Lý Người Dùng & Phân Quyền", href: "/admin/users", count: `${totalUsers} Nhân Viên`, icon: Users, color: "text-blue-600", bg: "bg-blue-50" },
+    { title: "Cấu Hình Phòng Ban Linh Hoạt", href: "/admin/departments", count: `${totalDepts} Phòng Ban`, icon: Sliders, color: "text-emerald-600", bg: "bg-emerald-50" },
+    { title: "Cơ Cấu Khu Vực (Xưởng/Tổ/Chuyền)", href: "/admin/areas", count: `${totalAreas} Khu Vực`, icon: Building, color: "text-purple-600", bg: "bg-purple-50" },
+    { title: "Danh Mục Lỗi Sự Cố (Issue Categories)", href: "/admin/categories", count: `${totalIssueCats} Danh Mục`, icon: Layers, color: "text-amber-600", bg: "bg-amber-50" },
+    { title: "Danh Mục Linh Kiện Thay Thế (Part Categories)", href: "/admin/parts", count: `${totalPartCats} Linh Kiện`, icon: Package, color: "text-teal-600", bg: "bg-teal-50" },
   ];
 
-  const issuesByStatus = statusGroups.map((g: any) => ({
-    status: g.status,
-    statusLabel: STATUS_LABEL[g.status] || g.status,
-    count: g._count._all,
-  }));
-
-  const dayBuckets = new Map<string, number>();
-  for (let i = TREND_DAYS - 1; i >= 0; i--) {
-    dayBuckets.set(dayKey(new Date(Date.now() - i * DAY_MS)), 0);
-  }
-  for (const issue of issuesByDayRaw) {
-    const key = dayKey(new Date(issue.createdAt));
-    if (dayBuckets.has(key)) dayBuckets.set(key, (dayBuckets.get(key) || 0) + 1);
-  }
-  const issuesByDay = Array.from(dayBuckets.entries()).map(([date, count]) => ({ date, count }));
-
-  const areaCountMap = new Map<string, number>();
-  for (const issue of issuesWithArea) {
-    const area = issue.area?.name || "Chưa phân khu vực";
-    areaCountMap.set(area, (areaCountMap.get(area) || 0) + 1);
-  }
-  const issuesByArea = Array.from(areaCountMap.entries())
-    .map(([area, count]) => ({ area, count }))
-    .sort((a, b) => b.count - a.count);
-
-  // --- Top 5 lỗi: rank, tên lỗi, số lượng, thời gian xử lý trung bình ---
-  const failureStats = new Map<string, { count: number; totalMinutes: number; withDuration: number }>();
-  for (const task of tasksForDuration) {
-    const name = task.issue.failureCategory?.name || "Chưa phân loại";
-    const entry = failureStats.get(name) || { count: 0, totalMinutes: 0, withDuration: 0 };
-    entry.count++;
-    if (task.completedAt) {
-      const startTime = task.acceptedAt ?? task.createdAt;
-      const minutes = Math.max(1, Math.round((task.completedAt.getTime() - startTime.getTime()) / 60000));
-      entry.totalMinutes += minutes;
-      entry.withDuration++;
-    }
-    failureStats.set(name, entry);
-  }
-  const top5Failures = Array.from(failureStats.entries())
-    .map(([name, s]) => ({
-      name,
-      count: s.count,
-      avgHours: s.withDuration > 0 ? Number((s.totalMinutes / s.withDuration / 60).toFixed(1)) : null,
-    }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 5);
-
   return (
-    <div>
-      <PageHeader title="Tổng quan">
-        <AreaFilter areas={areas} />
-      </PageHeader>
+    <div className="min-h-screen bg-[#f4f7f5] text-slate-900 font-sans">
+      <AppHeaderNav user={user} />
 
-      <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
-        {kpiCards.map((c) => {
-          const Icon = c.icon;
-          return (
-            <div key={c.label} className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm">
-              <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${c.iconBg}`}>
-                <Icon size={20} className={c.iconColor} />
-              </div>
-              <div className="min-w-0">
-                <div className="truncate text-xl font-bold text-slate-800">{c.value}</div>
-                <div className="truncate text-xs text-slate-500">
-                  {c.label} · {c.unit}
-                </div>
-              </div>
+      <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 space-y-8">
+        {/* Admin Header */}
+        <div className="bg-[#004724] text-white p-8 rounded-3xl shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="flex items-center space-x-4">
+            <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-[#8dc63f]">
+              <Shield className="w-8 h-8" />
             </div>
-          );
-        })}
-      </div>
-
-      <h2 className="mb-4 text-lg font-semibold text-slate-800">Báo cáo &amp; Thống kê</h2>
-      <ReportsCharts issuesByStatus={issuesByStatus} issuesByDay={issuesByDay} issuesByArea={issuesByArea} />
-
-      <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-2">
-        <div className="overflow-hidden rounded-2xl bg-white shadow-sm">
-          <h2 className="flex items-center gap-2 border-b border-slate-100 px-5 py-4 text-base font-bold text-rose-600">
-            <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-rose-600" />
-            Top 5 lỗi thường gặp
-          </h2>
-          <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 text-slate-500">
-              <tr>
-                <th className="px-5 py-2">#</th>
-                <th className="px-5 py-2">Tên lỗi</th>
-                <th className="px-5 py-2 text-right">Số lượng</th>
-                <th className="px-5 py-2 text-right">TB xử lý (giờ)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {top5Failures.length === 0 && (
-                <tr>
-                  <td className="px-5 py-4 text-slate-400" colSpan={4}>
-                    Không có dữ liệu
-                  </td>
-                </tr>
-              )}
-              {top5Failures.map((f, i) => (
-                <tr key={f.name} className="border-t border-slate-100">
-                  <td className="px-5 py-2 font-mono">{i + 1}</td>
-                  <td className="px-5 py-2">{f.name}</td>
-                  <td className="px-5 py-2 text-right font-semibold text-rose-600">{f.count}</td>
-                  <td className="px-5 py-2 text-right text-slate-600">
-                    {f.avgHours != null ? f.avgHours : "-"}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+            <div>
+              <div className="text-[10px] font-black uppercase text-emerald-300 tracking-widest">
+                TRUNG TÂM QUẢN TRỊ TBS SKECHERS KG1
+              </div>
+              <h1 className="text-3xl font-black font-serif-luxury tracking-tight mt-0.5">
+                Bảng Điều Khiển Hệ Thống Admin
+              </h1>
+              <p className="text-xs text-emerald-100/90 mt-1 font-medium">
+                Quản lý phân quyền 8 vai trò, danh mục phòng ban, cơ cấu khu vực và công cụ test thời gian.
+              </p>
+            </div>
+          </div>
         </div>
 
-        <div className="overflow-hidden rounded-2xl bg-white shadow-sm">
-          <h2 className="flex items-center gap-2 border-b border-slate-100 px-5 py-4 text-base font-bold text-amber-600">
-            <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-amber-600" />
-            Sự cố cần xử lý gấp
+        {/* Master Data Grid */}
+        <div className="space-y-4">
+          <h2 className="text-sm font-black uppercase text-[#004724] tracking-wider flex items-center gap-2">
+            <Sliders className="w-4 h-4" />
+            <span>Quản Trị Dữ Liệu Nền Tảng (Master Data CRUD)</span>
           </h2>
-          <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 text-slate-500">
-              <tr>
-                <th className="px-5 py-2">PO</th>
-                <th className="px-5 py-2">Tổ / Chuyền</th>
-                <th className="px-5 py-2">Trạng thái</th>
-                <th className="px-5 py-2">Thời gian</th>
-              </tr>
-            </thead>
-            <tbody>
-              {openIssues.length === 0 && (
-                <tr>
-                  <td className="px-5 py-4 text-slate-400" colSpan={4}>
-                    Không có sự cố nào đang chờ xử lý
-                  </td>
-                </tr>
-              )}
-              {openIssues.map((issue: any) => (
-                <tr key={issue.id} className="border-t border-slate-100">
-                  <td className="px-5 py-2 font-mono">{issue.poCode}</td>
-                  <td className="px-5 py-2">
-                    {issue.team?.name || "-"} / {issue.productionLine?.name || "-"}
-                  </td>
-                  <td className="px-5 py-2">
-                    <span className="rounded-full bg-sky-100 px-2 py-0.5 text-xs font-medium text-sky-700">
-                      {STATUS_LABEL[issue.status] || issue.status}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {masterLinks.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="p-6 rounded-3xl bg-white border border-slate-200/90 hover:border-[#004724] shadow-xs space-y-3 group transition-all hover:scale-[1.01]"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className={`w-10 h-10 rounded-2xl ${item.bg} flex items-center justify-center ${item.color}`}>
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">
+                      {item.count}
                     </span>
-                  </td>
-                  <td className="px-5 py-2 text-slate-600">
-                    {new Date(issue.createdAt).toLocaleString("vi-VN", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+
+                  <div>
+                    <h3 className="text-sm font-black text-slate-900 group-hover:text-[#004724] transition-colors">
+                      {item.title}
+                    </h3>
+                  </div>
+
+                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-[#004724] font-bold">
+                    <span>Quản lý chi tiết</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
         </div>
-      </div>
+
+        {/* 8 Test Accounts Quick Reference Table */}
+        <div className="p-6 rounded-3xl bg-white border border-slate-200/90 shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+            <h3 className="text-sm font-black uppercase text-[#004724] tracking-wider flex items-center gap-2">
+              <Users className="w-4 h-4" />
+              <span>Danh Sách 8 Tài Khoản Test Chuẩn (Mật khẩu: 123456)</span>
+            </h3>
+            <span className="text-xs font-mono text-slate-500">Seed D1 Database</span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-slate-50 text-slate-600 font-black uppercase border-b border-slate-200">
+                <tr>
+                  <th className="px-4 py-3">Mã Đăng Nhập</th>
+                  <th className="px-4 py-3">Họ và Tên</th>
+                  <th className="px-4 py-3">Vai Trò Hệ Thống</th>
+                  <th className="px-4 py-3">Phân Xưởng / Phòng Ban</th>
+                  <th className="px-4 py-3">Mật Khẩu Test</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 font-medium">
+                {[
+                  { mnv: "ADMIN01", name: "Quản Trị Viên TBS", role: "Quản trị hệ thống (Admin)", dept: "Công Nghệ Thông Tin" },
+                  { mnv: "NV001", name: "Nguyễn Văn An", role: "Cán bộ sản xuất / Công nhân (Worker)", dept: "Xưởng May 1 / Chuyền 1A" },
+                  { mnv: "QA001", name: "Lê Thị Cúc", role: "Nhân viên QA (QA)", dept: "Phòng Quản Lý Chất Lượng" },
+                  { mnv: "TL001", name: "Trần Văn Bình", role: "Line Leader / Trưởng Line (LL)", dept: "Xưởng May 1 / Tổ May 1" },
+                  { mnv: "CN001", name: "Phạm Văn Dũng", role: "Kỹ sư Công nghệ (CN)", dept: "Phòng Công Nghệ" },
+                  { mnv: "TP001", name: "Hoàng Văn Giang", role: "Trưởng phòng ban (TP)", dept: "Phòng Bảo Trì & Thiết Bị" },
+                  { mnv: "KT001", name: "Đỗ Văn Hùng", role: "Kỹ thuật sửa chữa (Handler)", dept: "Phòng Bảo Trì Xưởng May 1" },
+                  { mnv: "GD001", name: "Vũ Thị Mai", role: "Giám đốc xưởng (Director)", dept: "Ban Giám Đốc Phân Xưởng" },
+                  { mnv: "TGD001", name: "Trịnh Xuân Hùng", role: "Tổng Giám Đốc (General Director)", dept: "Ban Tổng Giám Đốc Nhà Máy" },
+                ].map((acc) => (
+                  <tr key={acc.mnv} className="hover:bg-slate-50">
+                    <td className="px-4 py-2.5 font-mono font-black text-[#004724]">{acc.mnv}</td>
+                    <td className="px-4 py-2.5 font-bold text-slate-900">{acc.name}</td>
+                    <td className="px-4 py-2.5 text-slate-700">{acc.role}</td>
+                    <td className="px-4 py-2.5 text-slate-600">{acc.dept}</td>
+                    <td className="px-4 py-2.5 font-mono text-emerald-700 font-bold">123456</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

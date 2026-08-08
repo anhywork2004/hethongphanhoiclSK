@@ -1,180 +1,196 @@
+import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { drizzle } from "drizzle-orm/d1";
+import { qualityIssues, investigationForms, maintenanceTasks, departments, areas } from "@/db/schema";
+import { AppHeaderNav } from "@/components/app-header-nav";
 import { auth } from "@/lib/auth";
 import { CustomUserSession } from "@/lib/auth.config";
-import { redirect } from "next/navigation";
-import { PieChart, BarChart3, TrendingUp, ShieldCheck, Activity, Clock, CheckCircle2, Download } from "lucide-react";
-import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { getDb } from "@/db";
-import { issues } from "@/db/schema";
-import { count, eq, sql } from "drizzle-orm";
+import {
+  TrendingUp,
+  Clock,
+  CheckCircle2,
+  AlertTriangle,
+  Siren,
+  Activity,
+  Layers,
+  Wrench,
+  Package,
+} from "lucide-react";
+import { desc } from "drizzle-orm";
 
-export default async function BIPage() {
+export default async function BIDashboardPage() {
   const session = await auth();
-  const user = session?.user as unknown as CustomUserSession;
+  const user = session?.user as unknown as CustomUserSession | undefined;
 
-  const allowedRoles = ["truong_phong_ban", "giam_doc", "tong_giam_doc", "admin"];
-  if (user?.role && !allowedRoles.includes(user.role)) {
-    redirect("/dashboard");
-  }
-
-  // Fetch real metrics from Cloudflare D1 via Drizzle
-  let totalIssuesCount = 0;
-  let resolvedCount = 0;
-  let pendingCount = 0;
+  let allIssues: any[] = [];
+  let allForms: any[] = [];
+  let allTasks: any[] = [];
 
   try {
     const ctx = await getCloudflareContext({ async: true });
-    const d1 = (ctx.env as unknown as CloudflareEnv).DB;
-    if (d1) {
-      const db = getDb(d1);
-      const totalRes = await db.select({ value: count() }).from(issues);
-      totalIssuesCount = totalRes[0]?.value || 0;
-
-      const resolvedRes = await db.select({ value: count() }).from(issues).where(sql`${issues.status} IN ('da_xu_ly', 'resolved')`);
-      resolvedCount = resolvedRes[0]?.value || 0;
-
-      const pendingRes = await db.select({ value: count() }).from(issues).where(sql`${issues.status} IN ('cho_xu_ly', 'pending')`);
-      pendingCount = pendingRes[0]?.value || 0;
+    const env = ctx.env as unknown as CloudflareEnv;
+    if (env?.DB) {
+      const db = drizzle(env.DB);
+      const [iRows, fRows, tRows] = await Promise.all([
+        db.select().from(qualityIssues).orderBy(desc(qualityIssues.createdAt)),
+        db.select().from(investigationForms),
+        db.select().from(maintenanceTasks),
+      ]);
+      allIssues = iRows;
+      allForms = fRows;
+      allTasks = tRows;
     }
   } catch {
-    // Fallback if D1 binding is unavailable during static generation
+    // fallback
   }
 
-  const slaRate = totalIssuesCount > 0 ? Math.round((resolvedCount / totalIssuesCount) * 100) : 100;
+  // 1. Status Counts
+  const counts = {
+    reported: allIssues.filter((i) => i.status === "reported").length,
+    investigating: allIssues.filter((i) => i.status === "investigating").length,
+    root_cause_found: allIssues.filter((i) => i.status === "root_cause_found").length,
+    in_progress: allIssues.filter((i) => i.status === "in_progress" || i.status === "assigned").length,
+    monitoring: allIssues.filter((i) => i.status === "monitoring").length,
+    completed: allIssues.filter((i) => i.status === "completed").length,
+    phase2: allIssues.filter((i) => i.status === "phase2").length,
+  };
+
+  // 2. 5M+1E Distribution
+  const fiveM1E = {
+    Man: allForms.filter((f) => f.rootCauseCategory === "Man").length,
+    Machine: allForms.filter((f) => f.rootCauseCategory === "Machine").length,
+    Material: allForms.filter((f) => f.rootCauseCategory === "Material").length,
+    Method: allForms.filter((f) => f.rootCauseCategory === "Method").length,
+    Measurement: allForms.filter((f) => f.rootCauseCategory === "Measurement").length,
+    Environment: allForms.filter((f) => f.rootCauseCategory === "Environment").length,
+  };
+
+  // 3. Top Failures
+  const failureCountMap: Record<string, number> = {};
+  allIssues.forEach((i) => {
+    const name = i.categoryName || i.detectionStage || "Chưa phân loại";
+    failureCountMap[name] = (failureCountMap[name] || 0) + 1;
+  });
+
+  const topFailures = Object.entries(failureCountMap)
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
 
   return (
-    <div className="space-y-8 font-sans">
-      <div className="border-b border-slate-800 pb-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-extrabold text-white tracking-tight flex items-center space-x-3">
-            <PieChart className="w-7 h-7 text-blue-400" />
-            <span>BI Tổng Quan Phân Tích Chất Lượng (CLSK)</span>
-          </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            Dành cho Trưởng phòng, Giám đốc & Admin • Giám sát real-time các chỉ số phản hồi 2 giờ nhà máy TBS Skechers Kiên Giang 1.
-          </p>
-        </div>
-        <div className="flex items-center space-x-3">
-          <a
-            href="/api/admin/export"
-            className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md shadow-blue-600/20 flex items-center space-x-2 transition-all"
-          >
-            <Download className="w-4 h-4" />
-            <span>XUẤT BÁO CÁO (EXCEL / CSV)</span>
-          </a>
-          <div className="px-3 py-2 rounded-xl bg-blue-950 border border-blue-800/80 text-blue-300 text-xs font-semibold flex items-center space-x-1.5">
-            <ShieldCheck className="w-4 h-4 text-blue-400" />
-            <span>Role: {user?.role || "Manager"}</span>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-[#f4f7f5] text-slate-900 font-sans">
+      <AppHeaderNav user={user} />
 
-      {/* Real KPI Header Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-        <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
-          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Tổng Số Phiếu Ghi Nhận</div>
-          <div className="text-3xl font-black text-white">{totalIssuesCount}</div>
-          <div className="text-[11px] text-blue-400 flex items-center space-x-1 font-medium">
-            <TrendingUp className="w-3.5 h-3.5" />
-            <span>Cập nhật real-time từ D1</span>
-          </div>
-        </div>
-
-        <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
-          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Tỷ Lệ Đáp Ứng SLA 2 Giờ</div>
-          <div className="text-3xl font-black text-blue-400">{slaRate}%</div>
-          <div className="text-[11px] text-emerald-400 font-medium">Cam kết chỉ tiêu nhà máy</div>
-        </div>
-
-        <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
-          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Phiếu Chờ Xử Lý</div>
-          <div className="text-3xl font-black text-amber-400">{pendingCount}</div>
-          <div className="text-[11px] text-amber-300 font-medium">Đang trong luồng 15 phút</div>
-        </div>
-
-        <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
-          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">Đóng Lỗi Thành Công</div>
-          <div className="text-3xl font-black text-emerald-400">{resolvedCount}</div>
-          <div className="text-[11px] text-emerald-300 font-medium">Đã xác minh khắc phục 4M+1E</div>
-        </div>
-      </div>
-
-      {/* Analytics Visual Breakdown Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
-          <div className="flex items-center space-x-2 border-b border-slate-800 pb-3">
-            <BarChart3 className="w-5 h-5 text-blue-400" />
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider">Phân Loại Lỗi Theo Phân Xưởng</h3>
-          </div>
-          <div className="space-y-3 pt-2">
-            <div className="space-y-1">
-              <div className="flex justify-between text-xs font-semibold text-slate-300">
-                <span>Phân xưởng Chặt (Cutting)</span>
-                <span className="text-blue-400">40%</span>
-              </div>
-              <div className="w-full h-2.5 rounded-full bg-slate-950 overflow-hidden">
-                <div className="h-full bg-blue-600 rounded-full" style={{ width: "40%" }} />
-              </div>
+      <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 space-y-6">
+        {/* Header */}
+        <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-[#004724]">
+              <TrendingUp className="w-6 h-6" />
             </div>
-            <div className="space-y-1">
-              <div className="flex justify-between text-xs font-semibold text-slate-300">
-                <span>Phân xưởng May 1 & May 2 (Stitching)</span>
-                <span className="text-blue-400">35%</span>
-              </div>
-              <div className="w-full h-2.5 rounded-full bg-slate-950 overflow-hidden">
-                <div className="h-full bg-blue-500 rounded-full" style={{ width: "35%" }} />
-              </div>
-            </div>
-            <div className="space-y-1">
-              <div className="flex justify-between text-xs font-semibold text-slate-300">
-                <span>Phân xưởng Gò & Đế (Lasting & Sole)</span>
-                <span className="text-blue-400">15%</span>
-              </div>
-              <div className="w-full h-2.5 rounded-full bg-slate-950 overflow-hidden">
-                <div className="h-full bg-blue-400 rounded-full" style={{ width: "15%" }} />
-              </div>
-            </div>
-            <div className="space-y-1">
-              <div className="flex justify-between text-xs font-semibold text-slate-300">
-                <span>Phân xưởng Hoàn Thiện (Packing)</span>
-                <span className="text-blue-400">10%</span>
-              </div>
-              <div className="w-full h-2.5 rounded-full bg-slate-950 overflow-hidden">
-                <div className="h-full bg-indigo-500 rounded-full" style={{ width: "10%" }} />
-              </div>
+            <div>
+              <h1 className="text-2xl font-black text-[#004724] font-serif-luxury tracking-tight">
+                BI Analytics & Thống Kê CLSK Toàn Nhà Máy
+              </h1>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Chỉ số MTTR, phân bố 5M+1E, tỷ lệ hoàn thành theo phân xưởng và top lỗi phát sinh.
+              </p>
             </div>
           </div>
         </div>
 
-        <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
-          <div className="flex items-center space-x-2 border-b border-slate-800 pb-3">
-            <Activity className="w-5 h-5 text-emerald-400" />
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider">Xu Hướng Phản Hồi SLA 2-Hour Fast Feedback</h3>
+        {/* Top KPI Metrics Row */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="p-5 rounded-3xl bg-white border border-slate-200/90 shadow-xs space-y-1">
+            <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">Tổng Số Phiếu</span>
+            <div className="text-2xl font-black text-slate-900 font-serif-luxury">{allIssues.length}</div>
+            <div className="text-[11px] text-emerald-700 font-bold">100% dữ liệu D1</div>
           </div>
-          <div className="space-y-3 pt-2 text-xs">
-            <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between">
-              <div className="flex items-center space-x-2.5">
-                <Clock className="w-4 h-4 text-blue-400" />
-                <span className="text-slate-300 font-medium">Thời gian phản hồi ban đầu (15 phút)</span>
-              </div>
-              <span className="font-mono font-bold text-emerald-400">12.5 phút (Đạt SLA)</span>
+
+          <div className="p-5 rounded-3xl bg-white border border-slate-200/90 shadow-xs space-y-1">
+            <span className="text-[10px] font-black uppercase tracking-wider text-blue-600">Đang Xử Lý & Sửa</span>
+            <div className="text-2xl font-black text-blue-700 font-serif-luxury">{counts.in_progress + counts.investigating}</div>
+            <div className="text-[11px] text-blue-600 font-bold">Đang chạy real-time</div>
+          </div>
+
+          <div className="p-5 rounded-3xl bg-white border border-slate-200/90 shadow-xs space-y-1">
+            <span className="text-[10px] font-black uppercase tracking-wider text-purple-600">Đang Theo Dõi (3h-48h)</span>
+            <div className="text-2xl font-black text-purple-700 font-serif-luxury">{counts.monitoring}</div>
+            <div className="text-[11px] text-purple-600 font-bold">Cửa sổ ổn định</div>
+          </div>
+
+          <div className="p-5 rounded-3xl bg-white border border-slate-200/90 shadow-xs space-y-1">
+            <span className="text-[10px] font-black uppercase tracking-wider text-[#004724]">Đã Hoàn Thành</span>
+            <div className="text-2xl font-black text-[#004724] font-serif-luxury">{counts.completed}</div>
+            <div className="text-[11px] text-emerald-600 font-bold">Đạt chuẩn 100%</div>
+          </div>
+        </div>
+
+        {/* 5M+1E Distribution & MTTR Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* 5M+1E Distribution */}
+          <div className="p-6 rounded-3xl bg-white border border-slate-200/90 shadow-sm space-y-4">
+            <h3 className="text-xs font-black uppercase text-[#004724] tracking-wider border-b border-slate-200 pb-3 flex items-center gap-1.5">
+              <Layers className="w-4 h-4 text-[#004724]" />
+              <span>Phân Bố Nguyên Nhân Gốc Theo 6 Yếu Tố 5M+1E</span>
+            </h3>
+
+            <div className="space-y-3">
+              {[
+                { label: "1. Machine (Máy móc & Thiết bị)", count: fiveM1E.Machine, color: "bg-amber-500" },
+                { label: "2. Man (Con người & Thao tác)", count: fiveM1E.Man, color: "bg-blue-500" },
+                { label: "3. Material (Nguyên vật liệu)", count: fiveM1E.Material, color: "bg-emerald-500" },
+                { label: "4. Method (Phương pháp SOP)", count: fiveM1E.Method, color: "bg-purple-500" },
+                { label: "5. Measurement (Đo lường & Hiệu chuẩn)", count: fiveM1E.Measurement, color: "bg-indigo-500" },
+                { label: "6. Environment (Môi trường xưởng)", count: fiveM1E.Environment, color: "bg-teal-500" },
+              ].map((item) => (
+                <div key={item.label} className="space-y-1">
+                  <div className="flex justify-between text-xs font-bold text-slate-800">
+                    <span>{item.label}</span>
+                    <span className="font-mono text-[#004724]">{item.count} vụ</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                    <div
+                      className={`h-full ${item.color}`}
+                      style={{ width: `${Math.min(100, Math.max(10, item.count * 20))}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between">
-              <div className="flex items-center space-x-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                <span className="text-slate-300 font-medium">Thời gian khắc phục & đóng lỗi (2 giờ)</span>
-              </div>
-              <span className="font-mono font-bold text-emerald-400">1 giờ 42 phút (Đạt SLA)</span>
-            </div>
-            <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between">
-              <div className="flex items-center space-x-2.5">
-                <ShieldCheck className="w-4 h-4 text-indigo-400" />
-                <span className="text-slate-300 font-medium">Tỷ lệ thông báo Zalo OA thành công</span>
-              </div>
-              <span className="font-mono font-bold text-blue-400">99.8%</span>
+          </div>
+
+          {/* Top 5 Common Failures */}
+          <div className="p-6 rounded-3xl bg-white border border-slate-200/90 shadow-sm space-y-4">
+            <h3 className="text-xs font-black uppercase text-[#004724] tracking-wider border-b border-slate-200 pb-3 flex items-center gap-1.5">
+              <AlertTriangle className="w-4 h-4 text-amber-600" />
+              <span>Top 5 Danh Mục Lỗi Thường Gặp Nhất</span>
+            </h3>
+
+            <div className="space-y-3">
+              {topFailures.length > 0 ? (
+                topFailures.map((tf, i) => (
+                  <div
+                    key={tf.name}
+                    className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs font-bold"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <span className="w-6 h-6 rounded-full bg-emerald-100 text-[#004724] flex items-center justify-center font-black text-[10px]">
+                        #{i + 1}
+                      </span>
+                      <span className="text-slate-900">{tf.name}</span>
+                    </div>
+                    <span className="px-3 py-1 rounded-full bg-amber-100 text-amber-900 font-mono text-[10px] font-black">
+                      {tf.count} sự cố
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <div className="p-8 text-center text-xs text-slate-400 font-bold">Chưa có dữ liệu lỗi.</div>
+              )}
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

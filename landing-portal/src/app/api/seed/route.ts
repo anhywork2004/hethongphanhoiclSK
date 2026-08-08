@@ -4,27 +4,20 @@ import { seedInitialData } from "@/db/seed";
 
 export async function POST() {
   try {
-    let d1: D1Database | undefined;
-    try {
-      const ctx = await getCloudflareContext({ async: true });
-      d1 = (ctx.env as unknown as CloudflareEnv).DB;
-    } catch {
-      // fallback
+    const ctx = await getCloudflareContext({ async: true });
+    const env = ctx.env as unknown as CloudflareEnv;
+    if (!env?.DB) {
+      return NextResponse.json({ error: "Không tìm thấy kết nối D1 Database" }, { status: 500 });
     }
 
-    if (!d1) {
-      return NextResponse.json({ success: true, message: "Dev Mode (No D1 context)" });
-    }
-
-    const res = await seedInitialData(d1);
+    const result = await seedInitialData(env.DB);
     return NextResponse.json({
-      success: true,
-      message: "Database tables initialized and seed data populated successfully.",
-      res,
+      message: "Khởi tạo dữ liệu mẫu thành công với đầy đủ 8 vai trò test (Mật khẩu: 123456)!",
+      ...result,
     });
-  } catch (err: unknown) {
-    const error = err as Error;
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  } catch (err: any) {
+    console.error("[Seed API Error]:", err);
+    return NextResponse.json({ error: err.message || "Khởi tạo dữ liệu thất bại" }, { status: 500 });
   }
 }
 

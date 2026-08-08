@@ -1,110 +1,40 @@
 import { drizzle } from "drizzle-orm/d1";
-import { issues, zaloGroupMembers, employees, zaloNotificationLog } from "@/db/schema";
-import { eq, and, sql } from "drizzle-orm";
+import { qualityIssues, notifications, users } from "@/db/schema";
+import { eq, and, lt } from "drizzle-orm";
 
 export async function processSlaEscalations(d1: D1Database): Promise<{
   escalated15mCount: number;
   escalated90mCount: number;
 }> {
   const db = drizzle(d1);
-  const now = new Date();
+  const now = Math.floor(Date.now() / 1000);
 
   let escalated15mCount = 0;
   let escalated90mCount = 0;
 
   try {
-    // 1. Fetch pending issues (status = 'pending') that are past 15 minutes and escalatedLevel === 0
-    const pendingIssues = await db
+    const expiredIssues = await db
       .select()
-      .from(issues)
-      .where(and(eq(issues.status, "pending"), eq(issues.escalatedLevel, 0)));
+      .from(qualityIssues)
+      .where(and(eq(qualityIssues.status, "reported"), lt(qualityIssues.form15Deadline, now)));
 
-    for (const issue of pendingIssues) {
-      const createdTime = new Date(issue.createdAt).getTime();
-      const elapsedMinutes = (now.getTime() - createdTime) / (1000 * 60);
-
-      if (elapsedMinutes >= 15) {
-        // Escalate Level 1: Send Zalo OA alert to truong_phong_ban (Group 2)
-        await db
-          .update(issues)
-          .set({ escalatedLevel: 1 })
-          .where(eq(issues.id, issue.id));
-
-        escalated15mCount++;
-
-        // Trigger Escalation Zalo Alert
-        await dispatchEscalationZaloMessage(
-          db,
-          issue,
-          1,
-          `⚠️ [SLA ESCALATION 15 PHÚT] Phiếu ${issue.issueCode} tại ${issue.workshopName || "Chuyền"} đã quá 15 phút chưa có người nhận xử lý! Đề nghị Trưởng phòng phân công gấp.`
-        );
-      }
-    }
-
-    // 2. Fetch in-progress issues (status = 'processing') that are past 90 minutes and escalatedLevel <= 1
-    const inProgressIssues = await db
-      .select()
-      .from(issues)
-      .where(and(eq(issues.status, "processing"), sql`${issues.escalatedLevel} <= 1`));
-
-    for (const issue of inProgressIssues) {
-      const createdTime = new Date(issue.createdAt).getTime();
-      const elapsedMinutes = (now.getTime() - createdTime) / (1000 * 60);
-
-      if (elapsedMinutes >= 90) {
-        // Escalate Level 2: Send Zalo OA alert to giam_doc / Ban Giám Đốc (Group 3)
-        await db
-          .update(issues)
-          .set({ escalatedLevel: 2 })
-          .where(eq(issues.id, issue.id));
-
-        escalated90mCount++;
-
-        // Trigger Escalation Zalo Alert
-        await dispatchEscalationZaloMessage(
-          db,
-          issue,
-          2,
-          `🚨 [SLA ESCALATION 90 PHÚT - BÁO ĐỘNG GIÁM ĐỐC] Phiếu ${issue.issueCode} tại ${issue.workshopName || "Chuyền"} đã quá 90 phút chưa hoàn thành! Có nguy cơ trễ cam kết 2 Giờ Vàng.`
-        );
-      }
+    for (const issue of expiredIssues) {
+      escalated15mCount++;
+      await db.insert(notifications).values({
+        id: `notif_esc_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+        userId: "system",
+        roleTarget: "dept_head",
+        issueId: issue.id,
+        type: "timeout_alert",
+        title: `⚠️ [SLA 15 PHÚT] Quá hạn điều tra phiếu ${issue.issueCode}`,
+        message: `Phiếu sự cố ${issue.issueCode} tại ${issue.workshopName || "phân xưởng"} đã quá 15 phút điều tra 5M+1E.`,
+        isRead: 0,
+        createdAt: now,
+      }).execute();
     }
   } catch (err) {
     console.error("[Process SLA Escalation Error]:", err);
   }
 
   return { escalated15mCount, escalated90mCount };
-}
-
-async function dispatchEscalationZaloMessage(
-  db: ReturnType<typeof drizzle>,
-  issue: any,
-  level: number,
-  messageText: string
-) {
-  const targetGroupType = level === 1 ? "dua_giai_phap" : "tiep_nhan_thong_tin";
-
-  const members = await db
-    .select({
-      userId: zaloGroupMembers.userId,
-      zaloId: employees.zaloId,
-    })
-    .from(zaloGroupMembers)
-    .leftJoin(employees, eq(zaloGroupMembers.userId, employees.id))
-    .where(eq(zaloGroupMembers.groupType, targetGroupType));
-
-  const nowIso = new Date().toISOString();
-
-  for (const m of members) {
-    await db.insert(zaloNotificationLog).values({
-      id: `zlog_esc_${level}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
-      issueId: issue.id,
-      userId: m.userId,
-      groupType: targetGroupType,
-      status: "sent",
-      errorMessage: `[Escalation L${level}] ${messageText}`,
-      sentAt: nowIso,
-    });
-  }
 }

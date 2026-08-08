@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { getDb } from "@/db";
-import { issues, issueImages } from "@/db/schema";
+import { drizzle } from "drizzle-orm/d1";
+import { qualityIssues } from "@/db/schema";
 import { requireMobileAuth } from "@/lib/require-mobile-auth";
-import { sendZaloIssueNotifications } from "@/lib/zalo-oa";
+import { notifyNewIssueReported } from "@/lib/notifications";
 import { desc, eq } from "drizzle-orm";
 
 export async function GET(req: Request) {
@@ -12,18 +12,18 @@ export async function GET(req: Request) {
 
   try {
     const ctx = await getCloudflareContext({ async: true });
-    const d1 = (ctx.env as unknown as CloudflareEnv).DB;
+    const env = ctx.env as unknown as CloudflareEnv;
 
-    if (!d1) {
+    if (!env?.DB) {
       return NextResponse.json({ error: "D1 database binding not found" }, { status: 500 });
     }
 
-    const db = getDb(d1);
+    const db = drizzle(env.DB);
     const userIssues = await db
       .select()
-      .from(issues)
-      .where(eq(issues.createdByMnv, payload.employeeCode))
-      .orderBy(desc(issues.createdAt))
+      .from(qualityIssues)
+      .where(eq(qualityIssues.reportedByMnv, payload.employeeCode))
+      .orderBy(desc(qualityIssues.createdAt))
       .limit(50);
 
     return NextResponse.json(userIssues);
@@ -39,9 +39,9 @@ export async function POST(req: Request) {
 
   try {
     const ctx = await getCloudflareContext({ async: true });
-    const d1 = (ctx.env as unknown as CloudflareEnv).DB;
+    const env = ctx.env as unknown as CloudflareEnv;
 
-    if (!d1) {
+    if (!env?.DB) {
       return NextResponse.json({ error: "D1 database binding not found" }, { status: 500 });
     }
 
@@ -62,15 +62,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Mô tả sự cố không được để trống" }, { status: 400 });
     }
 
-    const issueId = `ISSUE-${Date.now()}`;
+    const issueId = `iss_${Date.now()}`;
     const issueCode = `CLSK-${Math.floor(1000 + Math.random() * 9000)}`;
-    const nowIso = new Date().toISOString();
+    const now = Math.floor(Date.now() / 1000);
+    const db = drizzle(env.DB);
 
-    const db = getDb(d1);
-
-    await db.insert(issues).values({
+    const newIssue = {
       id: issueId,
+      factoryId: "fac-tbs-kg1",
       issueCode,
+      poCode: body.poCode || "PO-MOBILE-DEMO",
       productCode: body.poCode || productCode,
       productName,
       affectedSizes: JSON.stringify(affectedSizes),
@@ -78,47 +79,27 @@ export async function POST(req: Request) {
       workshopName,
       detectionStage,
       description,
-      severity: (severity as any) || "medium",
-      status: "pending",
-      createdByMnv: payload.employeeCode,
-      createdByName: payload.name || payload.employeeCode,
-      createdAt: nowIso,
-    });
+      severity: (severity as any) || "trung_binh",
+      status: "reported" as any,
+      reportedByMnv: payload.employeeCode,
+      reportedByName: payload.name || payload.employeeCode,
+      reportedAt: now,
+      form15Deadline: now + 15 * 60,
+      images: JSON.stringify(images),
+      createdAt: now,
+    };
 
-    if (Array.isArray(images) && images.length > 0) {
-      for (const imgUrl of images) {
-        await db.insert(issueImages).values({
-          id: `IMG-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-          issueId,
-          r2Key: String(imgUrl),
-          imageUrl: imgUrl,
-          stage: "report",
-          createdAt: nowIso,
-        });
-      }
-    }
+    await db.insert(qualityIssues).values(newIssue).execute();
 
-    // Trigger async Zalo OA 3 groups notification
-    sendZaloIssueNotifications(
-      {
-        id: issueId,
-        issueCode,
-        productCode: body.poCode || productCode,
-        productName,
-        affectedSizes,
-        workshopId,
-        workshopName: workshopName || "Chưa phân xưởng",
-        detectionStage,
-        description,
-        severity,
-        createdByName: payload.name || payload.employeeCode,
-        createdByMnv: payload.employeeCode,
-        createdAt: nowIso,
-      },
-      images.map((imgUrl: string) => ({ imageUrl: imgUrl }))
-    ).catch((err) => {
-      console.error("Zalo OA notification async error:", err);
-    });
+    notifyNewIssueReported({
+      id: issueId,
+      issueCode,
+      poCode: newIssue.poCode,
+      productName,
+      workshopName,
+      detectionStage,
+      description,
+    }).catch((err) => console.error("Async notify error:", err));
 
     return NextResponse.json(
       {

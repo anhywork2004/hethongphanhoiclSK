@@ -231,15 +231,6 @@ export type UserWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   areaId?: Prisma.StringNullableFilter<"User"> | string | null
   area?: Prisma.XOR<Prisma.CategoryNullableScalarRelationFilter, Prisma.CategoryWhereInput> | null
-  reportedIncidents?: Prisma.IncidentListRelationFilter
-  assignedIncidents?: Prisma.IncidentListRelationFilter
-  maintenanceLogs?: Prisma.MaintenanceLogListRelationFilter
-  chatMemberships?: Prisma.ChatGroupMemberListRelationFilter
-  chatMessages?: Prisma.ChatMessageListRelationFilter
-  receivedInvitations?: Prisma.GroupInvitationListRelationFilter
-  sentInvitations?: Prisma.GroupInvitationListRelationFilter
-  announcements?: Prisma.AnnouncementListRelationFilter
-  ratingRequests?: Prisma.RatingRequestListRelationFilter
   reportedIssues?: Prisma.QualityIssueListRelationFilter
   rootCauseDecisions?: Prisma.QualityIssueListRelationFilter
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionListRelationFilter
@@ -261,15 +252,6 @@ export type UserOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   areaId?: Prisma.SortOrderInput | Prisma.SortOrder
   area?: Prisma.CategoryOrderByWithRelationInput
-  reportedIncidents?: Prisma.IncidentOrderByRelationAggregateInput
-  assignedIncidents?: Prisma.IncidentOrderByRelationAggregateInput
-  maintenanceLogs?: Prisma.MaintenanceLogOrderByRelationAggregateInput
-  chatMemberships?: Prisma.ChatGroupMemberOrderByRelationAggregateInput
-  chatMessages?: Prisma.ChatMessageOrderByRelationAggregateInput
-  receivedInvitations?: Prisma.GroupInvitationOrderByRelationAggregateInput
-  sentInvitations?: Prisma.GroupInvitationOrderByRelationAggregateInput
-  announcements?: Prisma.AnnouncementOrderByRelationAggregateInput
-  ratingRequests?: Prisma.RatingRequestOrderByRelationAggregateInput
   reportedIssues?: Prisma.QualityIssueOrderByRelationAggregateInput
   rootCauseDecisions?: Prisma.QualityIssueOrderByRelationAggregateInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionOrderByRelationAggregateInput
@@ -294,15 +276,6 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   areaId?: Prisma.StringNullableFilter<"User"> | string | null
   area?: Prisma.XOR<Prisma.CategoryNullableScalarRelationFilter, Prisma.CategoryWhereInput> | null
-  reportedIncidents?: Prisma.IncidentListRelationFilter
-  assignedIncidents?: Prisma.IncidentListRelationFilter
-  maintenanceLogs?: Prisma.MaintenanceLogListRelationFilter
-  chatMemberships?: Prisma.ChatGroupMemberListRelationFilter
-  chatMessages?: Prisma.ChatMessageListRelationFilter
-  receivedInvitations?: Prisma.GroupInvitationListRelationFilter
-  sentInvitations?: Prisma.GroupInvitationListRelationFilter
-  announcements?: Prisma.AnnouncementListRelationFilter
-  ratingRequests?: Prisma.RatingRequestListRelationFilter
   reportedIssues?: Prisma.QualityIssueListRelationFilter
   rootCauseDecisions?: Prisma.QualityIssueListRelationFilter
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionListRelationFilter
@@ -357,15 +330,6 @@ export type UserCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   area?: Prisma.CategoryCreateNestedOneWithoutUsersByAreaInput
-  reportedIncidents?: Prisma.IncidentCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestCreateNestedManyWithoutOperatorInput
   reportedIssues?: Prisma.QualityIssueCreateNestedManyWithoutReporterInput
   rootCauseDecisions?: Prisma.QualityIssueCreateNestedManyWithoutRootCauseDecidedByInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionCreateNestedManyWithoutSubmitterInput
@@ -386,15 +350,6 @@ export type UserUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   areaId?: string | null
-  reportedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementUncheckedCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestUncheckedCreateNestedManyWithoutOperatorInput
   reportedIssues?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutReporterInput
   rootCauseDecisions?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutRootCauseDecidedByInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedCreateNestedManyWithoutSubmitterInput
@@ -415,15 +370,6 @@ export type UserUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   area?: Prisma.CategoryUpdateOneWithoutUsersByAreaNestedInput
-  reportedIncidents?: Prisma.IncidentUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUpdateManyWithoutOperatorNestedInput
   reportedIssues?: Prisma.QualityIssueUpdateManyWithoutReporterNestedInput
   rootCauseDecisions?: Prisma.QualityIssueUpdateManyWithoutRootCauseDecidedByNestedInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUpdateManyWithoutSubmitterNestedInput
@@ -444,15 +390,6 @@ export type UserUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reportedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUncheckedUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUncheckedUpdateManyWithoutOperatorNestedInput
   reportedIssues?: Prisma.QualityIssueUncheckedUpdateManyWithoutReporterNestedInput
   rootCauseDecisions?: Prisma.QualityIssueUncheckedUpdateManyWithoutRootCauseDecidedByNestedInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedUpdateManyWithoutSubmitterNestedInput
@@ -610,136 +547,6 @@ export type EnumRoleFieldUpdateOperationsInput = {
   set?: $Enums.Role
 }
 
-export type UserCreateNestedOneWithoutReportedIncidentsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutReportedIncidentsInput, Prisma.UserUncheckedCreateWithoutReportedIncidentsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReportedIncidentsInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserCreateNestedOneWithoutAssignedIncidentsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutAssignedIncidentsInput, Prisma.UserUncheckedCreateWithoutAssignedIncidentsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAssignedIncidentsInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutReportedIncidentsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutReportedIncidentsInput, Prisma.UserUncheckedCreateWithoutReportedIncidentsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReportedIncidentsInput
-  upsert?: Prisma.UserUpsertWithoutReportedIncidentsInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReportedIncidentsInput, Prisma.UserUpdateWithoutReportedIncidentsInput>, Prisma.UserUncheckedUpdateWithoutReportedIncidentsInput>
-}
-
-export type UserUpdateOneWithoutAssignedIncidentsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutAssignedIncidentsInput, Prisma.UserUncheckedCreateWithoutAssignedIncidentsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAssignedIncidentsInput
-  upsert?: Prisma.UserUpsertWithoutAssignedIncidentsInput
-  disconnect?: Prisma.UserWhereInput | boolean
-  delete?: Prisma.UserWhereInput | boolean
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAssignedIncidentsInput, Prisma.UserUpdateWithoutAssignedIncidentsInput>, Prisma.UserUncheckedUpdateWithoutAssignedIncidentsInput>
-}
-
-export type UserCreateNestedOneWithoutMaintenanceLogsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutMaintenanceLogsInput, Prisma.UserUncheckedCreateWithoutMaintenanceLogsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutMaintenanceLogsInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutMaintenanceLogsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutMaintenanceLogsInput, Prisma.UserUncheckedCreateWithoutMaintenanceLogsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutMaintenanceLogsInput
-  upsert?: Prisma.UserUpsertWithoutMaintenanceLogsInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutMaintenanceLogsInput, Prisma.UserUpdateWithoutMaintenanceLogsInput>, Prisma.UserUncheckedUpdateWithoutMaintenanceLogsInput>
-}
-
-export type UserCreateNestedOneWithoutRatingRequestsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutRatingRequestsInput, Prisma.UserUncheckedCreateWithoutRatingRequestsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutRatingRequestsInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutRatingRequestsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutRatingRequestsInput, Prisma.UserUncheckedCreateWithoutRatingRequestsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutRatingRequestsInput
-  upsert?: Prisma.UserUpsertWithoutRatingRequestsInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutRatingRequestsInput, Prisma.UserUpdateWithoutRatingRequestsInput>, Prisma.UserUncheckedUpdateWithoutRatingRequestsInput>
-}
-
-export type UserCreateNestedOneWithoutChatMembershipsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutChatMembershipsInput, Prisma.UserUncheckedCreateWithoutChatMembershipsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutChatMembershipsInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutChatMembershipsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutChatMembershipsInput, Prisma.UserUncheckedCreateWithoutChatMembershipsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutChatMembershipsInput
-  upsert?: Prisma.UserUpsertWithoutChatMembershipsInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutChatMembershipsInput, Prisma.UserUpdateWithoutChatMembershipsInput>, Prisma.UserUncheckedUpdateWithoutChatMembershipsInput>
-}
-
-export type UserCreateNestedOneWithoutChatMessagesInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutChatMessagesInput, Prisma.UserUncheckedCreateWithoutChatMessagesInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutChatMessagesInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneWithoutChatMessagesNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutChatMessagesInput, Prisma.UserUncheckedCreateWithoutChatMessagesInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutChatMessagesInput
-  upsert?: Prisma.UserUpsertWithoutChatMessagesInput
-  disconnect?: Prisma.UserWhereInput | boolean
-  delete?: Prisma.UserWhereInput | boolean
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutChatMessagesInput, Prisma.UserUpdateWithoutChatMessagesInput>, Prisma.UserUncheckedUpdateWithoutChatMessagesInput>
-}
-
-export type UserCreateNestedOneWithoutReceivedInvitationsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutReceivedInvitationsInput, Prisma.UserUncheckedCreateWithoutReceivedInvitationsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReceivedInvitationsInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserCreateNestedOneWithoutSentInvitationsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutSentInvitationsInput, Prisma.UserUncheckedCreateWithoutSentInvitationsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSentInvitationsInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutReceivedInvitationsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutReceivedInvitationsInput, Prisma.UserUncheckedCreateWithoutReceivedInvitationsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReceivedInvitationsInput
-  upsert?: Prisma.UserUpsertWithoutReceivedInvitationsInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReceivedInvitationsInput, Prisma.UserUpdateWithoutReceivedInvitationsInput>, Prisma.UserUncheckedUpdateWithoutReceivedInvitationsInput>
-}
-
-export type UserUpdateOneRequiredWithoutSentInvitationsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutSentInvitationsInput, Prisma.UserUncheckedCreateWithoutSentInvitationsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSentInvitationsInput
-  upsert?: Prisma.UserUpsertWithoutSentInvitationsInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSentInvitationsInput, Prisma.UserUpdateWithoutSentInvitationsInput>, Prisma.UserUncheckedUpdateWithoutSentInvitationsInput>
-}
-
-export type UserCreateNestedOneWithoutAnnouncementsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutAnnouncementsInput, Prisma.UserUncheckedCreateWithoutAnnouncementsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAnnouncementsInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutAnnouncementsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutAnnouncementsInput, Prisma.UserUncheckedCreateWithoutAnnouncementsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAnnouncementsInput
-  upsert?: Prisma.UserUpsertWithoutAnnouncementsInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAnnouncementsInput, Prisma.UserUpdateWithoutAnnouncementsInput>, Prisma.UserUncheckedUpdateWithoutAnnouncementsInput>
-}
-
 export type UserCreateNestedOneWithoutReportedIssuesInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutReportedIssuesInput, Prisma.UserUncheckedCreateWithoutReportedIssuesInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutReportedIssuesInput
@@ -839,15 +646,6 @@ export type UserCreateWithoutAreaInput = {
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
-  reportedIncidents?: Prisma.IncidentCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestCreateNestedManyWithoutOperatorInput
   reportedIssues?: Prisma.QualityIssueCreateNestedManyWithoutReporterInput
   rootCauseDecisions?: Prisma.QualityIssueCreateNestedManyWithoutRootCauseDecidedByInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionCreateNestedManyWithoutSubmitterInput
@@ -867,15 +665,6 @@ export type UserUncheckedCreateWithoutAreaInput = {
   role?: $Enums.Role
   createdAt?: Date | string
   updatedAt?: Date | string
-  reportedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementUncheckedCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestUncheckedCreateNestedManyWithoutOperatorInput
   reportedIssues?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutReporterInput
   rootCauseDecisions?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutRootCauseDecidedByInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedCreateNestedManyWithoutSubmitterInput
@@ -926,1158 +715,6 @@ export type UserScalarWhereInput = {
   areaId?: Prisma.StringNullableFilter<"User"> | string | null
 }
 
-export type UserCreateWithoutReportedIncidentsInput = {
-  id?: string
-  employeeCode: string
-  name: string
-  phone?: string | null
-  passwordHash: string
-  avatarUrl?: string | null
-  pushToken?: string | null
-  role?: $Enums.Role
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  area?: Prisma.CategoryCreateNestedOneWithoutUsersByAreaInput
-  assignedIncidents?: Prisma.IncidentCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestCreateNestedManyWithoutOperatorInput
-  reportedIssues?: Prisma.QualityIssueCreateNestedManyWithoutReporterInput
-  rootCauseDecisions?: Prisma.QualityIssueCreateNestedManyWithoutRootCauseDecidedByInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionCreateNestedManyWithoutSubmitterInput
-  assignedTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutAssignedByInput
-  assigneeTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutAssigneeInput
-  verifiedTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutVerifiedByInput
-}
-
-export type UserUncheckedCreateWithoutReportedIncidentsInput = {
-  id?: string
-  employeeCode: string
-  name: string
-  phone?: string | null
-  passwordHash: string
-  avatarUrl?: string | null
-  pushToken?: string | null
-  role?: $Enums.Role
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  areaId?: string | null
-  assignedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementUncheckedCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestUncheckedCreateNestedManyWithoutOperatorInput
-  reportedIssues?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutReporterInput
-  rootCauseDecisions?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutRootCauseDecidedByInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedCreateNestedManyWithoutSubmitterInput
-  assignedTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutAssignedByInput
-  assigneeTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutAssigneeInput
-  verifiedTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutVerifiedByInput
-}
-
-export type UserCreateOrConnectWithoutReportedIncidentsInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutReportedIncidentsInput, Prisma.UserUncheckedCreateWithoutReportedIncidentsInput>
-}
-
-export type UserCreateWithoutAssignedIncidentsInput = {
-  id?: string
-  employeeCode: string
-  name: string
-  phone?: string | null
-  passwordHash: string
-  avatarUrl?: string | null
-  pushToken?: string | null
-  role?: $Enums.Role
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  area?: Prisma.CategoryCreateNestedOneWithoutUsersByAreaInput
-  reportedIncidents?: Prisma.IncidentCreateNestedManyWithoutReporterInput
-  maintenanceLogs?: Prisma.MaintenanceLogCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestCreateNestedManyWithoutOperatorInput
-  reportedIssues?: Prisma.QualityIssueCreateNestedManyWithoutReporterInput
-  rootCauseDecisions?: Prisma.QualityIssueCreateNestedManyWithoutRootCauseDecidedByInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionCreateNestedManyWithoutSubmitterInput
-  assignedTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutAssignedByInput
-  assigneeTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutAssigneeInput
-  verifiedTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutVerifiedByInput
-}
-
-export type UserUncheckedCreateWithoutAssignedIncidentsInput = {
-  id?: string
-  employeeCode: string
-  name: string
-  phone?: string | null
-  passwordHash: string
-  avatarUrl?: string | null
-  pushToken?: string | null
-  role?: $Enums.Role
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  areaId?: string | null
-  reportedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutReporterInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementUncheckedCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestUncheckedCreateNestedManyWithoutOperatorInput
-  reportedIssues?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutReporterInput
-  rootCauseDecisions?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutRootCauseDecidedByInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedCreateNestedManyWithoutSubmitterInput
-  assignedTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutAssignedByInput
-  assigneeTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutAssigneeInput
-  verifiedTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutVerifiedByInput
-}
-
-export type UserCreateOrConnectWithoutAssignedIncidentsInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutAssignedIncidentsInput, Prisma.UserUncheckedCreateWithoutAssignedIncidentsInput>
-}
-
-export type UserUpsertWithoutReportedIncidentsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutReportedIncidentsInput, Prisma.UserUncheckedUpdateWithoutReportedIncidentsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutReportedIncidentsInput, Prisma.UserUncheckedCreateWithoutReportedIncidentsInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutReportedIncidentsInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutReportedIncidentsInput, Prisma.UserUncheckedUpdateWithoutReportedIncidentsInput>
-}
-
-export type UserUpdateWithoutReportedIncidentsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  employeeCode?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  area?: Prisma.CategoryUpdateOneWithoutUsersByAreaNestedInput
-  assignedIncidents?: Prisma.IncidentUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUpdateManyWithoutOperatorNestedInput
-  reportedIssues?: Prisma.QualityIssueUpdateManyWithoutReporterNestedInput
-  rootCauseDecisions?: Prisma.QualityIssueUpdateManyWithoutRootCauseDecidedByNestedInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUpdateManyWithoutSubmitterNestedInput
-  assignedTasks?: Prisma.MaintenanceTaskUpdateManyWithoutAssignedByNestedInput
-  assigneeTasks?: Prisma.MaintenanceTaskUpdateManyWithoutAssigneeNestedInput
-  verifiedTasks?: Prisma.MaintenanceTaskUpdateManyWithoutVerifiedByNestedInput
-}
-
-export type UserUncheckedUpdateWithoutReportedIncidentsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  employeeCode?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assignedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUncheckedUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUncheckedUpdateManyWithoutOperatorNestedInput
-  reportedIssues?: Prisma.QualityIssueUncheckedUpdateManyWithoutReporterNestedInput
-  rootCauseDecisions?: Prisma.QualityIssueUncheckedUpdateManyWithoutRootCauseDecidedByNestedInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedUpdateManyWithoutSubmitterNestedInput
-  assignedTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutAssignedByNestedInput
-  assigneeTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutAssigneeNestedInput
-  verifiedTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutVerifiedByNestedInput
-}
-
-export type UserUpsertWithoutAssignedIncidentsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutAssignedIncidentsInput, Prisma.UserUncheckedUpdateWithoutAssignedIncidentsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutAssignedIncidentsInput, Prisma.UserUncheckedCreateWithoutAssignedIncidentsInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutAssignedIncidentsInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutAssignedIncidentsInput, Prisma.UserUncheckedUpdateWithoutAssignedIncidentsInput>
-}
-
-export type UserUpdateWithoutAssignedIncidentsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  employeeCode?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  area?: Prisma.CategoryUpdateOneWithoutUsersByAreaNestedInput
-  reportedIncidents?: Prisma.IncidentUpdateManyWithoutReporterNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUpdateManyWithoutOperatorNestedInput
-  reportedIssues?: Prisma.QualityIssueUpdateManyWithoutReporterNestedInput
-  rootCauseDecisions?: Prisma.QualityIssueUpdateManyWithoutRootCauseDecidedByNestedInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUpdateManyWithoutSubmitterNestedInput
-  assignedTasks?: Prisma.MaintenanceTaskUpdateManyWithoutAssignedByNestedInput
-  assigneeTasks?: Prisma.MaintenanceTaskUpdateManyWithoutAssigneeNestedInput
-  verifiedTasks?: Prisma.MaintenanceTaskUpdateManyWithoutVerifiedByNestedInput
-}
-
-export type UserUncheckedUpdateWithoutAssignedIncidentsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  employeeCode?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reportedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutReporterNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUncheckedUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUncheckedUpdateManyWithoutOperatorNestedInput
-  reportedIssues?: Prisma.QualityIssueUncheckedUpdateManyWithoutReporterNestedInput
-  rootCauseDecisions?: Prisma.QualityIssueUncheckedUpdateManyWithoutRootCauseDecidedByNestedInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedUpdateManyWithoutSubmitterNestedInput
-  assignedTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutAssignedByNestedInput
-  assigneeTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutAssigneeNestedInput
-  verifiedTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutVerifiedByNestedInput
-}
-
-export type UserCreateWithoutMaintenanceLogsInput = {
-  id?: string
-  employeeCode: string
-  name: string
-  phone?: string | null
-  passwordHash: string
-  avatarUrl?: string | null
-  pushToken?: string | null
-  role?: $Enums.Role
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  area?: Prisma.CategoryCreateNestedOneWithoutUsersByAreaInput
-  reportedIncidents?: Prisma.IncidentCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentCreateNestedManyWithoutAssignedToInput
-  chatMemberships?: Prisma.ChatGroupMemberCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestCreateNestedManyWithoutOperatorInput
-  reportedIssues?: Prisma.QualityIssueCreateNestedManyWithoutReporterInput
-  rootCauseDecisions?: Prisma.QualityIssueCreateNestedManyWithoutRootCauseDecidedByInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionCreateNestedManyWithoutSubmitterInput
-  assignedTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutAssignedByInput
-  assigneeTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutAssigneeInput
-  verifiedTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutVerifiedByInput
-}
-
-export type UserUncheckedCreateWithoutMaintenanceLogsInput = {
-  id?: string
-  employeeCode: string
-  name: string
-  phone?: string | null
-  passwordHash: string
-  avatarUrl?: string | null
-  pushToken?: string | null
-  role?: $Enums.Role
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  areaId?: string | null
-  reportedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutAssignedToInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementUncheckedCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestUncheckedCreateNestedManyWithoutOperatorInput
-  reportedIssues?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutReporterInput
-  rootCauseDecisions?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutRootCauseDecidedByInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedCreateNestedManyWithoutSubmitterInput
-  assignedTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutAssignedByInput
-  assigneeTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutAssigneeInput
-  verifiedTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutVerifiedByInput
-}
-
-export type UserCreateOrConnectWithoutMaintenanceLogsInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutMaintenanceLogsInput, Prisma.UserUncheckedCreateWithoutMaintenanceLogsInput>
-}
-
-export type UserUpsertWithoutMaintenanceLogsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutMaintenanceLogsInput, Prisma.UserUncheckedUpdateWithoutMaintenanceLogsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutMaintenanceLogsInput, Prisma.UserUncheckedCreateWithoutMaintenanceLogsInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutMaintenanceLogsInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutMaintenanceLogsInput, Prisma.UserUncheckedUpdateWithoutMaintenanceLogsInput>
-}
-
-export type UserUpdateWithoutMaintenanceLogsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  employeeCode?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  area?: Prisma.CategoryUpdateOneWithoutUsersByAreaNestedInput
-  reportedIncidents?: Prisma.IncidentUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUpdateManyWithoutAssignedToNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUpdateManyWithoutOperatorNestedInput
-  reportedIssues?: Prisma.QualityIssueUpdateManyWithoutReporterNestedInput
-  rootCauseDecisions?: Prisma.QualityIssueUpdateManyWithoutRootCauseDecidedByNestedInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUpdateManyWithoutSubmitterNestedInput
-  assignedTasks?: Prisma.MaintenanceTaskUpdateManyWithoutAssignedByNestedInput
-  assigneeTasks?: Prisma.MaintenanceTaskUpdateManyWithoutAssigneeNestedInput
-  verifiedTasks?: Prisma.MaintenanceTaskUpdateManyWithoutVerifiedByNestedInput
-}
-
-export type UserUncheckedUpdateWithoutMaintenanceLogsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  employeeCode?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reportedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutAssignedToNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUncheckedUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUncheckedUpdateManyWithoutOperatorNestedInput
-  reportedIssues?: Prisma.QualityIssueUncheckedUpdateManyWithoutReporterNestedInput
-  rootCauseDecisions?: Prisma.QualityIssueUncheckedUpdateManyWithoutRootCauseDecidedByNestedInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedUpdateManyWithoutSubmitterNestedInput
-  assignedTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutAssignedByNestedInput
-  assigneeTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutAssigneeNestedInput
-  verifiedTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutVerifiedByNestedInput
-}
-
-export type UserCreateWithoutRatingRequestsInput = {
-  id?: string
-  employeeCode: string
-  name: string
-  phone?: string | null
-  passwordHash: string
-  avatarUrl?: string | null
-  pushToken?: string | null
-  role?: $Enums.Role
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  area?: Prisma.CategoryCreateNestedOneWithoutUsersByAreaInput
-  reportedIncidents?: Prisma.IncidentCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementCreateNestedManyWithoutCreatedByInput
-  reportedIssues?: Prisma.QualityIssueCreateNestedManyWithoutReporterInput
-  rootCauseDecisions?: Prisma.QualityIssueCreateNestedManyWithoutRootCauseDecidedByInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionCreateNestedManyWithoutSubmitterInput
-  assignedTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutAssignedByInput
-  assigneeTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutAssigneeInput
-  verifiedTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutVerifiedByInput
-}
-
-export type UserUncheckedCreateWithoutRatingRequestsInput = {
-  id?: string
-  employeeCode: string
-  name: string
-  phone?: string | null
-  passwordHash: string
-  avatarUrl?: string | null
-  pushToken?: string | null
-  role?: $Enums.Role
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  areaId?: string | null
-  reportedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementUncheckedCreateNestedManyWithoutCreatedByInput
-  reportedIssues?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutReporterInput
-  rootCauseDecisions?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutRootCauseDecidedByInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedCreateNestedManyWithoutSubmitterInput
-  assignedTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutAssignedByInput
-  assigneeTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutAssigneeInput
-  verifiedTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutVerifiedByInput
-}
-
-export type UserCreateOrConnectWithoutRatingRequestsInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutRatingRequestsInput, Prisma.UserUncheckedCreateWithoutRatingRequestsInput>
-}
-
-export type UserUpsertWithoutRatingRequestsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutRatingRequestsInput, Prisma.UserUncheckedUpdateWithoutRatingRequestsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutRatingRequestsInput, Prisma.UserUncheckedCreateWithoutRatingRequestsInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutRatingRequestsInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutRatingRequestsInput, Prisma.UserUncheckedUpdateWithoutRatingRequestsInput>
-}
-
-export type UserUpdateWithoutRatingRequestsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  employeeCode?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  area?: Prisma.CategoryUpdateOneWithoutUsersByAreaNestedInput
-  reportedIncidents?: Prisma.IncidentUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUpdateManyWithoutCreatedByNestedInput
-  reportedIssues?: Prisma.QualityIssueUpdateManyWithoutReporterNestedInput
-  rootCauseDecisions?: Prisma.QualityIssueUpdateManyWithoutRootCauseDecidedByNestedInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUpdateManyWithoutSubmitterNestedInput
-  assignedTasks?: Prisma.MaintenanceTaskUpdateManyWithoutAssignedByNestedInput
-  assigneeTasks?: Prisma.MaintenanceTaskUpdateManyWithoutAssigneeNestedInput
-  verifiedTasks?: Prisma.MaintenanceTaskUpdateManyWithoutVerifiedByNestedInput
-}
-
-export type UserUncheckedUpdateWithoutRatingRequestsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  employeeCode?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reportedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUncheckedUpdateManyWithoutCreatedByNestedInput
-  reportedIssues?: Prisma.QualityIssueUncheckedUpdateManyWithoutReporterNestedInput
-  rootCauseDecisions?: Prisma.QualityIssueUncheckedUpdateManyWithoutRootCauseDecidedByNestedInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedUpdateManyWithoutSubmitterNestedInput
-  assignedTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutAssignedByNestedInput
-  assigneeTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutAssigneeNestedInput
-  verifiedTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutVerifiedByNestedInput
-}
-
-export type UserCreateWithoutChatMembershipsInput = {
-  id?: string
-  employeeCode: string
-  name: string
-  phone?: string | null
-  passwordHash: string
-  avatarUrl?: string | null
-  pushToken?: string | null
-  role?: $Enums.Role
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  area?: Prisma.CategoryCreateNestedOneWithoutUsersByAreaInput
-  reportedIncidents?: Prisma.IncidentCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogCreateNestedManyWithoutTechnicianInput
-  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestCreateNestedManyWithoutOperatorInput
-  reportedIssues?: Prisma.QualityIssueCreateNestedManyWithoutReporterInput
-  rootCauseDecisions?: Prisma.QualityIssueCreateNestedManyWithoutRootCauseDecidedByInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionCreateNestedManyWithoutSubmitterInput
-  assignedTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutAssignedByInput
-  assigneeTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutAssigneeInput
-  verifiedTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutVerifiedByInput
-}
-
-export type UserUncheckedCreateWithoutChatMembershipsInput = {
-  id?: string
-  employeeCode: string
-  name: string
-  phone?: string | null
-  passwordHash: string
-  avatarUrl?: string | null
-  pushToken?: string | null
-  role?: $Enums.Role
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  areaId?: string | null
-  reportedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedCreateNestedManyWithoutTechnicianInput
-  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementUncheckedCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestUncheckedCreateNestedManyWithoutOperatorInput
-  reportedIssues?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutReporterInput
-  rootCauseDecisions?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutRootCauseDecidedByInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedCreateNestedManyWithoutSubmitterInput
-  assignedTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutAssignedByInput
-  assigneeTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutAssigneeInput
-  verifiedTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutVerifiedByInput
-}
-
-export type UserCreateOrConnectWithoutChatMembershipsInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutChatMembershipsInput, Prisma.UserUncheckedCreateWithoutChatMembershipsInput>
-}
-
-export type UserUpsertWithoutChatMembershipsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutChatMembershipsInput, Prisma.UserUncheckedUpdateWithoutChatMembershipsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutChatMembershipsInput, Prisma.UserUncheckedCreateWithoutChatMembershipsInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutChatMembershipsInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutChatMembershipsInput, Prisma.UserUncheckedUpdateWithoutChatMembershipsInput>
-}
-
-export type UserUpdateWithoutChatMembershipsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  employeeCode?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  area?: Prisma.CategoryUpdateOneWithoutUsersByAreaNestedInput
-  reportedIncidents?: Prisma.IncidentUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUpdateManyWithoutTechnicianNestedInput
-  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUpdateManyWithoutOperatorNestedInput
-  reportedIssues?: Prisma.QualityIssueUpdateManyWithoutReporterNestedInput
-  rootCauseDecisions?: Prisma.QualityIssueUpdateManyWithoutRootCauseDecidedByNestedInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUpdateManyWithoutSubmitterNestedInput
-  assignedTasks?: Prisma.MaintenanceTaskUpdateManyWithoutAssignedByNestedInput
-  assigneeTasks?: Prisma.MaintenanceTaskUpdateManyWithoutAssigneeNestedInput
-  verifiedTasks?: Prisma.MaintenanceTaskUpdateManyWithoutVerifiedByNestedInput
-}
-
-export type UserUncheckedUpdateWithoutChatMembershipsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  employeeCode?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reportedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedUpdateManyWithoutTechnicianNestedInput
-  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUncheckedUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUncheckedUpdateManyWithoutOperatorNestedInput
-  reportedIssues?: Prisma.QualityIssueUncheckedUpdateManyWithoutReporterNestedInput
-  rootCauseDecisions?: Prisma.QualityIssueUncheckedUpdateManyWithoutRootCauseDecidedByNestedInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedUpdateManyWithoutSubmitterNestedInput
-  assignedTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutAssignedByNestedInput
-  assigneeTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutAssigneeNestedInput
-  verifiedTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutVerifiedByNestedInput
-}
-
-export type UserCreateWithoutChatMessagesInput = {
-  id?: string
-  employeeCode: string
-  name: string
-  phone?: string | null
-  passwordHash: string
-  avatarUrl?: string | null
-  pushToken?: string | null
-  role?: $Enums.Role
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  area?: Prisma.CategoryCreateNestedOneWithoutUsersByAreaInput
-  reportedIncidents?: Prisma.IncidentCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberCreateNestedManyWithoutUserInput
-  receivedInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestCreateNestedManyWithoutOperatorInput
-  reportedIssues?: Prisma.QualityIssueCreateNestedManyWithoutReporterInput
-  rootCauseDecisions?: Prisma.QualityIssueCreateNestedManyWithoutRootCauseDecidedByInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionCreateNestedManyWithoutSubmitterInput
-  assignedTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutAssignedByInput
-  assigneeTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutAssigneeInput
-  verifiedTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutVerifiedByInput
-}
-
-export type UserUncheckedCreateWithoutChatMessagesInput = {
-  id?: string
-  employeeCode: string
-  name: string
-  phone?: string | null
-  passwordHash: string
-  avatarUrl?: string | null
-  pushToken?: string | null
-  role?: $Enums.Role
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  areaId?: string | null
-  reportedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedCreateNestedManyWithoutUserInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementUncheckedCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestUncheckedCreateNestedManyWithoutOperatorInput
-  reportedIssues?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutReporterInput
-  rootCauseDecisions?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutRootCauseDecidedByInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedCreateNestedManyWithoutSubmitterInput
-  assignedTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutAssignedByInput
-  assigneeTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutAssigneeInput
-  verifiedTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutVerifiedByInput
-}
-
-export type UserCreateOrConnectWithoutChatMessagesInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutChatMessagesInput, Prisma.UserUncheckedCreateWithoutChatMessagesInput>
-}
-
-export type UserUpsertWithoutChatMessagesInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutChatMessagesInput, Prisma.UserUncheckedUpdateWithoutChatMessagesInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutChatMessagesInput, Prisma.UserUncheckedCreateWithoutChatMessagesInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutChatMessagesInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutChatMessagesInput, Prisma.UserUncheckedUpdateWithoutChatMessagesInput>
-}
-
-export type UserUpdateWithoutChatMessagesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  employeeCode?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  area?: Prisma.CategoryUpdateOneWithoutUsersByAreaNestedInput
-  reportedIncidents?: Prisma.IncidentUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUpdateManyWithoutUserNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUpdateManyWithoutOperatorNestedInput
-  reportedIssues?: Prisma.QualityIssueUpdateManyWithoutReporterNestedInput
-  rootCauseDecisions?: Prisma.QualityIssueUpdateManyWithoutRootCauseDecidedByNestedInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUpdateManyWithoutSubmitterNestedInput
-  assignedTasks?: Prisma.MaintenanceTaskUpdateManyWithoutAssignedByNestedInput
-  assigneeTasks?: Prisma.MaintenanceTaskUpdateManyWithoutAssigneeNestedInput
-  verifiedTasks?: Prisma.MaintenanceTaskUpdateManyWithoutVerifiedByNestedInput
-}
-
-export type UserUncheckedUpdateWithoutChatMessagesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  employeeCode?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reportedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedUpdateManyWithoutUserNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUncheckedUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUncheckedUpdateManyWithoutOperatorNestedInput
-  reportedIssues?: Prisma.QualityIssueUncheckedUpdateManyWithoutReporterNestedInput
-  rootCauseDecisions?: Prisma.QualityIssueUncheckedUpdateManyWithoutRootCauseDecidedByNestedInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedUpdateManyWithoutSubmitterNestedInput
-  assignedTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutAssignedByNestedInput
-  assigneeTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutAssigneeNestedInput
-  verifiedTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutVerifiedByNestedInput
-}
-
-export type UserCreateWithoutReceivedInvitationsInput = {
-  id?: string
-  employeeCode: string
-  name: string
-  phone?: string | null
-  passwordHash: string
-  avatarUrl?: string | null
-  pushToken?: string | null
-  role?: $Enums.Role
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  area?: Prisma.CategoryCreateNestedOneWithoutUsersByAreaInput
-  reportedIncidents?: Prisma.IncidentCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
-  sentInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestCreateNestedManyWithoutOperatorInput
-  reportedIssues?: Prisma.QualityIssueCreateNestedManyWithoutReporterInput
-  rootCauseDecisions?: Prisma.QualityIssueCreateNestedManyWithoutRootCauseDecidedByInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionCreateNestedManyWithoutSubmitterInput
-  assignedTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutAssignedByInput
-  assigneeTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutAssigneeInput
-  verifiedTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutVerifiedByInput
-}
-
-export type UserUncheckedCreateWithoutReceivedInvitationsInput = {
-  id?: string
-  employeeCode: string
-  name: string
-  phone?: string | null
-  passwordHash: string
-  avatarUrl?: string | null
-  pushToken?: string | null
-  role?: $Enums.Role
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  areaId?: string | null
-  reportedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementUncheckedCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestUncheckedCreateNestedManyWithoutOperatorInput
-  reportedIssues?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutReporterInput
-  rootCauseDecisions?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutRootCauseDecidedByInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedCreateNestedManyWithoutSubmitterInput
-  assignedTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutAssignedByInput
-  assigneeTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutAssigneeInput
-  verifiedTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutVerifiedByInput
-}
-
-export type UserCreateOrConnectWithoutReceivedInvitationsInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutReceivedInvitationsInput, Prisma.UserUncheckedCreateWithoutReceivedInvitationsInput>
-}
-
-export type UserCreateWithoutSentInvitationsInput = {
-  id?: string
-  employeeCode: string
-  name: string
-  phone?: string | null
-  passwordHash: string
-  avatarUrl?: string | null
-  pushToken?: string | null
-  role?: $Enums.Role
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  area?: Prisma.CategoryCreateNestedOneWithoutUsersByAreaInput
-  reportedIncidents?: Prisma.IncidentCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedUserInput
-  announcements?: Prisma.AnnouncementCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestCreateNestedManyWithoutOperatorInput
-  reportedIssues?: Prisma.QualityIssueCreateNestedManyWithoutReporterInput
-  rootCauseDecisions?: Prisma.QualityIssueCreateNestedManyWithoutRootCauseDecidedByInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionCreateNestedManyWithoutSubmitterInput
-  assignedTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutAssignedByInput
-  assigneeTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutAssigneeInput
-  verifiedTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutVerifiedByInput
-}
-
-export type UserUncheckedCreateWithoutSentInvitationsInput = {
-  id?: string
-  employeeCode: string
-  name: string
-  phone?: string | null
-  passwordHash: string
-  avatarUrl?: string | null
-  pushToken?: string | null
-  role?: $Enums.Role
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  areaId?: string | null
-  reportedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedUserInput
-  announcements?: Prisma.AnnouncementUncheckedCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestUncheckedCreateNestedManyWithoutOperatorInput
-  reportedIssues?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutReporterInput
-  rootCauseDecisions?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutRootCauseDecidedByInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedCreateNestedManyWithoutSubmitterInput
-  assignedTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutAssignedByInput
-  assigneeTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutAssigneeInput
-  verifiedTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutVerifiedByInput
-}
-
-export type UserCreateOrConnectWithoutSentInvitationsInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutSentInvitationsInput, Prisma.UserUncheckedCreateWithoutSentInvitationsInput>
-}
-
-export type UserUpsertWithoutReceivedInvitationsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutReceivedInvitationsInput, Prisma.UserUncheckedUpdateWithoutReceivedInvitationsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutReceivedInvitationsInput, Prisma.UserUncheckedCreateWithoutReceivedInvitationsInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutReceivedInvitationsInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutReceivedInvitationsInput, Prisma.UserUncheckedUpdateWithoutReceivedInvitationsInput>
-}
-
-export type UserUpdateWithoutReceivedInvitationsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  employeeCode?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  area?: Prisma.CategoryUpdateOneWithoutUsersByAreaNestedInput
-  reportedIncidents?: Prisma.IncidentUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
-  sentInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUpdateManyWithoutOperatorNestedInput
-  reportedIssues?: Prisma.QualityIssueUpdateManyWithoutReporterNestedInput
-  rootCauseDecisions?: Prisma.QualityIssueUpdateManyWithoutRootCauseDecidedByNestedInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUpdateManyWithoutSubmitterNestedInput
-  assignedTasks?: Prisma.MaintenanceTaskUpdateManyWithoutAssignedByNestedInput
-  assigneeTasks?: Prisma.MaintenanceTaskUpdateManyWithoutAssigneeNestedInput
-  verifiedTasks?: Prisma.MaintenanceTaskUpdateManyWithoutVerifiedByNestedInput
-}
-
-export type UserUncheckedUpdateWithoutReceivedInvitationsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  employeeCode?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reportedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUncheckedUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUncheckedUpdateManyWithoutOperatorNestedInput
-  reportedIssues?: Prisma.QualityIssueUncheckedUpdateManyWithoutReporterNestedInput
-  rootCauseDecisions?: Prisma.QualityIssueUncheckedUpdateManyWithoutRootCauseDecidedByNestedInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedUpdateManyWithoutSubmitterNestedInput
-  assignedTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutAssignedByNestedInput
-  assigneeTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutAssigneeNestedInput
-  verifiedTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutVerifiedByNestedInput
-}
-
-export type UserUpsertWithoutSentInvitationsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutSentInvitationsInput, Prisma.UserUncheckedUpdateWithoutSentInvitationsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutSentInvitationsInput, Prisma.UserUncheckedCreateWithoutSentInvitationsInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutSentInvitationsInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutSentInvitationsInput, Prisma.UserUncheckedUpdateWithoutSentInvitationsInput>
-}
-
-export type UserUpdateWithoutSentInvitationsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  employeeCode?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  area?: Prisma.CategoryUpdateOneWithoutUsersByAreaNestedInput
-  reportedIncidents?: Prisma.IncidentUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedUserNestedInput
-  announcements?: Prisma.AnnouncementUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUpdateManyWithoutOperatorNestedInput
-  reportedIssues?: Prisma.QualityIssueUpdateManyWithoutReporterNestedInput
-  rootCauseDecisions?: Prisma.QualityIssueUpdateManyWithoutRootCauseDecidedByNestedInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUpdateManyWithoutSubmitterNestedInput
-  assignedTasks?: Prisma.MaintenanceTaskUpdateManyWithoutAssignedByNestedInput
-  assigneeTasks?: Prisma.MaintenanceTaskUpdateManyWithoutAssigneeNestedInput
-  verifiedTasks?: Prisma.MaintenanceTaskUpdateManyWithoutVerifiedByNestedInput
-}
-
-export type UserUncheckedUpdateWithoutSentInvitationsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  employeeCode?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reportedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedUserNestedInput
-  announcements?: Prisma.AnnouncementUncheckedUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUncheckedUpdateManyWithoutOperatorNestedInput
-  reportedIssues?: Prisma.QualityIssueUncheckedUpdateManyWithoutReporterNestedInput
-  rootCauseDecisions?: Prisma.QualityIssueUncheckedUpdateManyWithoutRootCauseDecidedByNestedInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedUpdateManyWithoutSubmitterNestedInput
-  assignedTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutAssignedByNestedInput
-  assigneeTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutAssigneeNestedInput
-  verifiedTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutVerifiedByNestedInput
-}
-
-export type UserCreateWithoutAnnouncementsInput = {
-  id?: string
-  employeeCode: string
-  name: string
-  phone?: string | null
-  passwordHash: string
-  avatarUrl?: string | null
-  pushToken?: string | null
-  role?: $Enums.Role
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  area?: Prisma.CategoryCreateNestedOneWithoutUsersByAreaInput
-  reportedIncidents?: Prisma.IncidentCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedByInput
-  ratingRequests?: Prisma.RatingRequestCreateNestedManyWithoutOperatorInput
-  reportedIssues?: Prisma.QualityIssueCreateNestedManyWithoutReporterInput
-  rootCauseDecisions?: Prisma.QualityIssueCreateNestedManyWithoutRootCauseDecidedByInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionCreateNestedManyWithoutSubmitterInput
-  assignedTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutAssignedByInput
-  assigneeTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutAssigneeInput
-  verifiedTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutVerifiedByInput
-}
-
-export type UserUncheckedCreateWithoutAnnouncementsInput = {
-  id?: string
-  employeeCode: string
-  name: string
-  phone?: string | null
-  passwordHash: string
-  avatarUrl?: string | null
-  pushToken?: string | null
-  role?: $Enums.Role
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  areaId?: string | null
-  reportedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedByInput
-  ratingRequests?: Prisma.RatingRequestUncheckedCreateNestedManyWithoutOperatorInput
-  reportedIssues?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutReporterInput
-  rootCauseDecisions?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutRootCauseDecidedByInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedCreateNestedManyWithoutSubmitterInput
-  assignedTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutAssignedByInput
-  assigneeTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutAssigneeInput
-  verifiedTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutVerifiedByInput
-}
-
-export type UserCreateOrConnectWithoutAnnouncementsInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutAnnouncementsInput, Prisma.UserUncheckedCreateWithoutAnnouncementsInput>
-}
-
-export type UserUpsertWithoutAnnouncementsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutAnnouncementsInput, Prisma.UserUncheckedUpdateWithoutAnnouncementsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutAnnouncementsInput, Prisma.UserUncheckedCreateWithoutAnnouncementsInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutAnnouncementsInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutAnnouncementsInput, Prisma.UserUncheckedUpdateWithoutAnnouncementsInput>
-}
-
-export type UserUpdateWithoutAnnouncementsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  employeeCode?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  area?: Prisma.CategoryUpdateOneWithoutUsersByAreaNestedInput
-  reportedIncidents?: Prisma.IncidentUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUpdateManyWithoutOperatorNestedInput
-  reportedIssues?: Prisma.QualityIssueUpdateManyWithoutReporterNestedInput
-  rootCauseDecisions?: Prisma.QualityIssueUpdateManyWithoutRootCauseDecidedByNestedInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUpdateManyWithoutSubmitterNestedInput
-  assignedTasks?: Prisma.MaintenanceTaskUpdateManyWithoutAssignedByNestedInput
-  assigneeTasks?: Prisma.MaintenanceTaskUpdateManyWithoutAssigneeNestedInput
-  verifiedTasks?: Prisma.MaintenanceTaskUpdateManyWithoutVerifiedByNestedInput
-}
-
-export type UserUncheckedUpdateWithoutAnnouncementsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  employeeCode?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
-  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reportedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUncheckedUpdateManyWithoutOperatorNestedInput
-  reportedIssues?: Prisma.QualityIssueUncheckedUpdateManyWithoutReporterNestedInput
-  rootCauseDecisions?: Prisma.QualityIssueUncheckedUpdateManyWithoutRootCauseDecidedByNestedInput
-  fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedUpdateManyWithoutSubmitterNestedInput
-  assignedTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutAssignedByNestedInput
-  assigneeTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutAssigneeNestedInput
-  verifiedTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutVerifiedByNestedInput
-}
-
 export type UserCreateWithoutReportedIssuesInput = {
   id?: string
   employeeCode: string
@@ -2090,15 +727,6 @@ export type UserCreateWithoutReportedIssuesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   area?: Prisma.CategoryCreateNestedOneWithoutUsersByAreaInput
-  reportedIncidents?: Prisma.IncidentCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestCreateNestedManyWithoutOperatorInput
   rootCauseDecisions?: Prisma.QualityIssueCreateNestedManyWithoutRootCauseDecidedByInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionCreateNestedManyWithoutSubmitterInput
   assignedTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutAssignedByInput
@@ -2118,15 +746,6 @@ export type UserUncheckedCreateWithoutReportedIssuesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   areaId?: string | null
-  reportedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementUncheckedCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestUncheckedCreateNestedManyWithoutOperatorInput
   rootCauseDecisions?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutRootCauseDecidedByInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedCreateNestedManyWithoutSubmitterInput
   assignedTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutAssignedByInput
@@ -2151,15 +770,6 @@ export type UserCreateWithoutRootCauseDecisionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   area?: Prisma.CategoryCreateNestedOneWithoutUsersByAreaInput
-  reportedIncidents?: Prisma.IncidentCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestCreateNestedManyWithoutOperatorInput
   reportedIssues?: Prisma.QualityIssueCreateNestedManyWithoutReporterInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionCreateNestedManyWithoutSubmitterInput
   assignedTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutAssignedByInput
@@ -2179,15 +789,6 @@ export type UserUncheckedCreateWithoutRootCauseDecisionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   areaId?: string | null
-  reportedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementUncheckedCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestUncheckedCreateNestedManyWithoutOperatorInput
   reportedIssues?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutReporterInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedCreateNestedManyWithoutSubmitterInput
   assignedTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutAssignedByInput
@@ -2223,15 +824,6 @@ export type UserUpdateWithoutReportedIssuesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   area?: Prisma.CategoryUpdateOneWithoutUsersByAreaNestedInput
-  reportedIncidents?: Prisma.IncidentUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUpdateManyWithoutOperatorNestedInput
   rootCauseDecisions?: Prisma.QualityIssueUpdateManyWithoutRootCauseDecidedByNestedInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUpdateManyWithoutSubmitterNestedInput
   assignedTasks?: Prisma.MaintenanceTaskUpdateManyWithoutAssignedByNestedInput
@@ -2251,15 +843,6 @@ export type UserUncheckedUpdateWithoutReportedIssuesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reportedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUncheckedUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUncheckedUpdateManyWithoutOperatorNestedInput
   rootCauseDecisions?: Prisma.QualityIssueUncheckedUpdateManyWithoutRootCauseDecidedByNestedInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedUpdateManyWithoutSubmitterNestedInput
   assignedTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutAssignedByNestedInput
@@ -2290,15 +873,6 @@ export type UserUpdateWithoutRootCauseDecisionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   area?: Prisma.CategoryUpdateOneWithoutUsersByAreaNestedInput
-  reportedIncidents?: Prisma.IncidentUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUpdateManyWithoutOperatorNestedInput
   reportedIssues?: Prisma.QualityIssueUpdateManyWithoutReporterNestedInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUpdateManyWithoutSubmitterNestedInput
   assignedTasks?: Prisma.MaintenanceTaskUpdateManyWithoutAssignedByNestedInput
@@ -2318,15 +892,6 @@ export type UserUncheckedUpdateWithoutRootCauseDecisionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reportedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUncheckedUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUncheckedUpdateManyWithoutOperatorNestedInput
   reportedIssues?: Prisma.QualityIssueUncheckedUpdateManyWithoutReporterNestedInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedUpdateManyWithoutSubmitterNestedInput
   assignedTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutAssignedByNestedInput
@@ -2346,15 +911,6 @@ export type UserCreateWithoutFiveMOneESubmissionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   area?: Prisma.CategoryCreateNestedOneWithoutUsersByAreaInput
-  reportedIncidents?: Prisma.IncidentCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestCreateNestedManyWithoutOperatorInput
   reportedIssues?: Prisma.QualityIssueCreateNestedManyWithoutReporterInput
   rootCauseDecisions?: Prisma.QualityIssueCreateNestedManyWithoutRootCauseDecidedByInput
   assignedTasks?: Prisma.MaintenanceTaskCreateNestedManyWithoutAssignedByInput
@@ -2374,15 +930,6 @@ export type UserUncheckedCreateWithoutFiveMOneESubmissionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   areaId?: string | null
-  reportedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementUncheckedCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestUncheckedCreateNestedManyWithoutOperatorInput
   reportedIssues?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutReporterInput
   rootCauseDecisions?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutRootCauseDecidedByInput
   assignedTasks?: Prisma.MaintenanceTaskUncheckedCreateNestedManyWithoutAssignedByInput
@@ -2418,15 +965,6 @@ export type UserUpdateWithoutFiveMOneESubmissionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   area?: Prisma.CategoryUpdateOneWithoutUsersByAreaNestedInput
-  reportedIncidents?: Prisma.IncidentUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUpdateManyWithoutOperatorNestedInput
   reportedIssues?: Prisma.QualityIssueUpdateManyWithoutReporterNestedInput
   rootCauseDecisions?: Prisma.QualityIssueUpdateManyWithoutRootCauseDecidedByNestedInput
   assignedTasks?: Prisma.MaintenanceTaskUpdateManyWithoutAssignedByNestedInput
@@ -2446,15 +984,6 @@ export type UserUncheckedUpdateWithoutFiveMOneESubmissionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reportedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUncheckedUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUncheckedUpdateManyWithoutOperatorNestedInput
   reportedIssues?: Prisma.QualityIssueUncheckedUpdateManyWithoutReporterNestedInput
   rootCauseDecisions?: Prisma.QualityIssueUncheckedUpdateManyWithoutRootCauseDecidedByNestedInput
   assignedTasks?: Prisma.MaintenanceTaskUncheckedUpdateManyWithoutAssignedByNestedInput
@@ -2474,15 +1003,6 @@ export type UserCreateWithoutAssignedTasksInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   area?: Prisma.CategoryCreateNestedOneWithoutUsersByAreaInput
-  reportedIncidents?: Prisma.IncidentCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestCreateNestedManyWithoutOperatorInput
   reportedIssues?: Prisma.QualityIssueCreateNestedManyWithoutReporterInput
   rootCauseDecisions?: Prisma.QualityIssueCreateNestedManyWithoutRootCauseDecidedByInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionCreateNestedManyWithoutSubmitterInput
@@ -2502,15 +1022,6 @@ export type UserUncheckedCreateWithoutAssignedTasksInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   areaId?: string | null
-  reportedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementUncheckedCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestUncheckedCreateNestedManyWithoutOperatorInput
   reportedIssues?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutReporterInput
   rootCauseDecisions?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutRootCauseDecidedByInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedCreateNestedManyWithoutSubmitterInput
@@ -2535,15 +1046,6 @@ export type UserCreateWithoutAssigneeTasksInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   area?: Prisma.CategoryCreateNestedOneWithoutUsersByAreaInput
-  reportedIncidents?: Prisma.IncidentCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestCreateNestedManyWithoutOperatorInput
   reportedIssues?: Prisma.QualityIssueCreateNestedManyWithoutReporterInput
   rootCauseDecisions?: Prisma.QualityIssueCreateNestedManyWithoutRootCauseDecidedByInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionCreateNestedManyWithoutSubmitterInput
@@ -2563,15 +1065,6 @@ export type UserUncheckedCreateWithoutAssigneeTasksInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   areaId?: string | null
-  reportedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementUncheckedCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestUncheckedCreateNestedManyWithoutOperatorInput
   reportedIssues?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutReporterInput
   rootCauseDecisions?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutRootCauseDecidedByInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedCreateNestedManyWithoutSubmitterInput
@@ -2596,15 +1089,6 @@ export type UserCreateWithoutVerifiedTasksInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   area?: Prisma.CategoryCreateNestedOneWithoutUsersByAreaInput
-  reportedIncidents?: Prisma.IncidentCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestCreateNestedManyWithoutOperatorInput
   reportedIssues?: Prisma.QualityIssueCreateNestedManyWithoutReporterInput
   rootCauseDecisions?: Prisma.QualityIssueCreateNestedManyWithoutRootCauseDecidedByInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionCreateNestedManyWithoutSubmitterInput
@@ -2624,15 +1108,6 @@ export type UserUncheckedCreateWithoutVerifiedTasksInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   areaId?: string | null
-  reportedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutReporterInput
-  assignedIncidents?: Prisma.IncidentUncheckedCreateNestedManyWithoutAssignedToInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedCreateNestedManyWithoutTechnicianInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedCreateNestedManyWithoutUserInput
-  chatMessages?: Prisma.ChatMessageUncheckedCreateNestedManyWithoutSenderInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedUserInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedCreateNestedManyWithoutInvitedByInput
-  announcements?: Prisma.AnnouncementUncheckedCreateNestedManyWithoutCreatedByInput
-  ratingRequests?: Prisma.RatingRequestUncheckedCreateNestedManyWithoutOperatorInput
   reportedIssues?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutReporterInput
   rootCauseDecisions?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutRootCauseDecidedByInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedCreateNestedManyWithoutSubmitterInput
@@ -2668,15 +1143,6 @@ export type UserUpdateWithoutAssignedTasksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   area?: Prisma.CategoryUpdateOneWithoutUsersByAreaNestedInput
-  reportedIncidents?: Prisma.IncidentUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUpdateManyWithoutOperatorNestedInput
   reportedIssues?: Prisma.QualityIssueUpdateManyWithoutReporterNestedInput
   rootCauseDecisions?: Prisma.QualityIssueUpdateManyWithoutRootCauseDecidedByNestedInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUpdateManyWithoutSubmitterNestedInput
@@ -2696,15 +1162,6 @@ export type UserUncheckedUpdateWithoutAssignedTasksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reportedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUncheckedUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUncheckedUpdateManyWithoutOperatorNestedInput
   reportedIssues?: Prisma.QualityIssueUncheckedUpdateManyWithoutReporterNestedInput
   rootCauseDecisions?: Prisma.QualityIssueUncheckedUpdateManyWithoutRootCauseDecidedByNestedInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedUpdateManyWithoutSubmitterNestedInput
@@ -2735,15 +1192,6 @@ export type UserUpdateWithoutAssigneeTasksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   area?: Prisma.CategoryUpdateOneWithoutUsersByAreaNestedInput
-  reportedIncidents?: Prisma.IncidentUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUpdateManyWithoutOperatorNestedInput
   reportedIssues?: Prisma.QualityIssueUpdateManyWithoutReporterNestedInput
   rootCauseDecisions?: Prisma.QualityIssueUpdateManyWithoutRootCauseDecidedByNestedInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUpdateManyWithoutSubmitterNestedInput
@@ -2763,15 +1211,6 @@ export type UserUncheckedUpdateWithoutAssigneeTasksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reportedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUncheckedUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUncheckedUpdateManyWithoutOperatorNestedInput
   reportedIssues?: Prisma.QualityIssueUncheckedUpdateManyWithoutReporterNestedInput
   rootCauseDecisions?: Prisma.QualityIssueUncheckedUpdateManyWithoutRootCauseDecidedByNestedInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedUpdateManyWithoutSubmitterNestedInput
@@ -2802,15 +1241,6 @@ export type UserUpdateWithoutVerifiedTasksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   area?: Prisma.CategoryUpdateOneWithoutUsersByAreaNestedInput
-  reportedIncidents?: Prisma.IncidentUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUpdateManyWithoutOperatorNestedInput
   reportedIssues?: Prisma.QualityIssueUpdateManyWithoutReporterNestedInput
   rootCauseDecisions?: Prisma.QualityIssueUpdateManyWithoutRootCauseDecidedByNestedInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUpdateManyWithoutSubmitterNestedInput
@@ -2830,15 +1260,6 @@ export type UserUncheckedUpdateWithoutVerifiedTasksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   areaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reportedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUncheckedUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUncheckedUpdateManyWithoutOperatorNestedInput
   reportedIssues?: Prisma.QualityIssueUncheckedUpdateManyWithoutReporterNestedInput
   rootCauseDecisions?: Prisma.QualityIssueUncheckedUpdateManyWithoutRootCauseDecidedByNestedInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedUpdateManyWithoutSubmitterNestedInput
@@ -2870,15 +1291,6 @@ export type UserUpdateWithoutAreaInput = {
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reportedIncidents?: Prisma.IncidentUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUpdateManyWithoutOperatorNestedInput
   reportedIssues?: Prisma.QualityIssueUpdateManyWithoutReporterNestedInput
   rootCauseDecisions?: Prisma.QualityIssueUpdateManyWithoutRootCauseDecidedByNestedInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUpdateManyWithoutSubmitterNestedInput
@@ -2898,15 +1310,6 @@ export type UserUncheckedUpdateWithoutAreaInput = {
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reportedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutReporterNestedInput
-  assignedIncidents?: Prisma.IncidentUncheckedUpdateManyWithoutAssignedToNestedInput
-  maintenanceLogs?: Prisma.MaintenanceLogUncheckedUpdateManyWithoutTechnicianNestedInput
-  chatMemberships?: Prisma.ChatGroupMemberUncheckedUpdateManyWithoutUserNestedInput
-  chatMessages?: Prisma.ChatMessageUncheckedUpdateManyWithoutSenderNestedInput
-  receivedInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedUserNestedInput
-  sentInvitations?: Prisma.GroupInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
-  announcements?: Prisma.AnnouncementUncheckedUpdateManyWithoutCreatedByNestedInput
-  ratingRequests?: Prisma.RatingRequestUncheckedUpdateManyWithoutOperatorNestedInput
   reportedIssues?: Prisma.QualityIssueUncheckedUpdateManyWithoutReporterNestedInput
   rootCauseDecisions?: Prisma.QualityIssueUncheckedUpdateManyWithoutRootCauseDecidedByNestedInput
   fiveMOneESubmissions?: Prisma.FiveMOneESubmissionUncheckedUpdateManyWithoutSubmitterNestedInput
@@ -2934,15 +1337,6 @@ export type UserUncheckedUpdateManyWithoutAreaInput = {
  */
 
 export type UserCountOutputType = {
-  reportedIncidents: number
-  assignedIncidents: number
-  maintenanceLogs: number
-  chatMemberships: number
-  chatMessages: number
-  receivedInvitations: number
-  sentInvitations: number
-  announcements: number
-  ratingRequests: number
   reportedIssues: number
   rootCauseDecisions: number
   fiveMOneESubmissions: number
@@ -2952,15 +1346,6 @@ export type UserCountOutputType = {
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  reportedIncidents?: boolean | UserCountOutputTypeCountReportedIncidentsArgs
-  assignedIncidents?: boolean | UserCountOutputTypeCountAssignedIncidentsArgs
-  maintenanceLogs?: boolean | UserCountOutputTypeCountMaintenanceLogsArgs
-  chatMemberships?: boolean | UserCountOutputTypeCountChatMembershipsArgs
-  chatMessages?: boolean | UserCountOutputTypeCountChatMessagesArgs
-  receivedInvitations?: boolean | UserCountOutputTypeCountReceivedInvitationsArgs
-  sentInvitations?: boolean | UserCountOutputTypeCountSentInvitationsArgs
-  announcements?: boolean | UserCountOutputTypeCountAnnouncementsArgs
-  ratingRequests?: boolean | UserCountOutputTypeCountRatingRequestsArgs
   reportedIssues?: boolean | UserCountOutputTypeCountReportedIssuesArgs
   rootCauseDecisions?: boolean | UserCountOutputTypeCountRootCauseDecisionsArgs
   fiveMOneESubmissions?: boolean | UserCountOutputTypeCountFiveMOneESubmissionsArgs
@@ -2977,69 +1362,6 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
    * Select specific fields to fetch from the UserCountOutputType
    */
   select?: Prisma.UserCountOutputTypeSelect<ExtArgs> | null
-}
-
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountReportedIncidentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.IncidentWhereInput
-}
-
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountAssignedIncidentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.IncidentWhereInput
-}
-
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountMaintenanceLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.MaintenanceLogWhereInput
-}
-
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountChatMembershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ChatGroupMemberWhereInput
-}
-
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountChatMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ChatMessageWhereInput
-}
-
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountReceivedInvitationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.GroupInvitationWhereInput
-}
-
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountSentInvitationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.GroupInvitationWhereInput
-}
-
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountAnnouncementsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.AnnouncementWhereInput
-}
-
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountRatingRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.RatingRequestWhereInput
 }
 
 /**
@@ -3098,15 +1420,6 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   updatedAt?: boolean
   areaId?: boolean
   area?: boolean | Prisma.User$areaArgs<ExtArgs>
-  reportedIncidents?: boolean | Prisma.User$reportedIncidentsArgs<ExtArgs>
-  assignedIncidents?: boolean | Prisma.User$assignedIncidentsArgs<ExtArgs>
-  maintenanceLogs?: boolean | Prisma.User$maintenanceLogsArgs<ExtArgs>
-  chatMemberships?: boolean | Prisma.User$chatMembershipsArgs<ExtArgs>
-  chatMessages?: boolean | Prisma.User$chatMessagesArgs<ExtArgs>
-  receivedInvitations?: boolean | Prisma.User$receivedInvitationsArgs<ExtArgs>
-  sentInvitations?: boolean | Prisma.User$sentInvitationsArgs<ExtArgs>
-  announcements?: boolean | Prisma.User$announcementsArgs<ExtArgs>
-  ratingRequests?: boolean | Prisma.User$ratingRequestsArgs<ExtArgs>
   reportedIssues?: boolean | Prisma.User$reportedIssuesArgs<ExtArgs>
   rootCauseDecisions?: boolean | Prisma.User$rootCauseDecisionsArgs<ExtArgs>
   fiveMOneESubmissions?: boolean | Prisma.User$fiveMOneESubmissionsArgs<ExtArgs>
@@ -3163,15 +1476,6 @@ export type UserSelectScalar = {
 export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "employeeCode" | "name" | "phone" | "passwordHash" | "avatarUrl" | "pushToken" | "role" | "createdAt" | "updatedAt" | "areaId", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   area?: boolean | Prisma.User$areaArgs<ExtArgs>
-  reportedIncidents?: boolean | Prisma.User$reportedIncidentsArgs<ExtArgs>
-  assignedIncidents?: boolean | Prisma.User$assignedIncidentsArgs<ExtArgs>
-  maintenanceLogs?: boolean | Prisma.User$maintenanceLogsArgs<ExtArgs>
-  chatMemberships?: boolean | Prisma.User$chatMembershipsArgs<ExtArgs>
-  chatMessages?: boolean | Prisma.User$chatMessagesArgs<ExtArgs>
-  receivedInvitations?: boolean | Prisma.User$receivedInvitationsArgs<ExtArgs>
-  sentInvitations?: boolean | Prisma.User$sentInvitationsArgs<ExtArgs>
-  announcements?: boolean | Prisma.User$announcementsArgs<ExtArgs>
-  ratingRequests?: boolean | Prisma.User$ratingRequestsArgs<ExtArgs>
   reportedIssues?: boolean | Prisma.User$reportedIssuesArgs<ExtArgs>
   rootCauseDecisions?: boolean | Prisma.User$rootCauseDecisionsArgs<ExtArgs>
   fiveMOneESubmissions?: boolean | Prisma.User$fiveMOneESubmissionsArgs<ExtArgs>
@@ -3191,15 +1495,6 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "User"
   objects: {
     area: Prisma.$CategoryPayload<ExtArgs> | null
-    reportedIncidents: Prisma.$IncidentPayload<ExtArgs>[]
-    assignedIncidents: Prisma.$IncidentPayload<ExtArgs>[]
-    maintenanceLogs: Prisma.$MaintenanceLogPayload<ExtArgs>[]
-    chatMemberships: Prisma.$ChatGroupMemberPayload<ExtArgs>[]
-    chatMessages: Prisma.$ChatMessagePayload<ExtArgs>[]
-    receivedInvitations: Prisma.$GroupInvitationPayload<ExtArgs>[]
-    sentInvitations: Prisma.$GroupInvitationPayload<ExtArgs>[]
-    announcements: Prisma.$AnnouncementPayload<ExtArgs>[]
-    ratingRequests: Prisma.$RatingRequestPayload<ExtArgs>[]
     reportedIssues: Prisma.$QualityIssuePayload<ExtArgs>[]
     rootCauseDecisions: Prisma.$QualityIssuePayload<ExtArgs>[]
     fiveMOneESubmissions: Prisma.$FiveMOneESubmissionPayload<ExtArgs>[]
@@ -3614,15 +1909,6 @@ readonly fields: UserFieldRefs;
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   area<T extends Prisma.User$areaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$areaArgs<ExtArgs>>): Prisma.Prisma__CategoryClient<runtime.Types.Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  reportedIncidents<T extends Prisma.User$reportedIncidentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reportedIncidentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$IncidentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  assignedIncidents<T extends Prisma.User$assignedIncidentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$assignedIncidentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$IncidentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  maintenanceLogs<T extends Prisma.User$maintenanceLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$maintenanceLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MaintenanceLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  chatMemberships<T extends Prisma.User$chatMembershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$chatMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatGroupMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  chatMessages<T extends Prisma.User$chatMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$chatMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  receivedInvitations<T extends Prisma.User$receivedInvitationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$receivedInvitationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GroupInvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  sentInvitations<T extends Prisma.User$sentInvitationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sentInvitationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GroupInvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  announcements<T extends Prisma.User$announcementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$announcementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AnnouncementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  ratingRequests<T extends Prisma.User$ratingRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$ratingRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RatingRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reportedIssues<T extends Prisma.User$reportedIssuesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reportedIssuesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QualityIssuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   rootCauseDecisions<T extends Prisma.User$rootCauseDecisionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$rootCauseDecisionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QualityIssuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   fiveMOneESubmissions<T extends Prisma.User$fiveMOneESubmissionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$fiveMOneESubmissionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FiveMOneESubmissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -4084,222 +2370,6 @@ export type User$areaArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs 
    */
   include?: Prisma.CategoryInclude<ExtArgs> | null
   where?: Prisma.CategoryWhereInput
-}
-
-/**
- * User.reportedIncidents
- */
-export type User$reportedIncidentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Incident
-   */
-  select?: Prisma.IncidentSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Incident
-   */
-  omit?: Prisma.IncidentOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.IncidentInclude<ExtArgs> | null
-  where?: Prisma.IncidentWhereInput
-  orderBy?: Prisma.IncidentOrderByWithRelationInput | Prisma.IncidentOrderByWithRelationInput[]
-  cursor?: Prisma.IncidentWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.IncidentScalarFieldEnum | Prisma.IncidentScalarFieldEnum[]
-}
-
-/**
- * User.assignedIncidents
- */
-export type User$assignedIncidentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Incident
-   */
-  select?: Prisma.IncidentSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Incident
-   */
-  omit?: Prisma.IncidentOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.IncidentInclude<ExtArgs> | null
-  where?: Prisma.IncidentWhereInput
-  orderBy?: Prisma.IncidentOrderByWithRelationInput | Prisma.IncidentOrderByWithRelationInput[]
-  cursor?: Prisma.IncidentWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.IncidentScalarFieldEnum | Prisma.IncidentScalarFieldEnum[]
-}
-
-/**
- * User.maintenanceLogs
- */
-export type User$maintenanceLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the MaintenanceLog
-   */
-  select?: Prisma.MaintenanceLogSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the MaintenanceLog
-   */
-  omit?: Prisma.MaintenanceLogOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.MaintenanceLogInclude<ExtArgs> | null
-  where?: Prisma.MaintenanceLogWhereInput
-  orderBy?: Prisma.MaintenanceLogOrderByWithRelationInput | Prisma.MaintenanceLogOrderByWithRelationInput[]
-  cursor?: Prisma.MaintenanceLogWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.MaintenanceLogScalarFieldEnum | Prisma.MaintenanceLogScalarFieldEnum[]
-}
-
-/**
- * User.chatMemberships
- */
-export type User$chatMembershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ChatGroupMember
-   */
-  select?: Prisma.ChatGroupMemberSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the ChatGroupMember
-   */
-  omit?: Prisma.ChatGroupMemberOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ChatGroupMemberInclude<ExtArgs> | null
-  where?: Prisma.ChatGroupMemberWhereInput
-  orderBy?: Prisma.ChatGroupMemberOrderByWithRelationInput | Prisma.ChatGroupMemberOrderByWithRelationInput[]
-  cursor?: Prisma.ChatGroupMemberWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ChatGroupMemberScalarFieldEnum | Prisma.ChatGroupMemberScalarFieldEnum[]
-}
-
-/**
- * User.chatMessages
- */
-export type User$chatMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ChatMessage
-   */
-  select?: Prisma.ChatMessageSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the ChatMessage
-   */
-  omit?: Prisma.ChatMessageOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ChatMessageInclude<ExtArgs> | null
-  where?: Prisma.ChatMessageWhereInput
-  orderBy?: Prisma.ChatMessageOrderByWithRelationInput | Prisma.ChatMessageOrderByWithRelationInput[]
-  cursor?: Prisma.ChatMessageWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ChatMessageScalarFieldEnum | Prisma.ChatMessageScalarFieldEnum[]
-}
-
-/**
- * User.receivedInvitations
- */
-export type User$receivedInvitationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the GroupInvitation
-   */
-  select?: Prisma.GroupInvitationSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the GroupInvitation
-   */
-  omit?: Prisma.GroupInvitationOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.GroupInvitationInclude<ExtArgs> | null
-  where?: Prisma.GroupInvitationWhereInput
-  orderBy?: Prisma.GroupInvitationOrderByWithRelationInput | Prisma.GroupInvitationOrderByWithRelationInput[]
-  cursor?: Prisma.GroupInvitationWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.GroupInvitationScalarFieldEnum | Prisma.GroupInvitationScalarFieldEnum[]
-}
-
-/**
- * User.sentInvitations
- */
-export type User$sentInvitationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the GroupInvitation
-   */
-  select?: Prisma.GroupInvitationSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the GroupInvitation
-   */
-  omit?: Prisma.GroupInvitationOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.GroupInvitationInclude<ExtArgs> | null
-  where?: Prisma.GroupInvitationWhereInput
-  orderBy?: Prisma.GroupInvitationOrderByWithRelationInput | Prisma.GroupInvitationOrderByWithRelationInput[]
-  cursor?: Prisma.GroupInvitationWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.GroupInvitationScalarFieldEnum | Prisma.GroupInvitationScalarFieldEnum[]
-}
-
-/**
- * User.announcements
- */
-export type User$announcementsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Announcement
-   */
-  select?: Prisma.AnnouncementSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Announcement
-   */
-  omit?: Prisma.AnnouncementOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.AnnouncementInclude<ExtArgs> | null
-  where?: Prisma.AnnouncementWhereInput
-  orderBy?: Prisma.AnnouncementOrderByWithRelationInput | Prisma.AnnouncementOrderByWithRelationInput[]
-  cursor?: Prisma.AnnouncementWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.AnnouncementScalarFieldEnum | Prisma.AnnouncementScalarFieldEnum[]
-}
-
-/**
- * User.ratingRequests
- */
-export type User$ratingRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the RatingRequest
-   */
-  select?: Prisma.RatingRequestSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the RatingRequest
-   */
-  omit?: Prisma.RatingRequestOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.RatingRequestInclude<ExtArgs> | null
-  where?: Prisma.RatingRequestWhereInput
-  orderBy?: Prisma.RatingRequestOrderByWithRelationInput | Prisma.RatingRequestOrderByWithRelationInput[]
-  cursor?: Prisma.RatingRequestWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.RatingRequestScalarFieldEnum | Prisma.RatingRequestScalarFieldEnum[]
 }
 
 /**

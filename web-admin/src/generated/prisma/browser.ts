@@ -38,56 +38,6 @@ export type PartCategory = Prisma.PartCategoryModel
  */
 export type User = Prisma.UserModel
 /**
- * Model Machine
- * 
- */
-export type Machine = Prisma.MachineModel
-/**
- * Model FailureCategory
- * 
- */
-export type FailureCategory = Prisma.FailureCategoryModel
-/**
- * Model Incident
- * 
- */
-export type Incident = Prisma.IncidentModel
-/**
- * Model MaintenanceLog
- * 
- */
-export type MaintenanceLog = Prisma.MaintenanceLogModel
-/**
- * Model RatingRequest
- * 
- */
-export type RatingRequest = Prisma.RatingRequestModel
-/**
- * Model ChatGroup
- * 
- */
-export type ChatGroup = Prisma.ChatGroupModel
-/**
- * Model ChatGroupMember
- * 
- */
-export type ChatGroupMember = Prisma.ChatGroupMemberModel
-/**
- * Model ChatMessage
- * 
- */
-export type ChatMessage = Prisma.ChatMessageModel
-/**
- * Model GroupInvitation
- * 
- */
-export type GroupInvitation = Prisma.GroupInvitationModel
-/**
- * Model Announcement
- * 
- */
-export type Announcement = Prisma.AnnouncementModel
-/**
  * Model QualityIssue
  * 
  */

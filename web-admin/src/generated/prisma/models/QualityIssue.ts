@@ -888,6 +888,14 @@ export type EnumIssueStatusFieldUpdateOperationsInput = {
   set?: $Enums.IssueStatus
 }
 
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
+}
+
 export type QualityIssueCreateNestedOneWithoutSubmissionsInput = {
   create?: Prisma.XOR<Prisma.QualityIssueCreateWithoutSubmissionsInput, Prisma.QualityIssueUncheckedCreateWithoutSubmissionsInput>
   connectOrCreate?: Prisma.QualityIssueCreateOrConnectWithoutSubmissionsInput

@@ -36,6 +36,7 @@ export type MaintenanceTaskMinAggregateOutputType = {
   partsReplaced: string | null
   imagesBefore: string | null
   imagesAfter: string | null
+  monitoringStartedAt: Date | null
   verifyDeadline: Date | null
   lastVerifyPingAt: Date | null
   verifiedStatus: $Enums.VerifyStatus | null
@@ -57,6 +58,7 @@ export type MaintenanceTaskMaxAggregateOutputType = {
   partsReplaced: string | null
   imagesBefore: string | null
   imagesAfter: string | null
+  monitoringStartedAt: Date | null
   verifyDeadline: Date | null
   lastVerifyPingAt: Date | null
   verifiedStatus: $Enums.VerifyStatus | null
@@ -78,6 +80,7 @@ export type MaintenanceTaskCountAggregateOutputType = {
   partsReplaced: number
   imagesBefore: number
   imagesAfter: number
+  monitoringStartedAt: number
   verifyDeadline: number
   lastVerifyPingAt: number
   verifiedStatus: number
@@ -101,6 +104,7 @@ export type MaintenanceTaskMinAggregateInputType = {
   partsReplaced?: true
   imagesBefore?: true
   imagesAfter?: true
+  monitoringStartedAt?: true
   verifyDeadline?: true
   lastVerifyPingAt?: true
   verifiedStatus?: true
@@ -122,6 +126,7 @@ export type MaintenanceTaskMaxAggregateInputType = {
   partsReplaced?: true
   imagesBefore?: true
   imagesAfter?: true
+  monitoringStartedAt?: true
   verifyDeadline?: true
   lastVerifyPingAt?: true
   verifiedStatus?: true
@@ -143,6 +148,7 @@ export type MaintenanceTaskCountAggregateInputType = {
   partsReplaced?: true
   imagesBefore?: true
   imagesAfter?: true
+  monitoringStartedAt?: true
   verifyDeadline?: true
   lastVerifyPingAt?: true
   verifiedStatus?: true
@@ -237,6 +243,7 @@ export type MaintenanceTaskGroupByOutputType = {
   partsReplaced: string | null
   imagesBefore: string | null
   imagesAfter: string | null
+  monitoringStartedAt: Date | null
   verifyDeadline: Date | null
   lastVerifyPingAt: Date | null
   verifiedStatus: $Enums.VerifyStatus
@@ -279,6 +286,7 @@ export type MaintenanceTaskWhereInput = {
   partsReplaced?: Prisma.StringNullableFilter<"MaintenanceTask"> | string | null
   imagesBefore?: Prisma.StringNullableFilter<"MaintenanceTask"> | string | null
   imagesAfter?: Prisma.StringNullableFilter<"MaintenanceTask"> | string | null
+  monitoringStartedAt?: Prisma.DateTimeNullableFilter<"MaintenanceTask"> | Date | string | null
   verifyDeadline?: Prisma.DateTimeNullableFilter<"MaintenanceTask"> | Date | string | null
   lastVerifyPingAt?: Prisma.DateTimeNullableFilter<"MaintenanceTask"> | Date | string | null
   verifiedStatus?: Prisma.EnumVerifyStatusFilter<"MaintenanceTask"> | $Enums.VerifyStatus
@@ -304,6 +312,7 @@ export type MaintenanceTaskOrderByWithRelationInput = {
   partsReplaced?: Prisma.SortOrderInput | Prisma.SortOrder
   imagesBefore?: Prisma.SortOrderInput | Prisma.SortOrder
   imagesAfter?: Prisma.SortOrderInput | Prisma.SortOrder
+  monitoringStartedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   verifyDeadline?: Prisma.SortOrderInput | Prisma.SortOrder
   lastVerifyPingAt?: Prisma.SortOrderInput | Prisma.SortOrder
   verifiedStatus?: Prisma.SortOrder
@@ -332,6 +341,7 @@ export type MaintenanceTaskWhereUniqueInput = Prisma.AtLeast<{
   partsReplaced?: Prisma.StringNullableFilter<"MaintenanceTask"> | string | null
   imagesBefore?: Prisma.StringNullableFilter<"MaintenanceTask"> | string | null
   imagesAfter?: Prisma.StringNullableFilter<"MaintenanceTask"> | string | null
+  monitoringStartedAt?: Prisma.DateTimeNullableFilter<"MaintenanceTask"> | Date | string | null
   verifyDeadline?: Prisma.DateTimeNullableFilter<"MaintenanceTask"> | Date | string | null
   lastVerifyPingAt?: Prisma.DateTimeNullableFilter<"MaintenanceTask"> | Date | string | null
   verifiedStatus?: Prisma.EnumVerifyStatusFilter<"MaintenanceTask"> | $Enums.VerifyStatus
@@ -357,6 +367,7 @@ export type MaintenanceTaskOrderByWithAggregationInput = {
   partsReplaced?: Prisma.SortOrderInput | Prisma.SortOrder
   imagesBefore?: Prisma.SortOrderInput | Prisma.SortOrder
   imagesAfter?: Prisma.SortOrderInput | Prisma.SortOrder
+  monitoringStartedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   verifyDeadline?: Prisma.SortOrderInput | Prisma.SortOrder
   lastVerifyPingAt?: Prisma.SortOrderInput | Prisma.SortOrder
   verifiedStatus?: Prisma.SortOrder
@@ -384,6 +395,7 @@ export type MaintenanceTaskScalarWhereWithAggregatesInput = {
   partsReplaced?: Prisma.StringNullableWithAggregatesFilter<"MaintenanceTask"> | string | null
   imagesBefore?: Prisma.StringNullableWithAggregatesFilter<"MaintenanceTask"> | string | null
   imagesAfter?: Prisma.StringNullableWithAggregatesFilter<"MaintenanceTask"> | string | null
+  monitoringStartedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"MaintenanceTask"> | Date | string | null
   verifyDeadline?: Prisma.DateTimeNullableWithAggregatesFilter<"MaintenanceTask"> | Date | string | null
   lastVerifyPingAt?: Prisma.DateTimeNullableWithAggregatesFilter<"MaintenanceTask"> | Date | string | null
   verifiedStatus?: Prisma.EnumVerifyStatusWithAggregatesFilter<"MaintenanceTask"> | $Enums.VerifyStatus
@@ -402,6 +414,7 @@ export type MaintenanceTaskCreateInput = {
   partsReplaced?: string | null
   imagesBefore?: string | null
   imagesAfter?: string | null
+  monitoringStartedAt?: Date | string | null
   verifyDeadline?: Date | string | null
   lastVerifyPingAt?: Date | string | null
   verifiedStatus?: $Enums.VerifyStatus
@@ -426,6 +439,7 @@ export type MaintenanceTaskUncheckedCreateInput = {
   partsReplaced?: string | null
   imagesBefore?: string | null
   imagesAfter?: string | null
+  monitoringStartedAt?: Date | string | null
   verifyDeadline?: Date | string | null
   lastVerifyPingAt?: Date | string | null
   verifiedStatus?: $Enums.VerifyStatus
@@ -444,6 +458,7 @@ export type MaintenanceTaskUpdateInput = {
   partsReplaced?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesBefore?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesAfter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  monitoringStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastVerifyPingAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifiedStatus?: Prisma.EnumVerifyStatusFieldUpdateOperationsInput | $Enums.VerifyStatus
@@ -468,6 +483,7 @@ export type MaintenanceTaskUncheckedUpdateInput = {
   partsReplaced?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesBefore?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesAfter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  monitoringStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastVerifyPingAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifiedStatus?: Prisma.EnumVerifyStatusFieldUpdateOperationsInput | $Enums.VerifyStatus
@@ -489,6 +505,7 @@ export type MaintenanceTaskCreateManyInput = {
   partsReplaced?: string | null
   imagesBefore?: string | null
   imagesAfter?: string | null
+  monitoringStartedAt?: Date | string | null
   verifyDeadline?: Date | string | null
   lastVerifyPingAt?: Date | string | null
   verifiedStatus?: $Enums.VerifyStatus
@@ -507,6 +524,7 @@ export type MaintenanceTaskUpdateManyMutationInput = {
   partsReplaced?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesBefore?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesAfter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  monitoringStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastVerifyPingAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifiedStatus?: Prisma.EnumVerifyStatusFieldUpdateOperationsInput | $Enums.VerifyStatus
@@ -527,6 +545,7 @@ export type MaintenanceTaskUncheckedUpdateManyInput = {
   partsReplaced?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesBefore?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesAfter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  monitoringStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastVerifyPingAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifiedStatus?: Prisma.EnumVerifyStatusFieldUpdateOperationsInput | $Enums.VerifyStatus
@@ -563,6 +582,7 @@ export type MaintenanceTaskCountOrderByAggregateInput = {
   partsReplaced?: Prisma.SortOrder
   imagesBefore?: Prisma.SortOrder
   imagesAfter?: Prisma.SortOrder
+  monitoringStartedAt?: Prisma.SortOrder
   verifyDeadline?: Prisma.SortOrder
   lastVerifyPingAt?: Prisma.SortOrder
   verifiedStatus?: Prisma.SortOrder
@@ -584,6 +604,7 @@ export type MaintenanceTaskMaxOrderByAggregateInput = {
   partsReplaced?: Prisma.SortOrder
   imagesBefore?: Prisma.SortOrder
   imagesAfter?: Prisma.SortOrder
+  monitoringStartedAt?: Prisma.SortOrder
   verifyDeadline?: Prisma.SortOrder
   lastVerifyPingAt?: Prisma.SortOrder
   verifiedStatus?: Prisma.SortOrder
@@ -605,6 +626,7 @@ export type MaintenanceTaskMinOrderByAggregateInput = {
   partsReplaced?: Prisma.SortOrder
   imagesBefore?: Prisma.SortOrder
   imagesAfter?: Prisma.SortOrder
+  monitoringStartedAt?: Prisma.SortOrder
   verifyDeadline?: Prisma.SortOrder
   lastVerifyPingAt?: Prisma.SortOrder
   verifiedStatus?: Prisma.SortOrder
@@ -789,6 +811,7 @@ export type MaintenanceTaskCreateWithoutAssignedByInput = {
   partsReplaced?: string | null
   imagesBefore?: string | null
   imagesAfter?: string | null
+  monitoringStartedAt?: Date | string | null
   verifyDeadline?: Date | string | null
   lastVerifyPingAt?: Date | string | null
   verifiedStatus?: $Enums.VerifyStatus
@@ -811,6 +834,7 @@ export type MaintenanceTaskUncheckedCreateWithoutAssignedByInput = {
   partsReplaced?: string | null
   imagesBefore?: string | null
   imagesAfter?: string | null
+  monitoringStartedAt?: Date | string | null
   verifyDeadline?: Date | string | null
   lastVerifyPingAt?: Date | string | null
   verifiedStatus?: $Enums.VerifyStatus
@@ -838,6 +862,7 @@ export type MaintenanceTaskCreateWithoutAssigneeInput = {
   partsReplaced?: string | null
   imagesBefore?: string | null
   imagesAfter?: string | null
+  monitoringStartedAt?: Date | string | null
   verifyDeadline?: Date | string | null
   lastVerifyPingAt?: Date | string | null
   verifiedStatus?: $Enums.VerifyStatus
@@ -860,6 +885,7 @@ export type MaintenanceTaskUncheckedCreateWithoutAssigneeInput = {
   partsReplaced?: string | null
   imagesBefore?: string | null
   imagesAfter?: string | null
+  monitoringStartedAt?: Date | string | null
   verifyDeadline?: Date | string | null
   lastVerifyPingAt?: Date | string | null
   verifiedStatus?: $Enums.VerifyStatus
@@ -887,6 +913,7 @@ export type MaintenanceTaskCreateWithoutVerifiedByInput = {
   partsReplaced?: string | null
   imagesBefore?: string | null
   imagesAfter?: string | null
+  monitoringStartedAt?: Date | string | null
   verifyDeadline?: Date | string | null
   lastVerifyPingAt?: Date | string | null
   verifiedStatus?: $Enums.VerifyStatus
@@ -910,6 +937,7 @@ export type MaintenanceTaskUncheckedCreateWithoutVerifiedByInput = {
   partsReplaced?: string | null
   imagesBefore?: string | null
   imagesAfter?: string | null
+  monitoringStartedAt?: Date | string | null
   verifyDeadline?: Date | string | null
   lastVerifyPingAt?: Date | string | null
   verifiedStatus?: $Enums.VerifyStatus
@@ -958,6 +986,7 @@ export type MaintenanceTaskScalarWhereInput = {
   partsReplaced?: Prisma.StringNullableFilter<"MaintenanceTask"> | string | null
   imagesBefore?: Prisma.StringNullableFilter<"MaintenanceTask"> | string | null
   imagesAfter?: Prisma.StringNullableFilter<"MaintenanceTask"> | string | null
+  monitoringStartedAt?: Prisma.DateTimeNullableFilter<"MaintenanceTask"> | Date | string | null
   verifyDeadline?: Prisma.DateTimeNullableFilter<"MaintenanceTask"> | Date | string | null
   lastVerifyPingAt?: Prisma.DateTimeNullableFilter<"MaintenanceTask"> | Date | string | null
   verifiedStatus?: Prisma.EnumVerifyStatusFilter<"MaintenanceTask"> | $Enums.VerifyStatus
@@ -1008,6 +1037,7 @@ export type MaintenanceTaskCreateWithoutIssueInput = {
   partsReplaced?: string | null
   imagesBefore?: string | null
   imagesAfter?: string | null
+  monitoringStartedAt?: Date | string | null
   verifyDeadline?: Date | string | null
   lastVerifyPingAt?: Date | string | null
   verifiedStatus?: $Enums.VerifyStatus
@@ -1030,6 +1060,7 @@ export type MaintenanceTaskUncheckedCreateWithoutIssueInput = {
   partsReplaced?: string | null
   imagesBefore?: string | null
   imagesAfter?: string | null
+  monitoringStartedAt?: Date | string | null
   verifyDeadline?: Date | string | null
   lastVerifyPingAt?: Date | string | null
   verifiedStatus?: $Enums.VerifyStatus
@@ -1064,6 +1095,7 @@ export type MaintenanceTaskUpdateWithoutIssueInput = {
   partsReplaced?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesBefore?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesAfter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  monitoringStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastVerifyPingAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifiedStatus?: Prisma.EnumVerifyStatusFieldUpdateOperationsInput | $Enums.VerifyStatus
@@ -1086,6 +1118,7 @@ export type MaintenanceTaskUncheckedUpdateWithoutIssueInput = {
   partsReplaced?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesBefore?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesAfter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  monitoringStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastVerifyPingAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifiedStatus?: Prisma.EnumVerifyStatusFieldUpdateOperationsInput | $Enums.VerifyStatus
@@ -1106,6 +1139,7 @@ export type MaintenanceTaskCreateManyAssignedByInput = {
   partsReplaced?: string | null
   imagesBefore?: string | null
   imagesAfter?: string | null
+  monitoringStartedAt?: Date | string | null
   verifyDeadline?: Date | string | null
   lastVerifyPingAt?: Date | string | null
   verifiedStatus?: $Enums.VerifyStatus
@@ -1126,6 +1160,7 @@ export type MaintenanceTaskCreateManyAssigneeInput = {
   partsReplaced?: string | null
   imagesBefore?: string | null
   imagesAfter?: string | null
+  monitoringStartedAt?: Date | string | null
   verifyDeadline?: Date | string | null
   lastVerifyPingAt?: Date | string | null
   verifiedStatus?: $Enums.VerifyStatus
@@ -1147,6 +1182,7 @@ export type MaintenanceTaskCreateManyVerifiedByInput = {
   partsReplaced?: string | null
   imagesBefore?: string | null
   imagesAfter?: string | null
+  monitoringStartedAt?: Date | string | null
   verifyDeadline?: Date | string | null
   lastVerifyPingAt?: Date | string | null
   verifiedStatus?: $Enums.VerifyStatus
@@ -1164,6 +1200,7 @@ export type MaintenanceTaskUpdateWithoutAssignedByInput = {
   partsReplaced?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesBefore?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesAfter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  monitoringStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastVerifyPingAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifiedStatus?: Prisma.EnumVerifyStatusFieldUpdateOperationsInput | $Enums.VerifyStatus
@@ -1186,6 +1223,7 @@ export type MaintenanceTaskUncheckedUpdateWithoutAssignedByInput = {
   partsReplaced?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesBefore?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesAfter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  monitoringStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastVerifyPingAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifiedStatus?: Prisma.EnumVerifyStatusFieldUpdateOperationsInput | $Enums.VerifyStatus
@@ -1206,6 +1244,7 @@ export type MaintenanceTaskUncheckedUpdateManyWithoutAssignedByInput = {
   partsReplaced?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesBefore?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesAfter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  monitoringStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastVerifyPingAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifiedStatus?: Prisma.EnumVerifyStatusFieldUpdateOperationsInput | $Enums.VerifyStatus
@@ -1224,6 +1263,7 @@ export type MaintenanceTaskUpdateWithoutAssigneeInput = {
   partsReplaced?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesBefore?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesAfter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  monitoringStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastVerifyPingAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifiedStatus?: Prisma.EnumVerifyStatusFieldUpdateOperationsInput | $Enums.VerifyStatus
@@ -1246,6 +1286,7 @@ export type MaintenanceTaskUncheckedUpdateWithoutAssigneeInput = {
   partsReplaced?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesBefore?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesAfter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  monitoringStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastVerifyPingAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifiedStatus?: Prisma.EnumVerifyStatusFieldUpdateOperationsInput | $Enums.VerifyStatus
@@ -1266,6 +1307,7 @@ export type MaintenanceTaskUncheckedUpdateManyWithoutAssigneeInput = {
   partsReplaced?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesBefore?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesAfter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  monitoringStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastVerifyPingAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifiedStatus?: Prisma.EnumVerifyStatusFieldUpdateOperationsInput | $Enums.VerifyStatus
@@ -1284,6 +1326,7 @@ export type MaintenanceTaskUpdateWithoutVerifiedByInput = {
   partsReplaced?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesBefore?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesAfter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  monitoringStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastVerifyPingAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifiedStatus?: Prisma.EnumVerifyStatusFieldUpdateOperationsInput | $Enums.VerifyStatus
@@ -1307,6 +1350,7 @@ export type MaintenanceTaskUncheckedUpdateWithoutVerifiedByInput = {
   partsReplaced?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesBefore?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesAfter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  monitoringStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastVerifyPingAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifiedStatus?: Prisma.EnumVerifyStatusFieldUpdateOperationsInput | $Enums.VerifyStatus
@@ -1327,6 +1371,7 @@ export type MaintenanceTaskUncheckedUpdateManyWithoutVerifiedByInput = {
   partsReplaced?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesBefore?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagesAfter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  monitoringStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifyDeadline?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastVerifyPingAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   verifiedStatus?: Prisma.EnumVerifyStatusFieldUpdateOperationsInput | $Enums.VerifyStatus
@@ -1349,6 +1394,7 @@ export type MaintenanceTaskSelect<ExtArgs extends runtime.Types.Extensions.Inter
   partsReplaced?: boolean
   imagesBefore?: boolean
   imagesAfter?: boolean
+  monitoringStartedAt?: boolean
   verifyDeadline?: boolean
   lastVerifyPingAt?: boolean
   verifiedStatus?: boolean
@@ -1374,6 +1420,7 @@ export type MaintenanceTaskSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   partsReplaced?: boolean
   imagesBefore?: boolean
   imagesAfter?: boolean
+  monitoringStartedAt?: boolean
   verifyDeadline?: boolean
   lastVerifyPingAt?: boolean
   verifiedStatus?: boolean
@@ -1399,6 +1446,7 @@ export type MaintenanceTaskSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   partsReplaced?: boolean
   imagesBefore?: boolean
   imagesAfter?: boolean
+  monitoringStartedAt?: boolean
   verifyDeadline?: boolean
   lastVerifyPingAt?: boolean
   verifiedStatus?: boolean
@@ -1424,6 +1472,7 @@ export type MaintenanceTaskSelectScalar = {
   partsReplaced?: boolean
   imagesBefore?: boolean
   imagesAfter?: boolean
+  monitoringStartedAt?: boolean
   verifyDeadline?: boolean
   lastVerifyPingAt?: boolean
   verifiedStatus?: boolean
@@ -1433,7 +1482,7 @@ export type MaintenanceTaskSelectScalar = {
   updatedAt?: boolean
 }
 
-export type MaintenanceTaskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "issueId" | "assignedById" | "assigneeId" | "status" | "acceptedAt" | "completedAt" | "repairDetail" | "partsReplaced" | "imagesBefore" | "imagesAfter" | "verifyDeadline" | "lastVerifyPingAt" | "verifiedStatus" | "verifiedAt" | "verifiedById" | "createdAt" | "updatedAt", ExtArgs["result"]["maintenanceTask"]>
+export type MaintenanceTaskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "issueId" | "assignedById" | "assigneeId" | "status" | "acceptedAt" | "completedAt" | "repairDetail" | "partsReplaced" | "imagesBefore" | "imagesAfter" | "monitoringStartedAt" | "verifyDeadline" | "lastVerifyPingAt" | "verifiedStatus" | "verifiedAt" | "verifiedById" | "createdAt" | "updatedAt", ExtArgs["result"]["maintenanceTask"]>
 export type MaintenanceTaskInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   issue?: boolean | Prisma.QualityIssueDefaultArgs<ExtArgs>
   assignedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1473,6 +1522,7 @@ export type $MaintenanceTaskPayload<ExtArgs extends runtime.Types.Extensions.Int
     partsReplaced: string | null
     imagesBefore: string | null
     imagesAfter: string | null
+    monitoringStartedAt: Date | null
     verifyDeadline: Date | null
     lastVerifyPingAt: Date | null
     verifiedStatus: $Enums.VerifyStatus
@@ -1918,6 +1968,7 @@ export interface MaintenanceTaskFieldRefs {
   readonly partsReplaced: Prisma.FieldRef<"MaintenanceTask", 'String'>
   readonly imagesBefore: Prisma.FieldRef<"MaintenanceTask", 'String'>
   readonly imagesAfter: Prisma.FieldRef<"MaintenanceTask", 'String'>
+  readonly monitoringStartedAt: Prisma.FieldRef<"MaintenanceTask", 'DateTime'>
   readonly verifyDeadline: Prisma.FieldRef<"MaintenanceTask", 'DateTime'>
   readonly lastVerifyPingAt: Prisma.FieldRef<"MaintenanceTask", 'DateTime'>
   readonly verifiedStatus: Prisma.FieldRef<"MaintenanceTask", 'VerifyStatus'>

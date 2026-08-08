@@ -16,7 +16,8 @@ export const Role = {
   LINE_LEADER: 'LINE_LEADER',
   TECHNOLOGY: 'TECHNOLOGY',
   DEPARTMENT_HEAD: 'DEPARTMENT_HEAD',
-  MAINTENANCE: 'MAINTENANCE'
+  MAINTENANCE: 'MAINTENANCE',
+  DIRECTOR: 'DIRECTOR'
 } as const
 
 export type Role = (typeof Role)[keyof typeof Role]
@@ -25,57 +26,10 @@ export type Role = (typeof Role)[keyof typeof Role]
 export const CategoryType = {
   AREA: 'AREA',
   PRODUCTION_LINE: 'PRODUCTION_LINE',
-  TEAM: 'TEAM',
-  MAINTENANCE_PERIOD: 'MAINTENANCE_PERIOD',
-  MACHINE_STATUS: 'MACHINE_STATUS',
-  MACHINE_TYPE: 'MACHINE_TYPE'
+  TEAM: 'TEAM'
 } as const
 
 export type CategoryType = (typeof CategoryType)[keyof typeof CategoryType]
-
-
-export const StatusKind = {
-  ACTIVE: 'ACTIVE',
-  STOPPED: 'STOPPED',
-  MAINTENANCE: 'MAINTENANCE'
-} as const
-
-export type StatusKind = (typeof StatusKind)[keyof typeof StatusKind]
-
-
-export const IncidentStatus = {
-  PENDING: 'PENDING',
-  ACCEPTED: 'ACCEPTED',
-  DONE: 'DONE'
-} as const
-
-export type IncidentStatus = (typeof IncidentStatus)[keyof typeof IncidentStatus]
-
-
-export const ChatMessageType = {
-  TEXT: 'TEXT',
-  INCIDENT_ALERT: 'INCIDENT_ALERT',
-  SYSTEM: 'SYSTEM'
-} as const
-
-export type ChatMessageType = (typeof ChatMessageType)[keyof typeof ChatMessageType]
-
-
-export const InvitationStatus = {
-  PENDING: 'PENDING',
-  ACCEPTED: 'ACCEPTED',
-  REJECTED: 'REJECTED'
-} as const
-
-export type InvitationStatus = (typeof InvitationStatus)[keyof typeof InvitationStatus]
-
-
-export const RatingStatus = {
-  PENDING: 'PENDING',
-  SUBMITTED: 'SUBMITTED'
-} as const
-
-export type RatingStatus = (typeof RatingStatus)[keyof typeof RatingStatus]
 
 
 export const IssueStatus = {

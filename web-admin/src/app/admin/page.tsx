@@ -101,10 +101,10 @@ export default async function AdminDashboard({
     },
     {
       label: "Cần điều tra 5M+1E",
-      value: statusGroups.find((g: any) => g.status === "REPORTED" || g.status === "INVESTIGATING")
+      value: statusGroups.find((g) => g.status === "REPORTED" || g.status === "INVESTIGATING")
         ? statusGroups
-            .filter((g: any) => g.status === "REPORTED" || g.status === "INVESTIGATING")
-            .reduce((sum: number, g: any) => sum + g._count._all, 0)
+            .filter((g) => g.status === "REPORTED" || g.status === "INVESTIGATING")
+            .reduce((sum, g) => sum + g._count._all, 0)
         : 0,
       unit: "Phiếu",
       icon: Wrench,
@@ -121,7 +121,7 @@ export default async function AdminDashboard({
     },
   ];
 
-  const issuesByStatus = statusGroups.map((g: any) => ({
+  const issuesByStatus = statusGroups.map((g) => ({
     status: g.status,
     statusLabel: STATUS_LABEL[g.status] || g.status,
     count: g._count._all,
@@ -256,7 +256,7 @@ export default async function AdminDashboard({
                   </td>
                 </tr>
               )}
-              {openIssues.map((issue: any) => (
+              {openIssues.map((issue) => (
                 <tr key={issue.id} className="border-t border-slate-100">
                   <td className="px-5 py-2 font-mono">{issue.poCode}</td>
                   <td className="px-5 py-2">

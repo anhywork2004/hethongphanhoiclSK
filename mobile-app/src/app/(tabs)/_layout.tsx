@@ -36,7 +36,7 @@ export default function TabsLayout() {
   if (loading) return null;
   if (!token) return <Redirect href="/login" />;
 
-  const isMaintenance = user?.role === "MAINTENANCE";
+  const canSeeWorkTab = user?.role === "MAINTENANCE" || user?.role === "DEPARTMENT_HEAD";
 
   return (
     <Tabs
@@ -75,12 +75,12 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="chat"
+        name="work"
         options={{
-          title: "Chat nhóm",
+          title: "Công việc",
           headerShown: false,
-          href: isMaintenance ? undefined : null,
-          tabBarIcon: ({ focused }) => <TabIcon emoji="💬" focused={focused} />,
+          href: canSeeWorkTab ? undefined : null,
+          tabBarIcon: ({ focused }) => <TabIcon emoji="🛠️" focused={focused} />,
         }}
       />
       <Tabs.Screen

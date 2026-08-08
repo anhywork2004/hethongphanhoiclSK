@@ -13,7 +13,12 @@ import { PressableScale } from "@/components/pressable-scale";
 
 const roleLabel: Record<string, string> = {
   OPERATOR: "Nhân viên vận hành",
+  QA: "QA",
+  LINE_LEADER: "Trưởng line",
+  TECHNOLOGY: "Công nghệ",
+  DEPARTMENT_HEAD: "Trưởng phòng ban",
   MAINTENANCE: "Nhân viên bảo trì",
+  DIRECTOR: "Giám đốc",
   ADMIN: "Admin",
 };
 
@@ -119,20 +124,13 @@ export default function ProfileScreen() {
       {user?.role === "MAINTENANCE" && (
         <Animated.View entering={FadeInUp.delay(140).duration(320)} style={styles.statsCard}>
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>{user.stats?.totalRepairs ?? 0}</Text>
-            <Text style={styles.statLabel}>Lượt sửa</Text>
+            <Text style={styles.statValue}>{user.stats?.totalTasks ?? 0}</Text>
+            <Text style={styles.statLabel}>Tổng việc</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>
-              {user.stats?.avgRating != null ? `⭐ ${user.stats.avgRating}` : "Chưa có"}
-            </Text>
-            <Text style={styles.statLabel}>Sao trung bình</Text>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{user.stats?.ratedCount ?? 0}</Text>
-            <Text style={styles.statLabel}>Lượt đánh giá</Text>
+            <Text style={styles.statValue}>{user.stats?.completedTasks ?? 0}</Text>
+            <Text style={styles.statLabel}>Đã hoàn thành</Text>
           </View>
         </Animated.View>
       )}

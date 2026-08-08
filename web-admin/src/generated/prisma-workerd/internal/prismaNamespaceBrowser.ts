@@ -55,16 +55,6 @@ export const ModelName = {
   IssueFailureCategory: 'IssueFailureCategory',
   PartCategory: 'PartCategory',
   User: 'User',
-  Machine: 'Machine',
-  FailureCategory: 'FailureCategory',
-  Incident: 'Incident',
-  MaintenanceLog: 'MaintenanceLog',
-  RatingRequest: 'RatingRequest',
-  ChatGroup: 'ChatGroup',
-  ChatGroupMember: 'ChatGroupMember',
-  ChatMessage: 'ChatMessage',
-  GroupInvitation: 'GroupInvitation',
-  Announcement: 'Announcement',
   QualityIssue: 'QualityIssue',
   FiveMOneESubmission: 'FiveMOneESubmission',
   MaintenanceTask: 'MaintenanceTask'
@@ -87,9 +77,6 @@ export const CategoryScalarFieldEnum = {
   id: 'id',
   type: 'type',
   name: 'name',
-  days: 'days',
-  statusKind: 'statusKind',
-  isDefault: 'isDefault',
   colorHex: 'colorHex',
   order: 'order',
   createdAt: 'createdAt'
@@ -133,155 +120,6 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
-
-
-export const MachineScalarFieldEnum = {
-  id: 'id',
-  code: 'code',
-  serialNumber: 'serialNumber',
-  name: 'name',
-  location: 'location',
-  latitude: 'latitude',
-  longitude: 'longitude',
-  model: 'model',
-  manufacturer: 'manufacturer',
-  origin: 'origin',
-  manufactureYear: 'manufactureYear',
-  yearInUse: 'yearInUse',
-  specs: 'specs',
-  areaId: 'areaId',
-  teamId: 'teamId',
-  productionLineId: 'productionLineId',
-  statusId: 'statusId',
-  maintenancePeriodId: 'maintenancePeriodId',
-  machineTypeId: 'machineTypeId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type MachineScalarFieldEnum = (typeof MachineScalarFieldEnum)[keyof typeof MachineScalarFieldEnum]
-
-
-export const FailureCategoryScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  isOther: 'isOther',
-  order: 'order',
-  createdAt: 'createdAt'
-} as const
-
-export type FailureCategoryScalarFieldEnum = (typeof FailureCategoryScalarFieldEnum)[keyof typeof FailureCategoryScalarFieldEnum]
-
-
-export const IncidentScalarFieldEnum = {
-  id: 'id',
-  machineId: 'machineId',
-  reporterId: 'reporterId',
-  images: 'images',
-  description: 'description',
-  status: 'status',
-  categoryId: 'categoryId',
-  customCategoryText: 'customCategoryText',
-  assignedToId: 'assignedToId',
-  acceptedAt: 'acceptedAt',
-  completedAt: 'completedAt',
-  resendCount: 'resendCount',
-  lastResendAt: 'lastResendAt',
-  lastCompletionPingAt: 'lastCompletionPingAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type IncidentScalarFieldEnum = (typeof IncidentScalarFieldEnum)[keyof typeof IncidentScalarFieldEnum]
-
-
-export const MaintenanceLogScalarFieldEnum = {
-  id: 'id',
-  incidentId: 'incidentId',
-  machineId: 'machineId',
-  technicianId: 'technicianId',
-  startTime: 'startTime',
-  endTime: 'endTime',
-  durationMinutes: 'durationMinutes',
-  repairDetail: 'repairDetail',
-  partsReplaced: 'partsReplaced',
-  proofImages: 'proofImages',
-  skillRating: 'skillRating',
-  ratingSubmittedAt: 'ratingSubmittedAt',
-  createdAt: 'createdAt'
-} as const
-
-export type MaintenanceLogScalarFieldEnum = (typeof MaintenanceLogScalarFieldEnum)[keyof typeof MaintenanceLogScalarFieldEnum]
-
-
-export const RatingRequestScalarFieldEnum = {
-  id: 'id',
-  maintenanceLogId: 'maintenanceLogId',
-  operatorId: 'operatorId',
-  status: 'status',
-  createdAt: 'createdAt',
-  respondedAt: 'respondedAt'
-} as const
-
-export type RatingRequestScalarFieldEnum = (typeof RatingRequestScalarFieldEnum)[keyof typeof RatingRequestScalarFieldEnum]
-
-
-export const ChatGroupScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  image: 'image',
-  createdAt: 'createdAt'
-} as const
-
-export type ChatGroupScalarFieldEnum = (typeof ChatGroupScalarFieldEnum)[keyof typeof ChatGroupScalarFieldEnum]
-
-
-export const ChatGroupMemberScalarFieldEnum = {
-  id: 'id',
-  groupId: 'groupId',
-  userId: 'userId',
-  joinedAt: 'joinedAt'
-} as const
-
-export type ChatGroupMemberScalarFieldEnum = (typeof ChatGroupMemberScalarFieldEnum)[keyof typeof ChatGroupMemberScalarFieldEnum]
-
-
-export const ChatMessageScalarFieldEnum = {
-  id: 'id',
-  groupId: 'groupId',
-  senderId: 'senderId',
-  type: 'type',
-  content: 'content',
-  incidentId: 'incidentId',
-  createdAt: 'createdAt'
-} as const
-
-export type ChatMessageScalarFieldEnum = (typeof ChatMessageScalarFieldEnum)[keyof typeof ChatMessageScalarFieldEnum]
-
-
-export const GroupInvitationScalarFieldEnum = {
-  id: 'id',
-  groupId: 'groupId',
-  invitedUserId: 'invitedUserId',
-  invitedById: 'invitedById',
-  status: 'status',
-  createdAt: 'createdAt',
-  respondedAt: 'respondedAt'
-} as const
-
-export type GroupInvitationScalarFieldEnum = (typeof GroupInvitationScalarFieldEnum)[keyof typeof GroupInvitationScalarFieldEnum]
-
-
-export const AnnouncementScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  content: 'content',
-  image: 'image',
-  createdById: 'createdById',
-  createdAt: 'createdAt'
-} as const
-
-export type AnnouncementScalarFieldEnum = (typeof AnnouncementScalarFieldEnum)[keyof typeof AnnouncementScalarFieldEnum]
 
 
 export const QualityIssueScalarFieldEnum = {
@@ -340,6 +178,7 @@ export const MaintenanceTaskScalarFieldEnum = {
   partsReplaced: 'partsReplaced',
   imagesBefore: 'imagesBefore',
   imagesAfter: 'imagesAfter',
+  monitoringStartedAt: 'monitoringStartedAt',
   verifyDeadline: 'verifyDeadline',
   lastVerifyPingAt: 'lastVerifyPingAt',
   verifiedStatus: 'verifiedStatus',

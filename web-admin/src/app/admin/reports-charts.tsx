@@ -128,22 +128,3 @@ export default function ReportsCharts({
     </div>
   );
 }
-
-export function TechnicianChart({
-  data,
-}: {
-  data: { technician: string; count: number }[];
-}) {
-  return (
-    <ResponsiveContainer>
-      <BarChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-        <XAxis dataKey="technician" fontSize={12} />
-        <YAxis allowDecimals={false} fontSize={12} />
-        <Tooltip />
-        <Bar dataKey="count" fill="#3B82F6" name="Số công việc" />
-      </BarChart>
-    </ResponsiveContainer>
-  );
-}
-

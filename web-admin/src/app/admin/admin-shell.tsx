@@ -6,11 +6,8 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { signOut } from "next-auth/react";
 import {
   LayoutDashboard,
-  Wrench,
   Users,
   AlertTriangle,
-  ClipboardList,
-  Megaphone,
   Tags,
   Menu,
   ExternalLink,
@@ -24,20 +21,15 @@ const categoryTypeItems = [
   { type: "AREA", label: "Khu vực / Xưởng" },
   { type: "PRODUCTION_LINE", label: "Chuyền" },
   { type: "TEAM", label: "Tổ" },
-  { type: "FAILURE", label: "Danh mục hư máy" },
-  { type: "MAINTENANCE_PERIOD", label: "Bảo trì định kỳ" },
-  { type: "MACHINE_STATUS", label: "Trạng thái máy" },
-  { type: "MACHINE_TYPE", label: "Phân loại máy" },
+  { type: "FAILURE_CATEGORY", label: "Danh mục lỗi" },
+  { type: "PART_CATEGORY", label: "Danh mục linh kiện" },
 ];
 
 const navItems = [
   { href: "/admin", label: "Tổng quan", icon: LayoutDashboard },
-  { href: "/admin/machines", label: "Máy móc & Mã QR", icon: Wrench },
-  { href: "/admin/incidents", label: "Sự cố Máy", icon: AlertTriangle },
-  { href: "/admin/issues", label: "Sự cố CLSK (QA)", icon: ClipboardList },
-  { href: "/admin/employees", label: "Nhân sự (7 Roles)", icon: Users },
+  { href: "/admin/employees", label: "Nhân sự", icon: Users },
+  { href: "/admin/issues", label: "Sự cố", icon: AlertTriangle },
   { label: "Danh mục", icon: Tags, children: categoryTypeItems },
-  { href: "/admin/announcements", label: "Thông báo", icon: Megaphone },
 ];
 
 export default function AdminShell({

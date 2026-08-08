@@ -43,9 +43,9 @@ export async function sendPushToUsers(
   });
 
   const messages = users
-    .map((u: { pushToken: string | null }) => u.pushToken)
-    .filter((token: string | null): token is string => !!token)
-    .map((token: string) => ({
+    .map((u) => u.pushToken)
+    .filter((token): token is string => !!token)
+    .map((token) => ({
       to: token,
       title: notification.title,
       body: notification.body,
@@ -57,32 +57,26 @@ export async function sendPushToUsers(
   await sendExpoPushMessages(messages);
 }
 
-export async function sendPushToGroupMembers(
+// Gửi cho tất cả user có 1 trong các role chỉ định, trong 1 khu vực cụ thể (hoặc mọi khu vực
+// nếu areaId=null) — dùng để thông báo cho QA/Trưởng line/Công nghệ/Trưởng phòng ban cùng khu vực.
+export async function sendPushToUsersByRoleInArea(
   prisma: Prisma,
-  groupId: string,
+  roles: string[],
+  areaId: string | null,
   notification: { title: string; body: string; data?: Record<string, unknown> },
   excludeUserId?: string,
 ) {
-  const members = await prisma.chatGroupMember.findMany({
-    where: { groupId },
-    select: { userId: true },
+  const users = await prisma.user.findMany({
+    where: {
+      role: { in: roles as never[] },
+      ...(areaId ? { areaId } : {}),
+    },
+    select: { id: true },
   });
   await sendPushToUsers(
     prisma,
-    members.map((m: { userId: string }) => m.userId),
+    users.map((u) => u.id),
     notification,
     excludeUserId,
   );
 }
-
-export async function sendPushToUsersByRoleInArea(
-  prisma: any,
-  role: any,
-  areaId: any,
-  notification: { title: string; body: string; data?: Record<string, unknown> },
-  excludeUserId?: string
-) {
-  // Mock fallback for legacy push notifications
-  return;
-}
-

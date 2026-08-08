@@ -1,4 +1,4 @@
-// Prisma schema cho hệ thống Quản trị Máy móc & Bảo trì + Sự cố Chất lượng (QA / 5M+1E) — Hợp nhất TBS Máy Móc & TBS HTPH-CLSK
+// Prisma schema cho hệ thống Quản lý Sự cố Chất lượng (QA / 5M+1E) — TBS HTPH-CLSK
 
 generator client {
   provider = "prisma-client"
@@ -20,55 +20,40 @@ datasource db {
 
 enum Role {
   ADMIN // Chỉ dùng web-admin
-  OPERATOR // NV vận hành — báo cáo sự cố máy & CLSK
-  QA // QA — điều tra 5M+1E
-  LINE_LEADER // Trưởng line — điều tra 5M+1E, chốt nguyên nhân gốc, xác nhận hoàn thành 3h-48h
+  OPERATOR // NV vận hành — chỉ báo cáo
+  QA
+  LINE_LEADER // Trưởng line — điều tra 5M+1E, chốt nguyên nhân gốc, xác nhận hoàn thành
   TECHNOLOGY // Công nghệ — điều tra 5M+1E
-  DEPARTMENT_HEAD // Trưởng phòng ban — phân việc cho bảo trì cùng khu vực
-  MAINTENANCE // Bảo trì — nhận việc, sửa chữa, nhóm chat
+  DEPARTMENT_HEAD // Trưởng phòng ban — phân việc cho bảo trì, 1-1 với khu vực
+  MAINTENANCE // Bảo trì — nhận việc, sửa chữa
+  DIRECTOR // Giám đốc — chỉ nhận thông báo khi 1 sự cố đã hoàn thành, phạm vi toàn nhà máy (không gắn khu vực)
 }
 
 enum CategoryType {
   AREA // Khu vực / Xưởng
   PRODUCTION_LINE // Chuyền
   TEAM // Tổ
-  MAINTENANCE_PERIOD // Bảo trì định kỳ (Máy Móc)
-  MACHINE_STATUS // Trạng thái máy (Máy Móc)
-  MACHINE_TYPE // Phân loại máy (Máy Móc)
 }
 
-enum StatusKind {
-  ACTIVE
-  STOPPED
-  MAINTENANCE
-}
-
+// Danh mục dùng chung cho Khu vực/Xưởng, Chuyền, Tổ — Admin quản lý trước.
 model Category {
-  id         String       @id @default(cuid())
-  type       CategoryType
-  name       String
-  days       Int?
-  statusKind StatusKind?
-  isDefault  Boolean      @default(false)
-  colorHex   String?
-  order      Int          @default(0)
-  createdAt  DateTime     @default(now())
+  id        String       @id @default(cuid())
+  type      CategoryType
+  name      String
+  colorHex  String?
+  order     Int          @default(0)
+  createdAt DateTime     @default(now())
 
-  machinesByArea              Machine[]      @relation("MachineArea")
-  machinesByTeam              Machine[]      @relation("MachineTeam")
-  machinesByProductionLine    Machine[]      @relation("MachineProductionLine")
-  machinesByStatus            Machine[]      @relation("MachineStatus")
-  machinesByMaintenancePeriod Machine[]      @relation("MachineMaintenancePeriod")
-  machinesByType              Machine[]      @relation("MachineType")
-  usersByArea                 User[]         @relation("UserArea")
-  issuesByArea                QualityIssue[] @relation("IssueArea")
-  issuesByTeam                QualityIssue[] @relation("IssueTeam")
-  issuesByProductionLine      QualityIssue[] @relation("IssueProductionLine")
+  usersByArea             User[]         @relation("UserArea")
+  issuesByArea            QualityIssue[] @relation("IssueArea")
+  issuesByTeam            QualityIssue[] @relation("IssueTeam")
+  issuesByProductionLine  QualityIssue[] @relation("IssueProductionLine")
 
   @@unique([type, name])
   @@map("categories")
 }
 
+// Danh mục lỗi — người báo cáo chọn khi tạo phiếu, dùng để thống kê "Top 5 lỗi".
 model IssueFailureCategory {
   id        String   @id @default(cuid())
   name      String
@@ -80,6 +65,7 @@ model IssueFailureCategory {
   @@map("issue_failure_categories")
 }
 
+// Danh mục linh kiện — bảo trì chọn khi điền form Hoàn thành.
 model PartCategory {
   id        String   @id @default(cuid())
   name      String
@@ -89,29 +75,6 @@ model PartCategory {
   @@map("part_categories")
 }
 
-enum IncidentStatus {
-  PENDING
-  ACCEPTED
-  DONE
-}
-
-enum ChatMessageType {
-  TEXT
-  INCIDENT_ALERT
-  SYSTEM
-}
-
-enum InvitationStatus {
-  PENDING
-  ACCEPTED
-  REJECTED
-}
-
-enum RatingStatus {
-  PENDING
-  SUBMITTED
-}
-
 model User {
   id           String   @id @default(cuid())
   employeeCode String   @unique
@@ -119,230 +82,31 @@ model User {
   phone        String?
   passwordHash String
   avatarUrl    String?
-  pushToken    String?
+  pushToken    String? // Expo push token của thiết bị đang đăng nhập gần nhất
   role         Role     @default(OPERATOR)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  areaId String?
+  areaId String? // Khu vực/Xưởng phụ trách — bắt buộc có ý nghĩa với QA/LINE_LEADER/TECHNOLOGY/DEPARTMENT_HEAD/MAINTENANCE
   area   Category? @relation("UserArea", fields: [areaId], references: [id])
 
-  reportedIncidents   Incident[]        @relation("Reporter")
-  assignedIncidents   Incident[]        @relation("AssignedTo")
-  maintenanceLogs     MaintenanceLog[]
-  chatMemberships     ChatGroupMember[]
-  chatMessages        ChatMessage[]
-  receivedInvitations GroupInvitation[] @relation("InvitedUser")
-  sentInvitations     GroupInvitation[] @relation("InvitedBy")
-  announcements       Announcement[]
-  ratingRequests      RatingRequest[]
-
-  // HTPH-CLSK Relations
-  reportedIssues       QualityIssue[]        @relation("Reporter")
-  rootCauseDecisions   QualityIssue[]        @relation("RootCauseDecidedBy")
+  reportedIssues       QualityIssue[]          @relation("Reporter")
+  rootCauseDecisions   QualityIssue[]          @relation("RootCauseDecidedBy")
   fiveMOneESubmissions FiveMOneESubmission[]
-  assignedTasks        MaintenanceTask[]     @relation("TaskAssignedBy")
-  assigneeTasks        MaintenanceTask[]     @relation("TaskAssignee")
-  verifiedTasks        MaintenanceTask[]     @relation("TaskVerifiedBy")
+  assignedTasks        MaintenanceTask[]       @relation("TaskAssignedBy")
+  assigneeTasks        MaintenanceTask[]       @relation("TaskAssignee")
+  verifiedTasks        MaintenanceTask[]       @relation("TaskVerifiedBy")
 
   @@map("users")
 }
 
-model Machine {
-  id              String  @id @default(cuid())
-  code            String  @unique
-  serialNumber    String?
-  name            String
-  location        String
-  latitude        Float?
-  longitude       Float?
-  model           String?
-  manufacturer    String?
-  origin          String?
-  manufactureYear Int?
-  yearInUse       Int?
-  specs           String?
-
-  areaId String?
-  area   Category? @relation("MachineArea", fields: [areaId], references: [id])
-
-  teamId String?
-  team   Category? @relation("MachineTeam", fields: [teamId], references: [id])
-
-  productionLineId String?
-  productionLine   Category? @relation("MachineProductionLine", fields: [productionLineId], references: [id])
-
-  statusId String
-  status   Category @relation("MachineStatus", fields: [statusId], references: [id])
-
-  maintenancePeriodId String?
-  maintenancePeriod   Category? @relation("MachineMaintenancePeriod", fields: [maintenancePeriodId], references: [id])
-
-  machineTypeId String?
-  machineType   Category? @relation("MachineType", fields: [machineTypeId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  incidents       Incident[]
-  maintenanceLogs MaintenanceLog[]
-
-  @@map("machines")
-}
-
-model FailureCategory {
-  id        String   @id @default(cuid())
-  name      String
-  isOther   Boolean  @default(false)
-  order     Int      @default(0)
-  createdAt DateTime @default(now())
-
-  incidents Incident[]
-
-  @@map("failure_categories")
-}
-
-model Incident {
-  id                 String           @id @default(cuid())
-  machine            Machine          @relation(fields: [machineId], references: [id])
-  machineId          String
-  reporter           User             @relation("Reporter", fields: [reporterId], references: [id])
-  reporterId         String
-  images             String?
-  description        String
-  status             IncidentStatus   @default(PENDING)
-  category           FailureCategory? @relation(fields: [categoryId], references: [id])
-  categoryId         String?
-  customCategoryText String?
-
-  assignedTo   User?     @relation("AssignedTo", fields: [assignedToId], references: [id])
-  assignedToId String?
-  acceptedAt   DateTime?
-  completedAt  DateTime?
-
-  resendCount          Int       @default(0)
-  lastResendAt         DateTime?
-  lastCompletionPingAt DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  maintenanceLogs MaintenanceLog[]
-  chatMessages    ChatMessage[]
-
-  @@map("incidents")
-}
-
-model MaintenanceLog {
-  id                String        @id @default(cuid())
-  incident          Incident      @relation(fields: [incidentId], references: [id])
-  incidentId        String
-  machine           Machine       @relation(fields: [machineId], references: [id])
-  machineId         String
-  technician        User          @relation(fields: [technicianId], references: [id])
-  technicianId      String
-  startTime         DateTime
-  endTime           DateTime
-  durationMinutes   Int
-  repairDetail      String
-  partsReplaced     String?
-  proofImages       String?
-  skillRating       Int?
-  ratingSubmittedAt DateTime?
-  createdAt         DateTime      @default(now())
-
-  ratingRequest RatingRequest?
-
-  @@map("maintenance_logs")
-}
-
-model RatingRequest {
-  id               String         @id @default(cuid())
-  maintenanceLog   MaintenanceLog @relation(fields: [maintenanceLogId], references: [id])
-  maintenanceLogId String         @unique
-  operator         User           @relation(fields: [operatorId], references: [id])
-  operatorId       String
-  status           RatingStatus   @default(PENDING)
-  createdAt        DateTime       @default(now())
-  respondedAt      DateTime?
-
-  @@map("rating_requests")
-}
-
-model ChatGroup {
-  id        String   @id @default(cuid())
-  name      String
-  image     String?
-  createdAt DateTime @default(now())
-
-  members     ChatGroupMember[]
-  messages    ChatMessage[]
-  invitations GroupInvitation[]
-
-  @@map("chat_groups")
-}
-
-model ChatGroupMember {
-  id       String    @id @default(cuid())
-  group    ChatGroup @relation(fields: [groupId], references: [id])
-  groupId  String
-  user     User      @relation(fields: [userId], references: [id])
-  userId   String
-  joinedAt DateTime  @default(now())
-
-  @@unique([groupId, userId])
-  @@map("chat_group_members")
-}
-
-model ChatMessage {
-  id         String          @id @default(cuid())
-  group      ChatGroup       @relation(fields: [groupId], references: [id])
-  groupId    String
-  sender     User?           @relation(fields: [senderId], references: [id])
-  senderId   String?
-  type       ChatMessageType @default(TEXT)
-  content    String
-  incident   Incident?       @relation(fields: [incidentId], references: [id])
-  incidentId String?
-  createdAt  DateTime        @default(now())
-
-  @@map("chat_messages")
-}
-
-model GroupInvitation {
-  id            String           @id @default(cuid())
-  group         ChatGroup        @relation(fields: [groupId], references: [id])
-  groupId       String
-  invitedUser   User             @relation("InvitedUser", fields: [invitedUserId], references: [id])
-  invitedUserId String
-  invitedBy     User             @relation("InvitedBy", fields: [invitedById], references: [id])
-  invitedById   String
-  status        InvitationStatus @default(PENDING)
-  createdAt     DateTime         @default(now())
-  respondedAt   DateTime?
-
-  @@map("group_invitations")
-}
-
-model Announcement {
-  id          String   @id @default(cuid())
-  title       String
-  content     String
-  image       String?
-  createdBy   User     @relation(fields: [createdById], references: [id])
-  createdById String
-  createdAt   DateTime @default(now())
-
-  @@map("announcements")
-}
-
 enum IssueStatus {
-  REPORTED
-  INVESTIGATING
-  ROOT_CAUSE_FOUND
-  ASSIGNED
-  IN_PROGRESS
-  DONE
+  REPORTED // Vừa báo cáo, chờ 3 role điều tra
+  INVESTIGATING // Đang nộp/đã nộp 5M+1E, chờ chốt nguyên nhân gốc
+  ROOT_CAUSE_FOUND // Đã chốt nguyên nhân gốc, chờ Trưởng phòng ban giao việc
+  ASSIGNED // Đã giao việc cho bảo trì, chờ nhận
+  IN_PROGRESS // Bảo trì đã nhận việc, đang sửa
+  DONE // Đã xác nhận hoàn thành (thủ công hoặc tự động sau 48h)
 }
 
 model QualityIssue {
@@ -350,8 +114,8 @@ model QualityIssue {
   reporter    User        @relation("Reporter", fields: [reporterId], references: [id])
   reporterId  String
   description String
-  images      String?
-  poCode      String
+  images      String? // JSON array đường dẫn ảnh
+  poCode      String // Mã PO — text tự do, nhập tay
   status      IssueStatus @default(REPORTED)
 
   areaId String?
@@ -366,13 +130,13 @@ model QualityIssue {
   failureCategoryId String?
   failureCategory   IssueFailureCategory? @relation(fields: [failureCategoryId], references: [id])
 
-  investigationDeadline DateTime?
-  investigationLocked   Boolean   @default(false)
+  investigationDeadline DateTime? // createdAt + 15 phút — hạn nộp 5M+1E
+  investigationLocked   Boolean   @default(false) // true khi hết 15p mà còn thiếu bản nộp
   rootCause             String?
-  solution              String?
-  rootCauseDecidedBy    User?     @relation("RootCauseDecidedBy", fields: [rootCauseDecidedById], references: [id])
-  rootCauseDecidedById  String?
-  rootCauseDecidedAt    DateTime?
+  solution               String?
+  rootCauseDecidedBy   User?     @relation("RootCauseDecidedBy", fields: [rootCauseDecidedById], references: [id])
+  rootCauseDecidedById String?
+  rootCauseDecidedAt   DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -389,6 +153,7 @@ enum SubmitterRole {
   TECHNOLOGY
 }
 
+// 1 bản điều tra 5M+1E — mỗi người trong 3 role QA/Trưởng line/Công nghệ nộp riêng 1 bản/phiếu.
 model FiveMOneESubmission {
   id            String        @id @default(cuid())
   issue         QualityIssue  @relation(fields: [issueId], references: [id])
@@ -397,7 +162,7 @@ model FiveMOneESubmission {
   submitterId   String
   submitterRole SubmitterRole
   poCode        String
-  images        String?
+  images        String? // JSON array đường dẫn ảnh
 
   man         String
   machine     String
@@ -414,40 +179,48 @@ model FiveMOneESubmission {
 }
 
 enum TaskStatus {
-  PENDING
-  ACCEPTED
-  DONE
+  PENDING // Vừa giao, chưa ai nhận
+  ACCEPTED // Bảo trì đã nhận việc
+  DONE // Bảo trì đã bấm Hoàn thành, chờ Trưởng line xác nhận
 }
 
 enum VerifyStatus {
-  PENDING
-  CONFIRMED_DONE
-  REJECTED
+  PENDING // Chưa đến lúc/chưa xác nhận
+  CONFIRMED_DONE // Trưởng line xác nhận Đã hoàn thành (hoặc tự động sau 48h)
+  REJECTED // Trưởng line bấm Chưa hoàn thành — phiếu quay lại INVESTIGATING
 }
 
 model MaintenanceTask {
-  id           String       @id @default(cuid())
+  id           String     @id @default(cuid())
   issue        QualityIssue @relation(fields: [issueId], references: [id])
-  issueId      String       @unique
-  assignedBy   User         @relation("TaskAssignedBy", fields: [assignedById], references: [id])
+  issueId      String     @unique
+  assignedBy   User       @relation("TaskAssignedBy", fields: [assignedById], references: [id])
   assignedById String
-  assignee     User         @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  assignee     User       @relation("TaskAssignee", fields: [assigneeId], references: [id])
   assigneeId   String
-  status       TaskStatus   @default(PENDING)
+  status       TaskStatus @default(PENDING)
   acceptedAt   DateTime?
   completedAt  DateTime?
 
-  repairDetail  String?
-  partsReplaced String?
-  imagesBefore  String?
-  imagesAfter   String?
+  repairDetail   String?
+  partsReplaced  String? // JSON array [{ partCategoryId, quantity, note? }]
+  imagesBefore   String? // JSON array đường dẫn ảnh
+  imagesAfter    String? // JSON array đường dẫn ảnh
 
-  verifyDeadline   DateTime?
-  lastVerifyPingAt DateTime?
-  verifiedStatus   VerifyStatus @default(PENDING)
-  verifiedAt       DateTime?
-  verifiedBy       User?        @relation("TaskVerifiedBy", fields: [verifiedById], references: [id])
-  verifiedById     String?
+  // Bước 1 (ngay khi bảo trì bấm Hoàn thành, không giới hạn giờ): Trưởng line xác nhận sửa chữa
+  // đạt yêu cầu hay chưa. monitoringStartedAt = null → đang chờ bước này. Nếu "Chưa" → task quay
+  // lại ACCEPTED để bảo trì làm lại. Nếu "Xong" → set monitoringStartedAt = lúc xác nhận, bắt đầu
+  // đếm giờ theo dõi 3-48h (bước 2).
+  monitoringStartedAt DateTime?
+
+  // Bước 2 (trong cửa sổ 3-48h sau monitoringStartedAt): Trưởng line bấm "Đóng vấn đề" (verifiedStatus=CONFIRMED_DONE)
+  // hoặc "Kiểm tra lại" (verifiedStatus=REJECTED, quay lại cho 3 role điều tra 5M+1E).
+  verifyDeadline        DateTime? // monitoringStartedAt + 48h
+  lastVerifyPingAt      DateTime? // Lần gần nhất nhắc Trưởng line xác nhận (mỗi 20 phút trong cửa sổ 3-48h, tái dùng pattern reminder-sweep)
+  verifiedStatus         VerifyStatus @default(PENDING)
+  verifiedAt             DateTime?
+  verifiedBy             User?        @relation("TaskVerifiedBy", fields: [verifiedById], references: [id])
+  verifiedById            String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

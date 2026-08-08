@@ -9,7 +9,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const prisma = await getPrisma();
   const { id } = await params;
 
-  if ((payload.role as string) !== "LINE_LEADER") {
+  if (payload.role !== "LINE_LEADER") {
     return NextResponse.json({ error: "Chỉ Trưởng line mới được chốt nguyên nhân gốc" }, { status: 403 });
   }
 

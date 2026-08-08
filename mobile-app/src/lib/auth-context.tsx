@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { api, User } from "@/lib/api";
 import { registerForPushNotificationsAsync } from "@/lib/push-notifications";
 
-const STORAGE_KEY = "tbs-may-moc-auth";
+const STORAGE_KEY = "tbs-htph-clsk-auth";
 
 type AuthState = {
   token: string | null;

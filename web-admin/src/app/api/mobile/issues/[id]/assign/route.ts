@@ -9,7 +9,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const prisma = await getPrisma();
   const { id } = await params;
 
-  if ((payload.role as string) !== "DEPARTMENT_HEAD") {
+  if (payload.role !== "DEPARTMENT_HEAD") {
     return NextResponse.json({ error: "Chỉ Trưởng phòng ban mới được giao việc" }, { status: 403 });
   }
 

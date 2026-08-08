@@ -1,17 +1,17 @@
 {
   "expo": {
-    "name": "TBS Máy Móc",
-    "slug": "tbs-qlmmtb",
+    "name": "TBS HTPH-CLSK",
+    "slug": "tbs-htph-clsk",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "mobileapp",
+    "scheme": "htphclsk",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon"
     },
     "android": {
-      "package": "com.tbsgroup.mmtb",
+      "package": "com.tbsgroup.htphclsk",
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#0F2A20",
@@ -20,17 +20,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "config": {
-        "googleMaps": {
-          "apiKey": "REPLACE_WITH_GOOGLE_MAPS_API_KEY"
-        }
-      },
-      "permissions": [
-        "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO",
-        "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.ACCESS_FINE_LOCATION"
-      ]
+      "permissions": ["android.permission.CAMERA"]
     },
     "web": {
       "output": "static",
@@ -47,22 +37,10 @@
         }
       ],
       [
-        "expo-camera",
-        {
-          "cameraPermission": "Ứng dụng cần quyền camera để quét mã QR trên máy móc."
-        }
-      ],
-      [
         "expo-image-picker",
         {
-          "photosPermission": "Ứng dụng cần quyền truy cập ảnh để đính kèm hình ảnh báo lỗi.",
-          "cameraPermission": "Ứng dụng cần quyền camera để chụp ảnh báo lỗi."
-        }
-      ],
-      [
-        "expo-location",
-        {
-          "locationWhenInUsePermission": "Ứng dụng cần quyền vị trí để hiển thị khoảng cách và chỉ đường đến máy."
+          "photosPermission": "Ứng dụng cần quyền truy cập ảnh để đính kèm hình ảnh báo cáo.",
+          "cameraPermission": "Ứng dụng cần quyền camera để chụp ảnh báo cáo."
         }
       ],
       [
@@ -80,9 +58,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "1e9d4c35-c635-48bc-899f-c8b673f3eb7a"
+        "projectId": "REPLACE_AFTER_EAS_INIT"
       }
     },
-    "owner": "tbs-group"
+    "owner": "REPLACE_WITH_EXPO_ACCOUNT"
   }
 }

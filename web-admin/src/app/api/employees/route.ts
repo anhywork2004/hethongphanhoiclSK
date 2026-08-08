@@ -1,6 +1,5 @@
 import { getPrisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/require-admin";
-import { syncMaintenanceAreaMembership } from "@/lib/area-chat-group";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 
@@ -55,11 +54,6 @@ export async function POST(req: Request) {
       area: { select: { id: true, name: true } },
     },
   });
-
-  // Nhân viên bảo trì tự động được xếp vào nhóm chat theo khu vực/xưởng của họ.
-  if (role === "MAINTENANCE") {
-    await syncMaintenanceAreaMembership(prisma, user.id, areaId || null);
-  }
 
   return NextResponse.json(user, { status: 201 });
 }

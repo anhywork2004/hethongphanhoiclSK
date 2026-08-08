@@ -15,6 +15,20 @@ import { ApiError } from "@/lib/api";
 import { colors } from "@/constants/colors";
 import { BrandMark } from "@/components/brand-mark";
 
+// ─── DEMO_QUICK_LOGIN — chỉ dùng để demo, xoá cả khối này (và <QuickLoginRow/> bên dưới) khi
+// triển khai thật, quay lại đăng nhập nhập tay bình thường. ─────────────────────────────────
+const DEMO_ACCOUNTS: { code: string; label: string; icon: string }[] = [
+  { code: "NV001", label: "Vận hành", icon: "🧑‍🏭" },
+  { code: "QA001", label: "QA", icon: "🔍" },
+  { code: "LL001", label: "Trưởng line", icon: "🧑‍🔧" },
+  { code: "CN001", label: "Công nghệ", icon: "🧪" },
+  { code: "TP001", label: "Trưởng phòng ban", icon: "🗂️" },
+  { code: "BT001", label: "Bảo trì", icon: "🛠️" },
+  { code: "GD001", label: "Giám đốc", icon: "🎯" },
+];
+const DEMO_PASSWORD = "123456";
+// ─────────────────────────────────────────────────────────────────────────────────────────
+
 export default function LoginScreen() {
   const { token, login } = useAuth();
   const [employeeCode, setEmployeeCode] = useState("");
@@ -25,16 +39,20 @@ export default function LoginScreen() {
 
   if (token) return <Redirect href="/(tabs)" />;
 
-  async function handleLogin() {
+  async function doLogin(code: string, pass: string) {
     setError(null);
     setLoading(true);
     try {
-      await login(employeeCode.trim(), password);
+      await login(code.trim(), pass);
     } catch (e) {
       setError(e instanceof ApiError ? e.message : "Không thể đăng nhập");
     } finally {
       setLoading(false);
     }
+  }
+
+  async function handleLogin() {
+    await doLogin(employeeCode, password);
   }
 
   return (
@@ -47,8 +65,27 @@ export default function LoginScreen() {
         <View style={styles.logoWrap}>
           <BrandMark size={48} />
         </View>
-        <Text style={styles.title}>Phần Mềm Quản Lý MMTB</Text>
+        <Text style={styles.title}>Quản Lý Sự Cố Chất Lượng</Text>
         <Text style={styles.subtitle}>Đăng nhập để tiếp tục</Text>
+
+        {/* DEMO_QUICK_LOGIN — xoá cả block này khi triển khai thật */}
+        <Text style={styles.label}>Demo: chọn nhanh vai trò</Text>
+        <View style={styles.demoRow}>
+          {DEMO_ACCOUNTS.map((acc) => (
+            <TouchableOpacity
+              key={acc.code}
+              style={styles.demoPill}
+              onPress={() => doLogin(acc.code, DEMO_PASSWORD)}
+              disabled={loading}
+            >
+              <Text style={styles.demoPillText}>
+                {acc.icon} {acc.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+        <View style={styles.divider} />
+        {/* /DEMO_QUICK_LOGIN */}
 
         <Text style={styles.label}>Tên đăng nhập</Text>
         <TextInput
@@ -93,6 +130,18 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
+  // DEMO_QUICK_LOGIN — xoá cùng lúc với block JSX phía trên khi triển khai thật
+  demoRow: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  demoPill: {
+    borderWidth: 1,
+    borderColor: colors.primary,
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    backgroundColor: colors.accentSoft,
+  },
+  demoPillText: { color: colors.primaryDark, fontWeight: "600", fontSize: 12.5 },
+  divider: { height: 1, backgroundColor: colors.border, marginTop: 18 },
   container: {
     flex: 1,
     backgroundColor: colors.lightGreenBg,

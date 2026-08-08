@@ -11,7 +11,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const prisma = await getPrisma();
   const { id } = await params;
 
-  if ((payload.role as string) !== "LINE_LEADER") {
+  if (payload.role !== "LINE_LEADER") {
     return NextResponse.json({ error: "Chỉ Trưởng line mới được xác nhận" }, { status: 403 });
   }
 
@@ -23,18 +23,23 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (task.status !== "DONE" || task.verifiedStatus !== "PENDING") {
     return NextResponse.json({ error: "Việc này không ở trạng thái chờ xác nhận" }, { status: 409 });
   }
-  if (!task.completedAt) {
-    return NextResponse.json({ error: "Thiếu thời gian hoàn thành" }, { status: 409 });
-  }
-
-  const now = Date.now();
-  if (now < task.completedAt.getTime() + VERIFY_MIN_MS) {
+  if (!task.monitoringStartedAt) {
     return NextResponse.json(
-      { error: "Chưa đủ 3 giờ kể từ lúc hoàn thành — vui lòng chờ thêm" },
+      { error: "Cần xác nhận sửa chữa đạt yêu cầu trước khi vào giai đoạn theo dõi" },
       { status: 409 },
     );
   }
 
+  const now = Date.now();
+  if (now < task.monitoringStartedAt.getTime() + VERIFY_MIN_MS) {
+    return NextResponse.json(
+      { error: "Chưa đủ 3 giờ theo dõi kể từ khi xác nhận sửa chữa — vui lòng chờ thêm" },
+      { status: 409 },
+    );
+  }
+
+  // confirmed=true → "Đóng vấn đề" (đóng hẳn phiếu). confirmed=false → "Kiểm tra lại" (sự cố
+  // còn tái diễn trong lúc theo dõi, quay lại cho 3 role điều tra 5M+1E).
   const { confirmed } = await req.json();
   if (typeof confirmed !== "boolean") {
     return NextResponse.json({ error: "Thiếu giá trị xác nhận" }, { status: 400 });
@@ -50,15 +55,24 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     ]);
 
     await sendPushToUsers(prisma, [task.issue.reporterId, task.assigneeId], {
-      title: `Đã xác nhận hoàn thành — PO ${task.issue.poCode}`,
-      body: `Trưởng line đã xác nhận hoàn thành.`,
+      title: `Đã đóng vấn đề — PO ${task.issue.poCode}`,
+      body: `Trưởng line đã xác nhận đóng vấn đề sau thời gian theo dõi.`,
       data: { type: "TASK_VERIFIED", issueId: task.issueId, taskId: id },
+    });
+
+    // Giám đốc — phạm vi toàn nhà máy, không giới hạn khu vực — nhận thông báo khi 1 sự cố
+    // hoàn tất toàn bộ luồng xử lý.
+    await sendPushToUsersByRoleInArea(prisma, ["DIRECTOR"], null, {
+      title: `Đã hoàn thành — PO ${task.issue.poCode}`,
+      body: `Sự cố đã được xử lý xong: ${task.issue.description}`,
+      data: { type: "ISSUE_RESOLVED", issueId: task.issueId },
     });
 
     return NextResponse.json(updatedTask);
   }
 
-  // Chưa hoàn thành — giữ nguyên phiếu gốc, mở lại 5M+1E cho 3 role điều tra tiếp.
+  // Kiểm tra lại — sự cố còn tái diễn trong lúc theo dõi, giữ nguyên phiếu gốc, mở lại 5M+1E cho
+  // 3 role điều tra tiếp.
   const [updatedTask] = await prisma.$transaction([
     prisma.maintenanceTask.update({
       where: { id },
@@ -71,8 +85,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   ]);
 
   await sendPushToUsersByRoleInArea(prisma, ["QA", "LINE_LEADER", "TECHNOLOGY"], task.issue.areaId, {
-    title: `Chưa hoàn thành — PO ${task.issue.poCode}`,
-    body: "Trưởng line xác nhận chưa hoàn thành — cần điều tra lại 5M+1E.",
+    title: `Cần kiểm tra lại — PO ${task.issue.poCode}`,
+    body: "Trưởng line yêu cầu kiểm tra lại — cần điều tra lại 5M+1E.",
     data: { type: "REOPENED", issueId: task.issueId, taskId: id },
   });
 

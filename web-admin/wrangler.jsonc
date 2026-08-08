@@ -1,10 +1,9 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "hethongphanhoiclsk",
+  "name": "tbs-htph-clsk-admin",
   "main": "worker.ts",
   "compatibility_date": "2024-09-23",
   "compatibility_flags": ["nodejs_compat"],
-  "workers_dev": true,
   "triggers": {
     "crons": ["*/5 * * * *"]
   },
@@ -15,7 +14,20 @@
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",
-      "service": "hethongphanhoiclsk"
+      "service": "tbs-htph-clsk-admin"
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "tbs-htph-clsk-db",
+      "database_id": "f16f6633-5d36-457e-945c-bdba8d1b4ce4"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "UPLOADS",
+      "bucket_name": "tbs-htph-clsk-uploads"
     }
   ]
 }

@@ -3,14 +3,7 @@ import { requireAdmin } from "@/lib/require-admin";
 import { NextResponse } from "next/server";
 import type { CategoryType } from "@/generated/prisma/enums";
 
-const VALID_TYPES: CategoryType[] = [
-  "AREA",
-  "PRODUCTION_LINE",
-  "TEAM",
-  "MAINTENANCE_PERIOD",
-  "MACHINE_STATUS",
-  "MACHINE_TYPE",
-];
+const VALID_TYPES: CategoryType[] = ["AREA", "PRODUCTION_LINE", "TEAM"];
 
 export async function GET(req: Request) {
   const { response } = await requireAdmin();
@@ -36,7 +29,7 @@ export async function POST(req: Request) {
   const prisma = await getPrisma();
 
   const body = await req.json();
-  const { type, name, days, colorHex, order } = body;
+  const { type, name, colorHex, order } = body;
 
   if (!type || !VALID_TYPES.includes(type)) {
     return NextResponse.json({ error: "Loại danh mục không hợp lệ" }, { status: 400 });
@@ -50,13 +43,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Tên danh mục đã tồn tại" }, { status: 409 });
   }
 
-  // Danh sách MACHINE_STATUS hoàn toàn tự do (thêm/xoá/sửa tên thoải mái) — statusKind chỉ
-  // được gán qua hành động riêng "Đặt làm mặc định hệ thống" (xem PUT /api/categories/[id]).
   const category = await prisma.category.create({
     data: {
       type,
       name,
-      days: type === "MAINTENANCE_PERIOD" ? (days != null ? Number(days) : null) : null,
       colorHex: colorHex || null,
       order: order ?? 0,
     },

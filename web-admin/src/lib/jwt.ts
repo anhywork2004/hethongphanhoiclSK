@@ -1,30 +1,29 @@
 import jwt from "jsonwebtoken";
 
-function getJwtSecret(): string {
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error("CRITICAL SECURITY RISK: JWT_SECRET environment secret is required in production mode.");
-    }
-    return "dev-secret-change-me";
-  }
-  return secret;
-}
+const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-me";
 
 export type MobileTokenPayload = {
   userId: string;
   employeeCode: string;
-  role: "OPERATOR" | "MAINTENANCE" | "ADMIN";
+  role:
+    | "ADMIN"
+    | "OPERATOR"
+    | "QA"
+    | "LINE_LEADER"
+    | "TECHNOLOGY"
+    | "DEPARTMENT_HEAD"
+    | "MAINTENANCE"
+    | "DIRECTOR";
   name: string;
 };
 
 export function signMobileToken(payload: MobileTokenPayload) {
-  return jwt.sign(payload, getJwtSecret(), { expiresIn: "30d" });
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: "30d" });
 }
 
 export function verifyMobileToken(token: string): MobileTokenPayload | null {
   try {
-    return jwt.verify(token, getJwtSecret()) as MobileTokenPayload;
+    return jwt.verify(token, JWT_SECRET) as MobileTokenPayload;
   } catch {
     return null;
   }

@@ -12,7 +12,8 @@ type Role =
   | "LINE_LEADER"
   | "TECHNOLOGY"
   | "DEPARTMENT_HEAD"
-  | "MAINTENANCE";
+  | "MAINTENANCE"
+  | "DIRECTOR";
 
 type Employee = {
   id: string;
@@ -43,6 +44,7 @@ const roleLabel: Record<Role, string> = {
   TECHNOLOGY: "Công nghệ",
   DEPARTMENT_HEAD: "Trưởng phòng ban",
   MAINTENANCE: "Bảo trì",
+  DIRECTOR: "Giám đốc",
 };
 
 const ROLE_OPTIONS: Role[] = [
@@ -52,6 +54,7 @@ const ROLE_OPTIONS: Role[] = [
   "TECHNOLOGY",
   "DEPARTMENT_HEAD",
   "MAINTENANCE",
+  "DIRECTOR",
   "ADMIN",
 ];
 

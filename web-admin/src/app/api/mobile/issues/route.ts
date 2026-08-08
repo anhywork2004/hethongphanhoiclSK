@@ -1,134 +1,112 @@
-import { NextResponse } from "next/server";
-import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { getDb } from "@/db";
-import { issues, issueImages } from "@/db/schema";
+import { getPrisma } from "@/lib/prisma";
 import { requireMobileAuth } from "@/lib/require-mobile-auth";
-import { sendZaloIssueNotifications } from "@/lib/zalo-oa";
-import { desc, eq } from "drizzle-orm";
+import { userPublicSelect } from "@/lib/selects";
+import { sendPushToUsersByRoleInArea } from "@/lib/push";
+import type { Prisma } from "@/generated/prisma/client";
+import { NextResponse } from "next/server";
 
+const INVESTIGATION_WINDOW_MS = 15 * 60 * 1000;
+const INVESTIGATOR_ROLES = ["QA", "LINE_LEADER", "TECHNOLOGY"];
+
+const issueInclude = {
+  reporter: { select: userPublicSelect },
+  area: true,
+  team: true,
+  productionLine: true,
+  failureCategory: true,
+  submissions: { include: { submitter: { select: userPublicSelect } } },
+  task: {
+    include: {
+      assignee: { select: userPublicSelect },
+      assignedBy: { select: userPublicSelect },
+    },
+  },
+} as const;
+
+// Danh sách phiếu liên quan tới người dùng hiện tại — dùng cho "Hoạt động sự cố gần đây" ở Trang
+// chủ. Phạm vi mở rộng theo vai trò để nhóm điều tra/xử lý cũng thấy được sự cố cần họ xử lý,
+// không chỉ phiếu do chính họ báo cáo:
+// - Vận hành: chỉ phiếu do chính mình báo cáo.
+// - QA/Trưởng line/Công nghệ/Trưởng phòng ban: phiếu tự báo cáo + mọi phiếu trong khu vực mình.
+// - Bảo trì: phiếu tự báo cáo + phiếu đang/đã được giao cho mình.
+// - Giám đốc: toàn bộ phiếu (không giới hạn khu vực).
 export async function GET(req: Request) {
   const { payload, response } = requireMobileAuth(req);
   if (response) return response;
+  const prisma = await getPrisma();
 
-  try {
-    const ctx = await getCloudflareContext({ async: true });
-    const d1 = (ctx.env as unknown as CloudflareEnv).DB;
+  const me = await prisma.user.findUnique({
+    where: { id: payload.userId },
+    select: { areaId: true },
+  });
 
-    if (!d1) {
-      return NextResponse.json({ error: "D1 database binding not found" }, { status: 500 });
-    }
-
-    const db = getDb(d1);
-    const userIssues = await db
-      .select()
-      .from(issues)
-      .where(eq(issues.createdByMnv, payload.employeeCode))
-      .orderBy(desc(issues.createdAt))
-      .limit(50);
-
-    return NextResponse.json(userIssues);
-  } catch (err: unknown) {
-    const e = err as Error;
-    return NextResponse.json({ error: `Lỗi truy vấn: ${e.message}` }, { status: 500 });
+  let where: Prisma.QualityIssueWhereInput = { reporterId: payload.userId };
+  if (payload.role === "DIRECTOR") {
+    where = {};
+  } else if (["QA", "LINE_LEADER", "TECHNOLOGY", "DEPARTMENT_HEAD"].includes(payload.role) && me?.areaId) {
+    where = { OR: [{ reporterId: payload.userId }, { areaId: me.areaId }] };
+  } else if (payload.role === "MAINTENANCE") {
+    where = { OR: [{ reporterId: payload.userId }, { task: { assigneeId: payload.userId } }] };
   }
+
+  const issues = await prisma.qualityIssue.findMany({
+    where,
+    include: issueInclude,
+    orderBy: { createdAt: "desc" },
+    take: 50,
+  });
+
+  return NextResponse.json(issues);
 }
 
 export async function POST(req: Request) {
   const { payload, response } = requireMobileAuth(req);
   if (response) return response;
+  const prisma = await getPrisma();
 
-  try {
-    const ctx = await getCloudflareContext({ async: true });
-    const d1 = (ctx.env as unknown as CloudflareEnv).DB;
+  const { teamId, productionLineId, failureCategoryId, poCode, description, images } =
+    await req.json();
 
-    if (!d1) {
-      return NextResponse.json({ error: "D1 database binding not found" }, { status: 500 });
-    }
-
-    const body = await req.json();
-    const {
-      productCode = "SP-DEMO",
-      productName = "Giày Skechers Demo",
-      affectedSizes = ["39", "40", "41"],
-      workshopId = null,
-      workshopName = "Phân Xưởng May 2",
-      detectionStage = "Chuyền May 2",
-      description,
-      severity = "trung_binh",
-      images = [],
-    } = body;
-
-    if (!description) {
-      return NextResponse.json({ error: "Mô tả sự cố không được để trống" }, { status: 400 });
-    }
-
-    const issueId = `ISSUE-${Date.now()}`;
-    const issueCode = `CLSK-${Math.floor(1000 + Math.random() * 9000)}`;
-    const nowIso = new Date().toISOString();
-
-    const db = getDb(d1);
-
-    await db.insert(issues).values({
-      id: issueId,
-      issueCode,
-      productCode: body.poCode || productCode,
-      productName,
-      affectedSizes: JSON.stringify(affectedSizes),
-      workshopId,
-      workshopName,
-      detectionStage,
-      description,
-      severity,
-      status: "cho_xu_ly",
-      createdByMnv: payload.employeeCode,
-      createdByName: payload.name || payload.employeeCode,
-      createdAt: nowIso,
-    });
-
-    if (Array.isArray(images) && images.length > 0) {
-      for (const imgUrl of images) {
-        await db.insert(issueImages).values({
-          id: `IMG-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-          issueId,
-          imageUrl: imgUrl,
-          createdAt: nowIso,
-        });
-      }
-    }
-
-    // Trigger async Zalo OA 3 groups notification
-    sendZaloIssueNotifications(
-      {
-        id: issueId,
-        issueCode,
-        productCode: body.poCode || productCode,
-        productName,
-        affectedSizes,
-        workshopId,
-        workshopName: workshopName || "Chưa phân xưởng",
-        detectionStage,
-        description,
-        severity,
-        createdByName: payload.name || payload.employeeCode,
-        createdByMnv: payload.employeeCode,
-        createdAt: nowIso,
-      },
-      images.map((imgUrl: string) => ({ imageUrl: imgUrl }))
-    ).catch((err) => {
-      console.error("Zalo OA notification async error:", err);
-    });
-
-    return NextResponse.json(
-      {
-        success: true,
-        message: "Tạo phiếu báo lỗi CLSK thành công",
-        issueId,
-        issueCode,
-      },
-      { status: 201 }
-    );
-  } catch (err: unknown) {
-    const e = err as Error;
-    return NextResponse.json({ error: `Lỗi tạo phiếu: ${e.message}` }, { status: 500 });
+  if (!poCode || !description) {
+    return NextResponse.json({ error: "Thiếu mã PO hoặc mô tả" }, { status: 400 });
   }
+
+  // Phiếu luôn thuộc khu vực của chính người báo cáo — mọi nhân viên (trừ Admin) đều gắn với
+  // đúng 1 khu vực, dùng để định tuyến thông báo/phân việc cho đúng QA/Trưởng line/Công nghệ/
+  // Trưởng phòng ban/Bảo trì cùng khu vực. Không lấy areaId từ client vì mobile không có picker
+  // chọn khu vực (chỉ chọn Tổ/Chuyền).
+  const reporter = await prisma.user.findUnique({
+    where: { id: payload.userId },
+    select: { areaId: true },
+  });
+
+  const issue = await prisma.qualityIssue.create({
+    data: {
+      reporterId: payload.userId,
+      areaId: reporter?.areaId ?? null,
+      teamId: teamId || null,
+      productionLineId: productionLineId || null,
+      failureCategoryId: failureCategoryId || null,
+      poCode,
+      description,
+      images: images ? JSON.stringify(images) : null,
+      status: "REPORTED",
+      investigationDeadline: new Date(Date.now() + INVESTIGATION_WINDOW_MS),
+    },
+    include: issueInclude,
+  });
+
+  await sendPushToUsersByRoleInArea(
+    prisma,
+    INVESTIGATOR_ROLES,
+    issue.areaId,
+    {
+      title: `Sự cố mới — PO ${issue.poCode}`,
+      body: `${payload.name} báo cáo: ${description}`,
+      data: { type: "NEED_INVESTIGATE", issueId: issue.id },
+    },
+    payload.userId,
+  );
+
+  return NextResponse.json(issue, { status: 201 });
 }

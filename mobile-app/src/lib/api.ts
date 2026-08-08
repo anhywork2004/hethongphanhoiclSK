@@ -1,6 +1,14 @@
-const API_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000";
+const API_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:3001";
 
-export type Role = "OPERATOR" | "MAINTENANCE" | "ADMIN";
+export type Role =
+  | "ADMIN"
+  | "OPERATOR"
+  | "QA"
+  | "LINE_LEADER"
+  | "TECHNOLOGY"
+  | "DEPARTMENT_HEAD"
+  | "MAINTENANCE"
+  | "DIRECTOR";
 
 export type User = {
   id: string;
@@ -10,127 +18,106 @@ export type User = {
   avatarUrl: string | null;
   role: Role;
   area?: { id: string; name: string } | null;
-  stats?: { totalRepairs: number; avgRating: number | null; ratedCount: number } | null;
+  stats?: { totalTasks: number; completedTasks: number } | null;
 };
 
-export type Machine = {
-  id: string;
-  code: string;
-  serialNumber: string | null;
-  name: string;
-  location: string;
-  latitude: number | null;
-  longitude: number | null;
-  area: string | null;
-  team: string | null;
-  productionLine: string | null;
-  model: string | null;
-  manufacturer: string | null;
-  origin: string | null;
-  manufactureYear: number | null;
-  yearInUse: number | null;
-  specs: string | null;
-  status: string;
-  maintenancePeriod: string | null;
-  incidents?: Incident[];
-};
+export type CategoryRef = { id: string; name: string } | null;
 
-export type FailureCategory = {
-  id: string;
-  name: string;
-  isOther: boolean;
-  order: number;
-};
+export type FailureCategory = { id: string; name: string; order: number };
+export type PartCategory = { id: string; name: string; order: number };
 
-export type Incident = {
+export type IssueStatus =
+  | "REPORTED"
+  | "INVESTIGATING"
+  | "ROOT_CAUSE_FOUND"
+  | "ASSIGNED"
+  | "IN_PROGRESS"
+  | "DONE";
+
+export type FiveMOneESubmission = {
   id: string;
-  machineId: string;
-  description: string;
+  issueId: string;
+  submitterId: string;
+  submitterRole: "QA" | "LINE_LEADER" | "TECHNOLOGY";
+  submitter: User;
+  poCode: string;
   images: string | null;
-  status: "PENDING" | "ACCEPTED" | "DONE";
-  reporter: User;
-  assignedTo: User | null;
+  man: string;
+  machine: string;
+  material: string;
+  method: string;
+  measurement: string;
+  environment: string;
+  submittedAt: string;
+};
+
+export type ChatTurn = { role: "user" | "model"; text: string };
+export type ChatQuestion = { type: "question"; text: string };
+export type ChatConclusion = {
+  type: "conclusion";
+  rootCause: string;
+  man: string;
+  machine: string;
+  material: string;
+  method: string;
+  measurement: string;
+  environment: string;
+};
+
+export type TaskStatus = "PENDING" | "ACCEPTED" | "DONE";
+export type VerifyStatus = "PENDING" | "CONFIRMED_DONE" | "REJECTED";
+
+export type MaintenanceTask = {
+  id: string;
+  issueId: string;
+  assignedBy: User;
+  assignee: User;
+  status: TaskStatus;
   acceptedAt: string | null;
   completedAt: string | null;
-  resendCount: number;
-  createdAt: string;
-  machine?: Machine;
-  category?: FailureCategory | null;
-  customCategoryText?: string | null;
-};
-
-export type ChatGroup = {
-  id: string;
-  name: string;
-  image: string | null;
-  createdAt: string;
-  members: { id: string; userId: string; user: User }[];
-  messages: ChatMessage[];
-};
-
-export type ChatMessage = {
-  id: string;
-  groupId: string;
-  senderId: string | null;
-  sender: User | null;
-  type: "TEXT" | "INCIDENT_ALERT" | "SYSTEM";
-  content: string;
-  incidentId: string | null;
-  incident?: Incident | null;
-  createdAt: string;
-};
-
-export type GroupInvitation = {
-  id: string;
-  groupId: string;
-  group: { id: string; name: string };
-  invitedUserId: string;
-  invitedBy: User;
-  status: "PENDING" | "ACCEPTED" | "REJECTED";
-  createdAt: string;
-  respondedAt: string | null;
-};
-
-export type Announcement = {
-  id: string;
-  title: string;
-  content: string;
-  image: string | null;
-  createdBy: User;
-  createdAt: string;
-};
-
-export type MaintenanceLog = {
-  id: string;
-  incidentId: string;
-  machine: Machine;
-  technician: User;
-  startTime: string;
-  endTime: string;
-  durationMinutes: number;
-  repairDetail: string;
+  repairDetail: string | null;
   partsReplaced: string | null;
-  proofImages: string | null;
-  skillRating: number | null;
-  ratingSubmittedAt: string | null;
-  createdAt: string;
+  imagesBefore: string | null;
+  imagesAfter: string | null;
+  monitoringStartedAt: string | null;
+  verifyDeadline: string | null;
+  verifiedStatus: VerifyStatus;
+  verifiedAt: string | null;
+  verifiedBy?: User | null;
 };
 
-export type RatingRequest = {
+export type QualityIssue = {
   id: string;
-  maintenanceLogId: string;
-  operatorId: string;
-  status: "PENDING" | "SUBMITTED";
+  reporterId: string;
+  reporter: User;
+  description: string;
+  images: string | null;
+  poCode: string;
+  status: IssueStatus;
+  area: CategoryRef;
+  team: CategoryRef;
+  productionLine: CategoryRef;
+  failureCategory: FailureCategory | null;
+  investigationDeadline: string | null;
+  investigationLocked: boolean;
+  rootCause: string | null;
+  solution: string | null;
+  rootCauseDecidedAt: string | null;
   createdAt: string;
-  respondedAt: string | null;
-  maintenanceLog: MaintenanceLog;
+  submissions: FiveMOneESubmission[];
+  task: MaintenanceTask | null;
 };
 
 export type NotificationItem =
-  | { kind: "INVITATION"; id: string; createdAt: string; invitation: GroupInvitation }
-  | { kind: "ANNOUNCEMENT"; id: string; createdAt: string; announcement: Announcement }
-  | { kind: "RATING_REQUEST"; id: string; createdAt: string; ratingRequest: RatingRequest }
-  | { kind: "INCIDENT_ACCEPTED"; id: string; createdAt: string; incident: Incident };
+  | { kind: "NEED_INVESTIGATE"; id: string; createdAt: string; issue: QualityIssue }
+  | { kind: "NEED_ROOT_CAUSE"; id: string; createdAt: string; issue: QualityIssue }
+  | { kind: "NEED_ASSIGN"; id: string; createdAt: string; issue: QualityIssue }
+  | { kind: "TASK_ASSIGNED"; id: string; createdAt: string; task: MaintenanceTask & { issue: QualityIssue } }
+  | { kind: "TASK_ACCEPTED"; id: string; createdAt: string; task: MaintenanceTask & { issue: QualityIssue } }
+  | { kind: "NEED_REPAIR_REVIEW"; id: string; createdAt: string; task: MaintenanceTask & { issue: QualityIssue } }
+  | { kind: "NEED_VERIFY"; id: string; createdAt: string; task: MaintenanceTask & { issue: QualityIssue } }
+  | { kind: "TASK_DONE_INFO"; id: string; createdAt: string; task: MaintenanceTask & { issue: QualityIssue } }
+  | { kind: "ISSUE_RESOLVED"; id: string; createdAt: string; issue: QualityIssue };
 
 class ApiError extends Error {
   status: number;
@@ -183,96 +170,112 @@ export const api = {
       body: { oldPassword, newPassword },
     }),
 
-  getMachineByCode: (token: string, code: string) =>
-    request<Machine>(`/api/mobile/machines/${encodeURIComponent(code)}`, { token }),
+  listAreas: (token: string) =>
+    request<{ id: string; name: string }[]>("/api/mobile/categories?type=AREA", { token }),
+  listTeams: (token: string) =>
+    request<{ id: string; name: string }[]>("/api/mobile/categories?type=TEAM", { token }),
+  listProductionLines: (token: string) =>
+    request<{ id: string; name: string }[]>("/api/mobile/categories?type=PRODUCTION_LINE", { token }),
+  listFailureCategories: (token: string) =>
+    request<FailureCategory[]>("/api/mobile/issue-failure-categories", { token }),
+  listPartCategories: (token: string) =>
+    request<PartCategory[]>("/api/mobile/part-categories", { token }),
 
-  listIncidents: (token: string) => request<Incident[]>("/api/mobile/incidents", { token }),
+  listMyIssues: (token: string) => request<QualityIssue[]>("/api/mobile/issues", { token }),
 
-  createIncident: (
+  getIssue: (token: string, id: string) => request<QualityIssue>(`/api/mobile/issues/${id}`, { token }),
+
+  reportIssue: (
     token: string,
     payload: {
-      machineId: string;
+      teamId?: string;
+      productionLineId?: string;
+      failureCategoryId?: string;
+      poCode: string;
       description: string;
       images?: string[];
-      categoryId: string;
-      customCategoryText?: string;
     },
-  ) => request<Incident>("/api/mobile/incidents", { method: "POST", token, body: payload }),
+  ) => request<QualityIssue>("/api/mobile/issues", { method: "POST", token, body: payload }),
 
-  listFailureCategories: (token: string) =>
-    request<FailureCategory[]>("/api/mobile/failure-categories", { token }),
-
-  acceptIncident: (token: string, incidentId: string) =>
-    request<Incident>(`/api/mobile/incidents/${incidentId}/accept`, { method: "POST", token }),
-
-  completeIncident: (
+  submit5M1E: (
     token: string,
-    incidentId: string,
+    issueId: string,
     payload: {
-      repairDetail: string;
-      partsReplaced?: string;
-      proofImages?: string[];
+      poCode: string;
+      images?: string[];
+      man: string;
+      machine: string;
+      material: string;
+      method: string;
+      measurement: string;
+      environment: string;
     },
   ) =>
-    request<Incident>(`/api/mobile/incidents/${incidentId}/complete`, {
+    request<FiveMOneESubmission>(`/api/mobile/issues/${issueId}/submissions`, {
       method: "POST",
       token,
       body: payload,
     }),
 
-  listChatGroups: (token: string) => request<ChatGroup[]>("/api/mobile/chat-groups", { token }),
+  investigateChat: (token: string, issueId: string, history: ChatTurn[]) =>
+    request<ChatQuestion | ChatConclusion>(`/api/mobile/issues/${issueId}/investigate-chat`, {
+      method: "POST",
+      token,
+      body: { history },
+    }),
 
-  createChatGroup: (token: string, name: string) =>
-    request<ChatGroup>("/api/mobile/chat-groups", { method: "POST", token, body: { name } }),
-
-  updateChatGroup: (token: string, groupId: string, payload: { name?: string; image?: string }) =>
-    request<ChatGroup>(`/api/mobile/chat-groups/${groupId}`, {
-      method: "PUT",
+  decideRootCause: (token: string, issueId: string, payload: { rootCause: string; solution?: string }) =>
+    request<QualityIssue>(`/api/mobile/issues/${issueId}/root-cause`, {
+      method: "POST",
       token,
       body: payload,
     }),
 
-  addChatGroupMember: (token: string, groupId: string, employeeCode: string) =>
-    request<GroupInvitation>(`/api/mobile/chat-groups/${groupId}/members`, {
+  searchMaintenanceInMyArea: (token: string, code: string) =>
+    request<User[]>(`/api/mobile/employees/search?code=${encodeURIComponent(code)}`, { token }),
+
+  assignTask: (token: string, issueId: string, assigneeId: string) =>
+    request<MaintenanceTask>(`/api/mobile/issues/${issueId}/assign`, {
       method: "POST",
       token,
-      body: { employeeCode },
+      body: { assigneeId },
+    }),
+
+  acceptTask: (token: string, taskId: string) =>
+    request<MaintenanceTask>(`/api/mobile/tasks/${taskId}/accept`, { method: "POST", token }),
+
+  completeTask: (
+    token: string,
+    taskId: string,
+    payload: {
+      repairDetail: string;
+      partsReplaced?: { partCategoryId: string; quantity: number; note?: string }[];
+      imagesBefore: string[];
+      imagesAfter: string[];
+    },
+  ) =>
+    request<MaintenanceTask>(`/api/mobile/tasks/${taskId}/complete`, {
+      method: "POST",
+      token,
+      body: payload,
+    }),
+
+  confirmRepair: (token: string, taskId: string, adequate: boolean) =>
+    request<MaintenanceTask>(`/api/mobile/tasks/${taskId}/confirm-repair`, {
+      method: "POST",
+      token,
+      body: { adequate },
+    }),
+
+  verifyTask: (token: string, taskId: string, confirmed: boolean) =>
+    request<MaintenanceTask>(`/api/mobile/tasks/${taskId}/verify`, {
+      method: "POST",
+      token,
+      body: { confirmed },
     }),
 
   listNotifications: (token: string) =>
     request<NotificationItem[]>("/api/mobile/notifications", { token }),
-
-  getAnnouncement: (token: string, id: string) =>
-    request<Announcement>(`/api/mobile/announcements/${id}`, { token }),
-
-  respondToInvitation: (token: string, invitationId: string, action: "accept" | "reject") =>
-    request<GroupInvitation>(`/api/mobile/notifications/invitations/${invitationId}/${action}`, {
-      method: "POST",
-      token,
-    }),
-
-  submitRating: (token: string, ratingRequestId: string, skillRating: number) =>
-    request<{ ok: true }>(`/api/mobile/notifications/ratings/${ratingRequestId}/submit`, {
-      method: "POST",
-      token,
-      body: { skillRating },
-    }),
-
-  listMessages: (token: string, groupId: string, since?: string) =>
-    request<ChatMessage[]>(
-      `/api/mobile/chat-groups/${groupId}/messages${since ? `?since=${encodeURIComponent(since)}` : ""}`,
-      { token },
-    ),
-
-  sendMessage: (token: string, groupId: string, content: string) =>
-    request<ChatMessage>(`/api/mobile/chat-groups/${groupId}/messages`, {
-      method: "POST",
-      token,
-      body: { content },
-    }),
-
-  searchEmployees: (token: string, code: string) =>
-    request<User[]>(`/api/mobile/employees/search?code=${encodeURIComponent(code)}`, { token }),
 
   uploadImage: (token: string, base64: string, mimeType: string) =>
     request<{ url: string }>("/api/mobile/upload", {

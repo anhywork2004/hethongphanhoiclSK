@@ -1,19 +1,11 @@
 import { useCallback, useState } from "react";
-import {
-  Alert,
-  FlatList,
-  Image,
-  RefreshControl,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
 import { useFocusEffect, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import Animated, { FadeInUp } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "@/lib/auth-context";
-import { api, ApiError, NotificationItem, RatingRequest, resolveImageUrl } from "@/lib/api";
+import { api, NotificationItem } from "@/lib/api";
 import { colors } from "@/constants/colors";
 import { radius } from "@/constants/ui-theme";
 import { PressableScale } from "@/components/pressable-scale";
@@ -29,54 +21,72 @@ function timeAgo(iso: string) {
   return `${days} ngày trước`;
 }
 
-function RatingRequestCard({
-  ratingRequest,
-  createdAt,
-  busy,
-  onSubmit,
-}: {
-  ratingRequest: RatingRequest;
-  createdAt: string;
-  busy: boolean;
-  onSubmit: (rating: number) => void;
-}) {
-  const [rating, setRating] = useState(5);
-  const log = ratingRequest.maintenanceLog;
+const KIND_META: Record<
+  NotificationItem["kind"],
+  { icon: string; title: string; badgeBg: string; badgeColor: string }
+> = {
+  NEED_INVESTIGATE: {
+    icon: "🔍",
+    title: "Cần điều tra 5M+1E",
+    badgeBg: colors.statusPendingBg,
+    badgeColor: colors.statusPendingText,
+  },
+  NEED_ROOT_CAUSE: {
+    icon: "🧩",
+    title: "Cần chốt nguyên nhân gốc",
+    badgeBg: colors.statusAcceptedBg,
+    badgeColor: colors.statusAcceptedText,
+  },
+  NEED_ASSIGN: {
+    icon: "📋",
+    title: "Cần giao việc bảo trì",
+    badgeBg: colors.statusAcceptedBg,
+    badgeColor: colors.statusAcceptedText,
+  },
+  TASK_ASSIGNED: {
+    icon: "🛠️",
+    title: "CẦN TRỢ GIÚP",
+    badgeBg: "#FEE2E2",
+    badgeColor: colors.danger,
+  },
+  TASK_ACCEPTED: {
+    icon: "✅",
+    title: "Đã nhận việc",
+    badgeBg: colors.statusDoneBg,
+    badgeColor: colors.statusDoneText,
+  },
+  NEED_REPAIR_REVIEW: {
+    icon: "🔎",
+    title: "Xác nhận sửa chữa đạt yêu cầu?",
+    badgeBg: colors.statusPendingBg,
+    badgeColor: colors.statusPendingText,
+  },
+  NEED_VERIFY: {
+    icon: "⏳",
+    title: "Đang theo dõi — Đóng vấn đề?",
+    badgeBg: colors.statusPendingBg,
+    badgeColor: colors.statusPendingText,
+  },
+  TASK_DONE_INFO: {
+    icon: "🔧",
+    title: "Bảo trì đã hoàn thành sửa chữa",
+    badgeBg: colors.statusDoneBg,
+    badgeColor: colors.statusDoneText,
+  },
+  ISSUE_RESOLVED: {
+    icon: "🎉",
+    title: "Sự cố đã hoàn thành",
+    badgeBg: colors.statusDoneBg,
+    badgeColor: colors.statusDoneText,
+  },
+};
 
+function Row({ label, value }: { label: string; value: string }) {
+  if (!value) return null;
   return (
-    <View style={styles.card}>
-      <View style={styles.cardHeaderRow}>
-        <View style={[styles.avatar, { backgroundColor: colors.success }]}>
-          <Text style={styles.avatarText}>✓</Text>
-        </View>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.cardTitle}>Yêu cầu đánh giá bảo trì</Text>
-          <Text style={styles.cardTime}>{timeAgo(createdAt)}</Text>
-        </View>
-      </View>
-      <Text style={styles.cardBody}>
-        <Text style={{ fontWeight: "700" }}>{log.technician.name}</Text> đã hoàn thành sửa máy{" "}
-        <Text style={{ fontWeight: "700" }}>
-          {log.machine.name} ({log.machine.code})
-        </Text>
-        . Hãy đánh giá tay nghề bảo trì.
-      </Text>
-
-      <View style={styles.starRow}>
-        {[1, 2, 3, 4, 5].map((n) => (
-          <PressableScale key={n} scaleTo={1.2} onPress={() => setRating(n)}>
-            <Text style={[styles.star, n <= rating && styles.starActive]}>★</Text>
-          </PressableScale>
-        ))}
-      </View>
-
-      <PressableScale
-        style={styles.acceptButton}
-        disabled={busy}
-        onPress={() => onSubmit(rating)}
-      >
-        <Text style={styles.acceptButtonText}>Gửi đánh giá</Text>
-      </PressableScale>
+    <View style={styles.alertRow}>
+      <Text style={styles.alertLabel}>{label}</Text>
+      <Text style={styles.alertValue}>{value}</Text>
     </View>
   );
 }
@@ -86,7 +96,6 @@ export default function NotificationsScreen() {
   const { token, user } = useAuth();
   const [items, setItems] = useState<NotificationItem[]>([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [respondingId, setRespondingId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     if (!token) return;
@@ -106,32 +115,8 @@ export default function NotificationsScreen() {
     setRefreshing(false);
   }
 
-  async function respond(invitationId: string, action: "accept" | "reject") {
-    if (!token) return;
-    setRespondingId(invitationId);
-    try {
-      await api.respondToInvitation(token, invitationId, action);
-      setItems((prev) => prev.filter((it) => it.id !== invitationId));
-    } catch (e) {
-      const message = e instanceof ApiError ? e.message : "Không thể xử lý lời mời";
-      Alert.alert("Lỗi", message);
-    } finally {
-      setRespondingId(null);
-    }
-  }
-
-  async function submitRating(ratingRequestId: string, rating: number) {
-    if (!token) return;
-    setRespondingId(ratingRequestId);
-    try {
-      await api.submitRating(token, ratingRequestId, rating);
-      setItems((prev) => prev.filter((it) => it.id !== ratingRequestId));
-    } catch (e) {
-      const message = e instanceof ApiError ? e.message : "Không thể gửi đánh giá";
-      Alert.alert("Lỗi", message);
-    } finally {
-      setRespondingId(null);
-    }
+  function goToIssue(issueId: string) {
+    router.push(`/issue/${issueId}`);
   }
 
   return (
@@ -148,7 +133,7 @@ export default function NotificationsScreen() {
 
       <FlatList
         data={items}
-        keyExtractor={(item) => `${item.kind}-${item.id}`}
+        keyExtractor={(item) => item.id}
         contentContainerStyle={{ padding: 16, gap: 10 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         ListEmptyComponent={
@@ -158,119 +143,63 @@ export default function NotificationsScreen() {
           </View>
         }
         renderItem={({ item, index }) => {
-          const entering = FadeInDown.delay(Math.min(index, 8) * 45).duration(320);
-          if (item.kind === "INVITATION") {
-            const inv = item.invitation;
-            const busy = respondingId === inv.id;
-            return (
-              <Animated.View entering={entering} style={styles.card}>
-                <View style={styles.cardHeaderRow}>
-                  <View style={styles.avatar}>
-                    <Text style={styles.avatarText}>{inv.group.name.charAt(0)}</Text>
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.cardTitle}>Lời mời tham gia nhóm</Text>
-                    <Text style={styles.cardTime}>{timeAgo(item.createdAt)}</Text>
-                  </View>
-                </View>
-                <Text style={styles.cardBody}>
-                  <Text style={{ fontWeight: "700" }}>{inv.invitedBy.name}</Text> mời bạn tham gia
-                  nhóm <Text style={{ fontWeight: "700" }}>{inv.group.name}</Text>
-                </Text>
-                <View style={styles.actionRow}>
-                  <PressableScale
-                    style={styles.rejectButton}
-                    disabled={busy}
-                    onPress={() => respond(inv.id, "reject")}
-                  >
-                    <Text style={styles.rejectButtonText}>Từ chối</Text>
-                  </PressableScale>
-                  <PressableScale
-                    style={styles.acceptButton}
-                    disabled={busy}
-                    onPress={() => respond(inv.id, "accept")}
-                  >
-                    <Text style={styles.acceptButtonText}>Chấp nhận</Text>
-                  </PressableScale>
-                </View>
-              </Animated.View>
-            );
-          }
+          const meta = KIND_META[item.kind];
+          const entering = FadeInUp.delay(Math.min(index, 8) * 45).duration(280);
 
-          if (item.kind === "RATING_REQUEST") {
-            return (
-              <Animated.View entering={entering}>
-                <RatingRequestCard
-                  ratingRequest={item.ratingRequest}
-                  createdAt={item.createdAt}
-                  busy={respondingId === item.id}
-                  onSubmit={(rating) => submitRating(item.id, rating)}
-                />
-              </Animated.View>
-            );
-          }
+          const issue = "issue" in item ? item.issue : item.task.issue;
+          const task = "task" in item ? item.task : null;
 
-          if (item.kind === "INCIDENT_ACCEPTED") {
-            const inc = item.incident;
-            const acceptedTime = inc.acceptedAt
-              ? new Date(inc.acceptedAt).toLocaleString("vi-VN", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  day: "2-digit",
-                  month: "2-digit",
-                })
-              : "";
-            return (
-              <Animated.View entering={entering} style={styles.card}>
-                <View style={styles.cardHeaderRow}>
-                  <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
-                    <Text style={styles.avatarText}>
-                      {(inc.assignedTo?.name || "?").charAt(0)}
-                    </Text>
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.cardTitle}>
-                      {inc.status === "DONE" ? "Đã hoàn thành công việc" : "Đã nhận việc sửa máy"}
-                    </Text>
-                    <Text style={styles.cardTime}>{timeAgo(item.createdAt)}</Text>
-                  </View>
-                </View>
-                <Text style={styles.cardBody}>
-                  <Text style={{ fontWeight: "700" }}>{inc.assignedTo?.name}</Text> đã nhận xử lý sự
-                  cố bạn báo tại máy{" "}
-                  <Text style={{ fontWeight: "700" }}>
-                    {inc.machine?.name} ({inc.machine?.code})
-                  </Text>{" "}
-                  lúc {acceptedTime}
-                </Text>
-              </Animated.View>
-            );
-          }
-
-          const ann = item.announcement;
           return (
             <Animated.View entering={entering}>
-              <PressableScale
-                style={styles.card}
-                onPress={() => router.push(`/announcement/${ann.id}`)}
-              >
-                <View style={styles.cardHeaderRow}>
-                  <View style={[styles.avatar, { backgroundColor: colors.primaryDark }]}>
-                    <Text style={styles.avatarText}>A</Text>
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.cardTitle}>Quản trị viên · {ann.createdBy.name}</Text>
-                    <Text style={styles.cardTime}>{timeAgo(item.createdAt)}</Text>
+              <PressableScale style={styles.card} onPress={() => goToIssue(issue.id)}>
+                <View style={styles.titleRow}>
+                  <Text style={styles.title}>
+                    {meta.icon} {meta.title}
+                  </Text>
+                  <View style={[styles.badge, { backgroundColor: meta.badgeBg }]}>
+                    <Text style={[styles.badgeText, { color: meta.badgeColor }]}>
+                      {timeAgo(item.createdAt)}
+                    </Text>
                   </View>
                 </View>
-                <Text style={styles.postTitle}>{ann.title}</Text>
-                {ann.image && (
-                  <Image source={{ uri: resolveImageUrl(ann.image) }} style={styles.postImage} />
+
+                <Row label="Mã PO" value={issue.poCode} />
+                <Row label="Người báo" value={issue.reporter?.name || ""} />
+                <Row
+                  label="Tổ / Chuyền"
+                  value={`${issue.team?.name || "-"} / ${issue.productionLine?.name || "-"}`}
+                />
+                {issue.failureCategory && <Row label="Danh mục lỗi" value={issue.failureCategory.name} />}
+                <Row label="Mô tả" value={issue.description} />
+
+                {item.kind === "TASK_ASSIGNED" && task && (
+                  <Row label="Giải pháp" value={issue.solution || "Không có đề xuất"} />
                 )}
-                <Text style={styles.cardBody} numberOfLines={3}>
-                  {ann.content}
-                </Text>
-                <Text style={styles.readMore}>Xem chi tiết →</Text>
+                {item.kind === "TASK_ACCEPTED" && task?.assignee && (
+                  <Row
+                    label="Bảo trì"
+                    value={`${task.assignee.name}${
+                      task.acceptedAt
+                        ? " · " +
+                          new Date(task.acceptedAt).toLocaleTimeString("vi-VN", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : ""
+                    }`}
+                  />
+                )}
+                {item.kind === "NEED_VERIFY" && task?.assignee && (
+                  <Row label="Đã sửa bởi" value={task.assignee.name} />
+                )}
+                {item.kind === "NEED_ROOT_CAUSE" && <Row label="Trạng thái" value="Đủ dữ liệu 5M+1E" />}
+                {item.kind === "NEED_ASSIGN" && <Row label="Nguyên nhân gốc" value={issue.rootCause || ""} />}
+                {item.kind === "TASK_DONE_INFO" && task?.assignee && (
+                  <Row label="Bảo trì" value={`${task.assignee.name} đã hoàn thành sửa chữa`} />
+                )}
+                {item.kind === "ISSUE_RESOLVED" && (
+                  <Row label="Trạng thái" value="Đã xác nhận hoàn thành toàn bộ luồng xử lý" />
+                )}
               </PressableScale>
             </Animated.View>
           );
@@ -310,49 +239,21 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     borderWidth: 1,
     borderColor: colors.border,
-    padding: 14,
+    padding: 16,
     gap: 8,
   },
-  cardHeaderRow: { flexDirection: "row", alignItems: "center", gap: 10 },
-  avatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: colors.primary,
+  titleRow: {
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
+    flexWrap: "wrap",
+    gap: 6,
+    marginBottom: 2,
   },
-  avatarText: { color: colors.white, fontWeight: "700" },
-  cardTitle: { fontWeight: "600", color: colors.text, fontSize: 13 },
-  cardTime: { color: colors.textMuted, fontSize: 11, marginTop: 1 },
-  cardBody: { color: colors.textSecondary, fontSize: 13, lineHeight: 19 },
-  postTitle: { fontWeight: "600", color: colors.text, fontSize: 15 },
-  postImage: {
-    width: "100%",
-    height: 160,
-    borderRadius: radius.md,
-    backgroundColor: colors.border,
-  },
-  readMore: { color: colors.primary, fontSize: 12, fontWeight: "700", marginTop: 2 },
-  actionRow: { flexDirection: "row", gap: 10, marginTop: 4 },
-  rejectButton: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: colors.danger,
-    borderRadius: radius.md,
-    paddingVertical: 10,
-    alignItems: "center",
-  },
-  rejectButtonText: { color: colors.danger, fontWeight: "700" },
-  acceptButton: {
-    flex: 1,
-    backgroundColor: colors.primary,
-    borderRadius: radius.md,
-    paddingVertical: 10,
-    alignItems: "center",
-  },
-  acceptButtonText: { color: colors.white, fontWeight: "700" },
-  starRow: { flexDirection: "row", gap: 6, marginTop: 2 },
-  star: { fontSize: 28, color: colors.border },
-  starActive: { color: colors.warning },
+  title: { fontWeight: "700", color: colors.text, fontSize: 14.5 },
+  badge: { borderRadius: radius.pill, paddingHorizontal: 8, paddingVertical: 3 },
+  badgeText: { fontSize: 11, fontWeight: "700" },
+  alertRow: { flexDirection: "row", alignItems: "flex-start" },
+  alertLabel: { width: 90, fontSize: 12, fontWeight: "700", color: colors.textMuted },
+  alertValue: { flex: 1, fontSize: 13.5, color: colors.text, lineHeight: 19 },
 });

@@ -19,21 +19,13 @@ export async function GET(req: Request) {
 
   if (!user) return NextResponse.json({ error: "Không tìm thấy người dùng" }, { status: 404 });
 
-  let stats: { totalRepairs: number; avgRating: number | null; ratedCount: number } | null = null;
+  let stats: { totalTasks: number; completedTasks: number } | null = null;
   if (user.role === "MAINTENANCE") {
-    const [totalRepairs, ratingAgg] = await Promise.all([
-      prisma.maintenanceLog.count({ where: { technicianId: user.id } }),
-      prisma.maintenanceLog.aggregate({
-        where: { technicianId: user.id, skillRating: { not: null } },
-        _avg: { skillRating: true },
-        _count: { skillRating: true },
-      }),
+    const [totalTasks, completedTasks] = await Promise.all([
+      prisma.maintenanceTask.count({ where: { assigneeId: user.id } }),
+      prisma.maintenanceTask.count({ where: { assigneeId: user.id, status: "DONE" } }),
     ]);
-    stats = {
-      totalRepairs,
-      avgRating: ratingAgg._avg.skillRating != null ? Number(ratingAgg._avg.skillRating.toFixed(1)) : null,
-      ratedCount: ratingAgg._count.skillRating,
-    };
+    stats = { totalTasks, completedTasks };
   }
 
   return NextResponse.json({ ...user, stats });

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Upload, X, Clock, AlertTriangle, CheckCircle2, Factory, Package, Layers, Image as ImageIcon } from "lucide-react";
+import { Visual4M1EPicker } from "@/components/reports/visual-4m1e-picker";
 
 interface SizeItem {
   id: string;
@@ -32,6 +33,7 @@ export function IssueReportForm() {
   const [detectionStage, setDetectionStage] = useState("");
   const [description, setDescription] = useState("");
   const [severity, setSeverity] = useState<"thap" | "trung_binh" | "cao" | "khan_cap">("trung_binh");
+  const [selectedCause4M1E, setSelectedCause4M1E] = useState("Machine");
 
   const [sizesList, setSizesList] = useState<SizeItem[]>([]);
   const [workshopsList, setWorkshopsList] = useState<WorkshopItem[]>([]);
@@ -186,7 +188,7 @@ export function IssueReportForm() {
           workshopId: selectedWorkshopId,
           workshopName: selectedWsObj?.workshopName || "Phân xưởng Chặt & Chuẩn bị",
           detectionStage,
-          description,
+          description: `[Lỗi 4M+1E: ${selectedCause4M1E}] ${description}`,
           severity,
           images: uploadedImages,
         }),
@@ -213,42 +215,50 @@ export function IssueReportForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl mx-auto font-sans">
-      <div className="flex items-center justify-between border-b border-slate-800 pb-5">
+      <div className="flex items-center justify-between border-b border-slate-200 pb-5">
         <div>
-          <h1 className="text-2xl font-extrabold text-white tracking-tight">
-            Form Báo Cáo Vấn Đề (Phiếu CLSK)
+          <h1 className="text-2xl font-black text-[#004724] tracking-tight font-serif-luxury">
+            Tạo Báo Cáo Vấn Đề CLSK
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            Phát hiện sự cố chất lượng sản phẩm & phát động quy trình phản hồi 2 giờ vàng.
+          <p className="text-xs text-slate-500 mt-1 font-medium">
+            Phát hiện sự cố chất lượng sản phẩm & phát động quy trình 2 giờ vàng.
           </p>
         </div>
 
         {/* Realtime non-editable clock */}
-        <div className="px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 flex items-center space-x-2 text-xs font-mono text-blue-400 shadow-inner">
-          <Clock className="w-4 h-4 text-blue-400 animate-pulse" />
-          <span>{currentTime || "Loading realtime clock..."}</span>
+        <div className="px-4 py-2 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center space-x-2 text-xs font-mono text-[#004724] shadow-xs">
+          <Clock className="w-4 h-4 text-[#004724] animate-pulse" />
+          <span>{currentTime || "Loading clock..."}</span>
         </div>
       </div>
 
       {error && (
-        <div className="rounded-xl bg-red-950/80 border border-red-800 p-4 flex items-center space-x-3 text-red-200 text-sm">
-          <AlertTriangle className="w-5 h-5 text-red-400 shrink-0" />
+        <div className="rounded-2xl bg-rose-50 border border-rose-200 p-4 flex items-center space-x-3 text-rose-800 text-sm">
+          <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {successMsg && (
-        <div className="rounded-xl bg-emerald-950/80 border border-emerald-800 p-4 flex items-center space-x-3 text-emerald-200 text-sm">
-          <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+        <div className="rounded-2xl bg-emerald-50 border border-emerald-300 p-4 flex items-center space-x-3 text-[#004724] text-sm font-bold">
+          <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
           <span>{successMsg}</span>
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-900/60 p-6 rounded-2xl border border-slate-800/80">
+      {/* 1-Touch 4M+1E Cause Picker */}
+      <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-sm">
+        <Visual4M1EPicker
+          selectedCause={selectedCause4M1E}
+          onSelectCause={(cause) => setSelectedCause4M1E(cause)}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6 rounded-3xl border border-slate-200/90 shadow-sm">
         {/* 1. Mã sản phẩm */}
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2 flex items-center space-x-1.5">
-            <Package className="w-3.5 h-3.5 text-blue-400" />
+          <label className="block text-xs font-bold uppercase tracking-wider text-[#004724] mb-2 flex items-center space-x-1.5">
+            <Package className="w-3.5 h-3.5 text-[#004724]" />
             <span>Mã Sản Phẩm *</span>
           </label>
           <input
@@ -257,14 +267,14 @@ export function IssueReportForm() {
             value={productCode}
             onChange={(e) => setProductCode(e.target.value)}
             placeholder="VD: SK-GO-WALK-6"
-            className="w-full rounded-xl bg-slate-950 border border-slate-800 px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 uppercase transition-all"
+            className="w-full rounded-2xl bg-slate-50 border border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#004724] uppercase transition-all font-semibold"
           />
         </div>
 
         {/* 2. Tên sản phẩm */}
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2 flex items-center space-x-1.5">
-            <Package className="w-3.5 h-3.5 text-indigo-400" />
+          <label className="block text-xs font-bold uppercase tracking-wider text-[#004724] mb-2 flex items-center space-x-1.5">
+            <Package className="w-3.5 h-3.5 text-[#004724]" />
             <span>Tên Sản Phẩm *</span>
           </label>
           <input
@@ -273,20 +283,20 @@ export function IssueReportForm() {
             value={productName}
             onChange={(e) => setProductName(e.target.value)}
             placeholder="VD: Giày Thể Thao Skechers Go Walk Flex"
-            className="w-full rounded-xl bg-slate-950 border border-slate-800 px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-all"
+            className="w-full rounded-2xl bg-slate-50 border border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#004724] transition-all font-semibold"
           />
         </div>
 
         {/* 3. Phân xưởng */}
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2 flex items-center space-x-1.5">
-            <Factory className="w-3.5 h-3.5 text-cyan-400" />
+          <label className="block text-xs font-bold uppercase tracking-wider text-[#004724] mb-2 flex items-center space-x-1.5">
+            <Factory className="w-3.5 h-3.5 text-[#004724]" />
             <span>Phân Xưởng *</span>
           </label>
           <select
             value={selectedWorkshopId}
             onChange={(e) => setSelectedWorkshopId(e.target.value)}
-            className="w-full rounded-xl bg-slate-950 border border-slate-800 px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500 transition-all"
+            className="w-full rounded-2xl bg-slate-50 border border-slate-200 px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#004724] transition-all font-semibold"
           >
             {workshopsList.length === 0 && <option value="">Đang tải phân xưởng...</option>}
             {workshopsList.map((ws) => (
@@ -299,8 +309,8 @@ export function IssueReportForm() {
 
         {/* 4. Công đoạn phát hiện */}
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2 flex items-center space-x-1.5">
-            <Layers className="w-3.5 h-3.5 text-amber-400" />
+          <label className="block text-xs font-bold uppercase tracking-wider text-[#004724] mb-2 flex items-center space-x-1.5">
+            <Layers className="w-3.5 h-3.5 text-[#004724]" />
             <span>Công Đoạn Phát Hiện *</span>
           </label>
           <input
@@ -309,18 +319,18 @@ export function IssueReportForm() {
             value={detectionStage}
             onChange={(e) => setDetectionStage(e.target.value)}
             placeholder="VD: Công đoạn Gò mũi / Chuyền may 2"
-            className="w-full rounded-xl bg-slate-950 border border-slate-800 px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-all"
+            className="w-full rounded-2xl bg-slate-50 border border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#004724] transition-all font-semibold"
           />
         </div>
       </div>
 
-      {/* 5. Size bị ảnh hưởng (multi-select) */}
-      <div className="bg-slate-900/60 p-6 rounded-2xl border border-slate-800/80 space-y-3">
+      {/* 5. Size bị ảnh hưởng */}
+      <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-sm space-y-3">
         <div className="flex items-center justify-between">
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+          <label className="block text-xs font-bold uppercase tracking-wider text-[#004724]">
             Size Bị Ảnh Hưởng (Chọn Nhiều Size) *
           </label>
-          <span className="text-xs text-blue-400 font-semibold">
+          <span className="text-xs text-[#004724] font-bold">
             Đã chọn {selectedSizes.length} size
           </span>
         </div>
@@ -333,10 +343,10 @@ export function IssueReportForm() {
                 type="button"
                 key={sz.id}
                 onClick={() => toggleSize(sz.sizeCode)}
-                className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                className={`px-4 py-2 rounded-2xl text-sm font-bold transition-all ${
                   isSelected
-                    ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30 ring-2 ring-blue-400"
-                    : "bg-slate-950 text-slate-300 border border-slate-800 hover:border-slate-600"
+                    ? "bg-[#004724] text-white shadow-md ring-2 ring-emerald-400"
+                    : "bg-slate-50 text-slate-700 border border-slate-200 hover:border-emerald-300"
                 }`}
               >
                 {sz.sizeCode}
@@ -347,24 +357,24 @@ export function IssueReportForm() {
       </div>
 
       {/* 6. Mức độ nghiêm trọng & Mô tả */}
-      <div className="bg-slate-900/60 p-6 rounded-2xl border border-slate-800/80 space-y-6">
+      <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-sm space-y-6">
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+          <label className="block text-xs font-bold uppercase tracking-wider text-[#004724] mb-2">
             Mức Độ Nghiêm Trọng *
           </label>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { id: "thap", label: "Thấp", color: "hover:border-slate-500 text-slate-300", active: "bg-slate-800 text-slate-100 border-slate-600" },
-              { id: "trung_binh", label: "Trung Bình", color: "hover:border-blue-500 text-blue-300", active: "bg-blue-950 text-blue-300 border-blue-700" },
-              { id: "cao", label: "Cao", color: "hover:border-amber-500 text-amber-300", active: "bg-amber-950 text-amber-300 border-amber-700" },
-              { id: "khan_cap", label: "Khẩn Cấp", color: "hover:border-rose-500 text-rose-300", active: "bg-rose-950 text-rose-300 border-rose-700" },
+              { id: "thap", label: "Thấp", color: "hover:border-slate-400 text-slate-700", active: "bg-slate-100 text-slate-900 border-slate-300 font-bold" },
+              { id: "trung_binh", label: "Trung Bình", color: "hover:border-blue-400 text-blue-800", active: "bg-blue-50 text-blue-900 border-blue-300 font-bold" },
+              { id: "cao", label: "Cao", color: "hover:border-amber-400 text-amber-800", active: "bg-amber-50 text-amber-900 border-amber-300 font-bold" },
+              { id: "khan_cap", label: "Khẩn Cấp", color: "hover:border-rose-400 text-rose-800", active: "bg-rose-50 text-rose-900 border-rose-300 font-bold" },
             ].map((sev) => (
               <button
                 type="button"
                 key={sev.id}
                 onClick={() => setSeverity(sev.id as any)}
-                className={`py-3 px-4 rounded-xl border text-sm font-bold transition-all text-center ${
-                  severity === sev.id ? sev.active : `bg-slate-950 border-slate-800 ${sev.color}`
+                className={`py-3 px-4 rounded-2xl border text-sm font-bold transition-all text-center ${
+                  severity === sev.id ? sev.active : `bg-slate-50 border-slate-200 ${sev.color}`
                 }`}
               >
                 {sev.label}
@@ -374,7 +384,7 @@ export function IssueReportForm() {
         </div>
 
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+          <label className="block text-xs font-bold uppercase tracking-wider text-[#004724] mb-2">
             Mô Tả Chi Tiết Hiện Tượng Lỗi *
           </label>
           <textarea
@@ -383,21 +393,21 @@ export function IssueReportForm() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Mô tả cụ thể dạng lỗi (VD: Quai may lệch chỉ 2mm, đường may nhăn quăn, hở keo gót đế...)"
-            className="w-full rounded-xl bg-slate-950 border border-slate-800 px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-all"
+            className="w-full rounded-2xl bg-slate-50 border border-slate-200 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#004724] transition-all font-medium"
           />
         </div>
       </div>
 
-      {/* 7. Upload Hình ảnh minh chứng lên Cloudflare R2 */}
-      <div className="bg-slate-900/60 p-6 rounded-2xl border border-slate-800/80 space-y-4">
-        <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center space-x-1.5">
-          <ImageIcon className="w-4 h-4 text-blue-400" />
-          <span>Hình Ảnh Minh Chứng (Upload Cloudflare R2 - Preview trước khi gửi)</span>
+      {/* 7. Upload Hình ảnh */}
+      <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-sm space-y-4">
+        <label className="block text-xs font-bold uppercase tracking-wider text-[#004724] flex items-center space-x-1.5">
+          <ImageIcon className="w-4 h-4 text-[#004724]" />
+          <span>Hình Ảnh Minh Chứng (Upload Cloudflare R2 - Preview trực tiếp)</span>
         </label>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {uploadedImages.map((img, idx) => (
-            <div key={idx} className="relative group rounded-xl overflow-hidden border border-slate-700 bg-slate-950 aspect-square">
+            <div key={idx} className="relative group rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 aspect-square">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={img.imageUrl} alt="Proof" className="w-full h-full object-cover" />
               <button
@@ -410,8 +420,8 @@ export function IssueReportForm() {
             </div>
           ))}
 
-          <label className="border-2 border-dashed border-slate-700 hover:border-blue-500 rounded-xl aspect-square flex flex-col items-center justify-center cursor-pointer bg-slate-950/60 hover:bg-slate-950 transition-all text-slate-400 hover:text-blue-400">
-            <Upload className="w-6 h-6 mb-2" />
+          <label className="border-2 border-dashed border-slate-300 hover:border-[#004724] rounded-2xl aspect-square flex flex-col items-center justify-center cursor-pointer bg-slate-50 hover:bg-emerald-50/50 transition-all text-slate-500 hover:text-[#004724]">
+            <Upload className="w-6 h-6 mb-2 text-[#004724]" />
             <span className="text-xs font-bold">{uploading ? "Đang tải R2..." : "Tải Ảnh Lên"}</span>
             <input
               type="file"
@@ -430,7 +440,7 @@ export function IssueReportForm() {
         <button
           type="submit"
           disabled={submitting || uploading}
-          className="w-full py-4 px-6 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm shadow-md shadow-blue-600/20 disabled:opacity-50 transition-all duration-200 flex items-center justify-center space-x-2"
+          className="w-full py-4 px-6 rounded-2xl bg-[#004724] hover:bg-[#07361e] text-white font-extrabold text-xs uppercase tracking-widest shadow-md shadow-emerald-950/20 disabled:opacity-50 transition-all duration-200 flex items-center justify-center space-x-2"
         >
           <span>{submitting ? "Đang Gửi Phiếu Lỗi CLSK..." : "GỬI PHIẾU BÁO CÁO LỖI (TỰ ĐỘNG GỬI ZALO 3 NHÓM)"}</span>
         </button>

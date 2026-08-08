@@ -7,6 +7,7 @@ export interface CustomUserSession {
   position: string;
   department: string;
   role: string;
+  roles: string[];
 }
 
 export const authConfig = {
@@ -25,6 +26,7 @@ export const authConfig = {
         token.position = u.position;
         token.department = u.department;
         token.role = u.role;
+        token.roles = u.roles || [u.role];
       }
       return token;
     },
@@ -37,6 +39,7 @@ export const authConfig = {
         u.position = token.position as string;
         u.department = token.department as string;
         u.role = token.role as string;
+        u.roles = (token.roles as string[]) || [token.role as string];
       }
       return session;
     },

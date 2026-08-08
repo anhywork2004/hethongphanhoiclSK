@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { drizzle } from "drizzle-orm/d1";
 import { eq } from "drizzle-orm";
-import { users } from "@/db/schema";
+import { employees, userRoles } from "@/db/schema";
 import { authConfig } from "@/lib/auth.config";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -24,18 +24,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         // Clean & normalize typo (e.g., NVO01 -> NV001)
         const mnvClean = mnvRaw.trim().toUpperCase().replace(/O/g, "0");
 
-        // Fallback user map for dev/demo mode
-        const fallbackUsers: Record<string, { id: string; mnv: string; fullName: string; position: string; department: string; role: string }> = {
-          NV001: { id: "u_1", mnv: "NV001", fullName: "Nguyễn Văn An", position: "Cán bộ sản xuất", department: "Chuyền Chặt 1", role: "reporter" },
-          TL001: { id: "u_2", mnv: "TL001", fullName: "Trần Thị Bình", position: "Trưởng Line May", department: "Chuyền May 2", role: "truong_line" },
-          TT001: { id: "u_3", mnv: "TT001", fullName: "Lê Văn Cường", position: "Tổ trưởng Tổ Đồ", department: "Chuyền Đế 1", role: "to_truong" },
-          QA001: { id: "u_4", mnv: "QA001", fullName: "Phạm Minh Dung", position: "Chuyên viên QA", department: "Phòng QA/QC", role: "qa" },
-          CN001: { id: "u_5", mnv: "CN001", fullName: "Hoàng Văn Em", position: "Kỹ sư Công nghệ", department: "Phòng Kỹ thuật - Công nghệ", role: "cong_nghe" },
-          TP001: { id: "u_6", mnv: "TP001", fullName: "Đỗ Thị Phương", position: "Trưởng phòng Sản xuất", department: "Phòng Quản lý Sản xuất", role: "truong_phong_ban" },
-          KT001: { id: "u_7", mnv: "KT001", fullName: "Ngô Văn Giang", position: "Kỹ thuật viên Bảo trì", department: "Bộ phận Bảo trì MMTB", role: "nguoi_xu_ly" },
-          GD001: { id: "u_8", mnv: "GD001", fullName: "Vũ Đình Hải", position: "Giám đốc Phân xưởng", department: "Ban Giám đốc Kiên Giang 1", role: "giam_doc" },
-          TGD001: { id: "u_9", mnv: "TGD001", fullName: "Trịnh Xuân Hùng", position: "Tổng Giám Đốc", department: "Ban Tổng Giám Đốc", role: "tong_giam_doc" },
-          ADMIN001: { id: "u_10", mnv: "ADMIN001", fullName: "Quản Trị Viên", position: "Quản trị Hệ thống", department: "Phòng IT", role: "admin" },
+        // Fallback users for offline/demo mode
+        const fallbackUsers: Record<string, { id: string; mnv: string; fullName: string; position: string; department: string; role: string; roles: string[] }> = {
+          NV001: { id: "emp-worker1", mnv: "NV001", fullName: "Nguyễn Văn An", position: "Công Nhân Xưởng May 1", department: "Xưởng may 1", role: "worker", roles: ["worker"] },
+          TL001: { id: "emp-lineleader1", mnv: "TL001", fullName: "Trần Văn Bình", position: "Trưởng Line 1", department: "Xưởng may 1", role: "line_leader", roles: ["line_leader"] },
+          TT001: { id: "emp-teamleader1", mnv: "TT001", fullName: "Lê Văn Cường", position: "Tổ Trưởng", department: "Xưởng may 1", role: "team_leader", roles: ["team_leader"] },
+          QA001: { id: "emp-qa1", mnv: "QA001", fullName: "Lê Thị Cúc", position: "Chuyên Viên QA", department: "Phòng QA", role: "qa", roles: ["qa"] },
+          CN001: { id: "emp-tech1", mnv: "CN001", fullName: "Phạm Văn Dũng", position: "Kỹ Sư Công Nghệ", department: "Phòng Công Nghệ", role: "technology", roles: ["technology"] },
+          TP001: { id: "emp-depthead1", mnv: "TP001", fullName: "Hoàng Văn Giang", position: "Trưởng Phòng Bảo Trì", department: "Phòng Bảo Trì", role: "dept_head", roles: ["dept_head"] },
+          KT001: { id: "emp-handler1", mnv: "KT001", fullName: "Đỗ Văn Hùng", position: "Kỹ Thuật Bảo Trì", department: "Phòng Bảo Trì", role: "handler", roles: ["handler"] },
+          GD001: { id: "emp-director1", mnv: "GD001", fullName: "Vũ Thị Mai", position: "Giám Đốc Phân Xưởng", department: "Ban Giám Đốc", role: "director", roles: ["director"] },
+          TGD001: { id: "emp-gdirector1", mnv: "TGD001", fullName: "Trịnh Xuân Hùng", position: "Tổng Giám Đốc", department: "Ban Tổng Giám Đốc", role: "general_director", roles: ["general_director"] },
+          ADMIN01: { id: "emp-admin1", mnv: "ADMIN01", fullName: "Quản Trị Viên TBS", position: "Quản Trị Hệ Thống", department: "Công Nghệ Thông Tin", role: "admin", roles: ["admin"] },
         };
 
         let db;
@@ -51,23 +51,29 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (db) {
           try {
-            const foundUsers = await db.select().from(users).where(eq(users.mnv, mnvClean)).limit(1);
-            const user = foundUsers[0];
-            if (user) {
-              const valid = await bcrypt.compare(password, user.passwordHash);
+            const foundEmps = await db.select().from(employees).where(eq(employees.mnv, mnvClean)).limit(1);
+            const emp = foundEmps[0];
+            if (emp) {
+              const valid = await bcrypt.compare(password, emp.passwordHash);
               if (valid) {
+                // Query user_roles table for multi-roles
+                const rolesRes = await db.select().from(userRoles).where(eq(userRoles.employeeId, emp.id));
+                const rolesList = rolesRes.map((r) => r.role);
+                const primaryRole = rolesList[0] || "worker";
+
                 return {
-                  id: user.id,
-                  mnv: user.mnv,
-                  fullName: user.fullName,
-                  position: user.position,
-                  department: user.department,
-                  role: user.role,
+                  id: emp.id,
+                  mnv: emp.mnv,
+                  fullName: emp.fullName,
+                  position: emp.position || "Cán Bộ CLSK",
+                  department: emp.department || "TBS Kiên Giang 1",
+                  role: primaryRole,
+                  roles: rolesList.length > 0 ? rolesList : [primaryRole],
                 };
               }
             }
           } catch {
-            // DB select error fallback
+            // DB error fallback
           }
         }
 

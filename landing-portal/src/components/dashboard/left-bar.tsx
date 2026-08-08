@@ -25,6 +25,7 @@ import {
   KeyRound,
   LayoutDashboard,
   Boxes,
+  FlaskConical,
 } from "lucide-react";
 import { useState } from "react";
 import { TBSMark } from "@/components/brand-logo";
@@ -243,7 +244,27 @@ export function LeftBar({ user, counts = { cho_xu_ly: 0, dang_xu_ly: 0, da_xu_ly
                 )}
               </Link>
 
-              {/* 3. Đã xử lý */}
+              {/* 3. Chạy thử (TAG MỚI VỊ TRÍ Ở GIỮA) */}
+              <Link
+                href="/dashboard/categories/dang_chay_thu"
+                className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                  pathname.includes("dang_chay_thu")
+                    ? "bg-purple-50 text-purple-900 border border-purple-300 font-bold"
+                    : "text-slate-600 hover:bg-emerald-50 hover:text-[#004724]"
+                }`}
+              >
+                <div className="flex items-center space-x-2 min-w-0">
+                  <FlaskConical className="h-3.5 w-3.5 text-purple-600 shrink-0" />
+                  {!collapsed && <span className="truncate">Chạy thử</span>}
+                </div>
+                {!collapsed && (
+                  <span className="px-1.5 py-0.5 text-[10px] font-black rounded-full bg-purple-600 text-white shadow-xs">
+                    {counts.dang_chay_thu || 0}
+                  </span>
+                )}
+              </Link>
+
+              {/* 4. Đã xử lý */}
               <Link
                 href="/dashboard/categories/da_xu_ly"
                 className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all ${

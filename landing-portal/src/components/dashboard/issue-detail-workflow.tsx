@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Clock, CheckCircle2, AlertTriangle, Lock, LockKeyholeOpen, Upload, X, ArrowLeft, Image as ImageIcon, ShieldAlert, Sparkles, Building, Layers, Package } from "lucide-react";
+import { Clock, CheckCircle2, AlertTriangle, Lock, LockKeyholeOpen, Upload, X, ArrowLeft, Image as ImageIcon, ShieldAlert, Sparkles, Building, Layers, Package, Check, RotateCcw, Wrench } from "lucide-react";
 import { AI5M1EAssistant } from "@/components/dashboard/ai-5m1e-assistant";
 import { BeforeAfterComparison } from "@/components/dashboard/before-after-comparison";
 import { CountdownTimer } from "@/components/dashboard/countdown-timer";
+import { TechnicianRepairForm } from "@/components/dashboard/technician-repair-form";
 
 interface UploadedImage {
   imageUrl: string;
@@ -44,14 +45,17 @@ export function IssueDetailWorkflow({ issue }: { issue: IssueData }) {
   const [initialQty, setInitialQty] = useState<number>(issue.initialDefectQty || 10);
   const [repairedQty, setRepairedQty] = useState<number>(issue.repairedDefectQty || 0);
   const [testRunHours, setTestRunHours] = useState<number>(issue.testRunHours || 3);
-  const [solutionDetail, setSolutionDetail] = useState("");
   const [aiDiagnosis, setAiDiagnosis] = useState<string>(issue.aiCauseDiagnosis || "");
+  const [technicianNotes, setTechnicianNotes] = useState<string>("");
+  const [technicianSubmitted, setTechnicianSubmitted] = useState<boolean>(false);
+  const [lineLeaderApproved, setLineLeaderApproved] = useState<boolean>(false);
+
   const [repairedImages, setRepairedImages] = useState<UploadedImage[]>([]);
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
-  // Determine stage flags
+  // Status flags
   const isChoXuLy = currentStatus === "cho_xu_ly";
   const isDangXuLy = currentStatus === "dang_xu_ly";
   const isDangChayThu = currentStatus === "dang_chay_thu" || currentStatus === "theo_doi";
@@ -83,7 +87,28 @@ export function IssueDetailWorkflow({ issue }: { issue: IssueData }) {
     e.target.value = "";
   }
 
-  // Action: Confirm Step 2 & Start Step 3 (Đóng Lần 1)
+  // Handle Technician Submission
+  function handleTechnicianSubmit(data: { notes: string; proofImages: string[] }) {
+    setTechnicianNotes(data.notes);
+    setTechnicianSubmitted(true);
+    setMsg("Kỹ thuật đã hoàn thành sửa chữa! Đã gửi thông báo cho Trưởng Line phê duyệt.");
+  }
+
+  // Handle Line Leader Rejection -> Reverts back to AI 5M+1E
+  function handleLineLeaderReject() {
+    setTechnicianSubmitted(false);
+    setLineLeaderApproved(false);
+    setCurrentStatus("dang_xu_ly");
+    setMsg("Trưởng line không xác nhận. Đã chuyển phiếu về bước AI 5M+1E để chẩn đoán lại.");
+  }
+
+  // Handle Line Leader Approval -> Unlocks Form 3 (Đóng Lần 1 & Chạy thử)
+  function handleLineLeaderApprove() {
+    setLineLeaderApproved(true);
+    setMsg("Trưởng line đã xác nhận sửa thành công! Form 3 Đóng Lần 1 & Kích hoạt đếm giờ chạy thử đã được mở khóa.");
+  }
+
+  // Action: Confirm Step 3 (Đóng Lần 1 & Kích hoạt chạy thử)
   async function handleCloseOnce() {
     setSubmitting(true);
     setMsg(null);
@@ -107,7 +132,7 @@ export function IssueDetailWorkflow({ issue }: { issue: IssueData }) {
 
       if (data.success) {
         setCurrentStatus("dang_chay_thu");
-        setMsg("Đã Đóng Lần 1 thành công! Kích hoạt đếm giờ chạy thử nghiệm 3h - 48h.");
+        setMsg(`Đã Đóng Lần 1 thành công! Kích hoạt đếm giờ chạy thử nghiệm ${testRunHours} giờ.`);
         router.refresh();
       } else {
         setMsg(`Lỗi cập nhật: ${data.error}`);
@@ -193,8 +218,8 @@ export function IssueDetailWorkflow({ issue }: { issue: IssueData }) {
                   : "bg-emerald-100 text-[#004724] border border-emerald-300"
               }`}
             >
-              {isChoXuLy && "Bước 1: Chờ tiếp nhận"}
-              {isDangXuLy && "Bước 2: Trưởng line xử lý AI 5M+1E"}
+              {isChoXuLy && "Bước 1: Chờ tiếp nhận (15p SLA)"}
+              {isDangXuLy && "Bước 2: Trưởng line & Kỹ thuật xử lý"}
               {isDangChayThu && "Bước 3: Đang chạy thử nghiệm"}
               {isDaXuLy && "Bước 4: Đã xử lý xong (Hoàn tất)"}
             </span>
@@ -204,10 +229,24 @@ export function IssueDetailWorkflow({ issue }: { issue: IssueData }) {
           </h1>
         </div>
 
-        {/* Status Timers Badge */}
+        {/* Dynamic 15m SLA Countdown Timer calculated per-issue from createdAt */}
+        {isChoXuLy && (
+          <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200">
+            <CountdownTimer targetMinutes={15} createdTimeStr={issue.createdAt} label="Hạn 15p Trưởng Line" />
+          </div>
+        )}
+
+        {/* 2h 4M+1E SLA Timer */}
+        {isDangXuLy && (
+          <div className="p-3 rounded-2xl bg-blue-50 border border-blue-200">
+            <CountdownTimer targetMinutes={120} createdTimeStr={issue.createdAt} label="Hạn 2h 4M+1E" />
+          </div>
+        )}
+
+        {/* Test Run Timer */}
         {isDangChayThu && (
           <div className="p-3 rounded-2xl bg-purple-50 border border-purple-200">
-            <CountdownTimer targetMinutes={testRunHours * 60} label="Đang Chạy Thử" />
+            <CountdownTimer targetMinutes={testRunHours * 60} createdTimeStr={issue.closedOnceAt || issue.createdAt} label="Đang Chạy Thử" />
           </div>
         )}
       </div>
@@ -271,14 +310,14 @@ export function IssueDetailWorkflow({ issue }: { issue: IssueData }) {
       </div>
 
       {/* ========================================================================= */}
-      {/* BƯỚC 2: TRƯỞNG LINE NHẬP SỐ LƯỢNG HÀNG HƯ & TRỢ LÝ AI 5M+1E (HIỂN THỊ TỪ BƯỚC 2 TRỞ ĐI) */}
+      {/* BƯỚC 2: TRƯỞNG LINE NHẬP SỐ LƯỢNG HÀNG HƯ & TRỢ LÝ AI 5M+1E */}
       {/* ========================================================================= */}
       {(isChoXuLy || isDangXuLy || isDangChayThu || isDaXuLy) && (
         <div className="p-6 rounded-3xl bg-white border border-slate-200/90 shadow-sm space-y-6">
           <div className="flex items-center justify-between border-b border-slate-200 pb-3">
             <div className="flex items-center space-x-2 text-xs font-black text-[#004724] uppercase tracking-wider">
               <ShieldAlert className="w-4 h-4 text-amber-600" />
-              <span>2. Trưởng Line Tiếp Nhận & Nhập Số Lượng Hàng Hư</span>
+              <span>2. Trưởng Line Tiếp Nhận & Nhập Số Lượng Hàng Hư (15p SLA)</span>
             </div>
             {isChoXuLy && (
               <button
@@ -286,12 +325,11 @@ export function IssueDetailWorkflow({ issue }: { issue: IssueData }) {
                 onClick={() => setCurrentStatus("dang_xu_ly")}
                 className="px-4 py-2 rounded-2xl bg-[#004724] text-white text-xs font-bold shadow-xs hover:bg-[#07361e] transition-all"
               >
-                Tiếp nhận & Mở Trợ lý AI 5M+1E
+                Tiếp nhận phiếu (Đáp ứng SLA 15p)
               </button>
             )}
           </div>
 
-          {/* Input initial defect quantity */}
           <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200 space-y-2">
             <label className="block text-xs font-bold uppercase tracking-wider text-amber-900">
               Số Lượng Hàng Hư Ban Đầu (Cái / Đôi) *
@@ -307,8 +345,7 @@ export function IssueDetailWorkflow({ issue }: { issue: IssueData }) {
             />
           </div>
 
-          {/* Interactive AI 5M+1E Assistant Component */}
-          {(isDangXuLy || isChoXuLy) && (
+          {(isDangXuLy || isChoXuLy) && !lineLeaderApproved && (
             <AI5M1EAssistant
               productName={issue.productName}
               detectionStage={issue.detectionStage}
@@ -317,35 +354,64 @@ export function IssueDetailWorkflow({ issue }: { issue: IssueData }) {
             />
           )}
 
-          {aiDiagnosis && (
-            <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-300 text-xs space-y-2">
-              <div className="font-bold text-[#004724] flex items-center space-x-1.5">
-                <Sparkles className="w-4 h-4 text-[#8dc63f]" />
-                <span>Kết quả AI 5M+1E Chẩn đoán:</span>
+          {/* Form Technician Repair Submission */}
+          {isDangXuLy && !technicianSubmitted && (
+            <TechnicianRepairForm issueId={issue.id} onSubmitRepair={handleTechnicianSubmit} />
+          )}
+
+          {/* Line Leader Verification Box */}
+          {isDangXuLy && technicianSubmitted && !lineLeaderApproved && (
+            <div className="p-6 rounded-3xl bg-amber-50 border border-amber-300 space-y-4 shadow-sm">
+              <div className="flex items-center space-x-2 text-amber-900 font-black text-sm">
+                <Wrench className="w-5 h-5 text-amber-700" />
+                <span>KỸ THUẬT ĐÃ HOÀN THÀNH SỬA CHỮA - TRƯỞNG LINE XÁC NHẬN</span>
               </div>
-              <pre className="font-sans text-slate-800 leading-relaxed whitespace-pre-wrap">{aiDiagnosis}</pre>
+              <p className="text-xs text-slate-700 font-medium bg-white p-3 rounded-2xl border border-amber-200">
+                Ghi chú sửa chữa: <strong>{technicianNotes || "Đã hiệu chỉnh máy móc & thay thế linh kiện lỗi"}</strong>
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <button
+                  type="button"
+                  onClick={handleLineLeaderApprove}
+                  className="py-3.5 px-4 rounded-2xl bg-[#004724] hover:bg-[#07361e] text-white text-xs font-black uppercase tracking-wider flex items-center justify-center space-x-2 shadow-md"
+                >
+                  <Check className="w-4 h-4 stroke-[3]" />
+                  <span>✅ XÁC NHẬN SỬA THÀNH CÔNG</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleLineLeaderReject}
+                  className="py-3.5 px-4 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center space-x-2 shadow-md"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  <span>❌ KHÔNG XÁC NHẬN (QUAY LẠI 5M+1E)</span>
+                </button>
+              </div>
             </div>
           )}
         </div>
       )}
 
       {/* ========================================================================= */}
-      {/* BƯỚC 3: ĐÓNG LẦN 1 & KÍCH HOẠT CHẠY THỬ (HIỂN THỊ TỪ BƯỚC DANG_XU_LY TRỞ ĐI) */}
+      {/* BƯỚC 3: FORM 3. ĐÓNG LẦN 1 & KÍCH HOẠT GIỜ CHẠY THỬ (MIN 3H – MAX 48H) */}
+      {/* (CHỈ MỞ KHÓA KHI TRƯỞNG LINE ĐÃ BẤM XÁC NHẬN SỬA THÀNH CÔNG) */}
       {/* ========================================================================= */}
-      {(isDangXuLy || isDangChayThu || isDaXuLy) && (
+      {(lineLeaderApproved || isDangChayThu || isDaXuLy) && (
         <div className="p-6 rounded-3xl bg-white border border-slate-200/90 shadow-sm space-y-5">
           <div className="flex items-center justify-between border-b border-slate-200 pb-3">
             <div className="flex items-center space-x-2 text-xs font-black text-[#004724] uppercase tracking-wider">
               <Lock className="w-4 h-4 text-[#004724]" />
-              <span>3. Đóng Lần 1 & Kích Hoạt Giờ Chạy Thử (Min 3h - Max 48h)</span>
+              <span>3. ĐÓNG LẦN 1 & KÍCH HOẠT GIỜ CHẠY THỬ (MIN 3H – MAX 48H)</span>
             </div>
           </div>
 
-          {isDangXuLy && (
+          {!isDangChayThu && !isDaXuLy && (
             <div className="space-y-4">
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
-                  Chọn Thời Gian Chạy Thử Nghiệm Tối Thiểu (3 Giờ - 48 Giờ) *
+                  CHỌN THỜI GIAN CHẠY THỬ NGHIỆM TỐI THIỂU (3 GIỜ – 48 GIỜ) *
                 </label>
                 <div className="flex items-center space-x-3">
                   {[3, 6, 12, 24, 48].map((hrs) => (
@@ -372,7 +438,7 @@ export function IssueDetailWorkflow({ issue }: { issue: IssueData }) {
                 className="w-full py-4 px-6 rounded-2xl bg-[#004724] hover:bg-[#07361e] text-white font-extrabold text-xs uppercase tracking-widest shadow-md flex items-center justify-center space-x-2"
               >
                 <Lock className="w-4 h-4" />
-                <span>{submitting ? "Đang ghi nhận..." : "🔒 ĐÓNG LẦN 1 - KÍCH HOẠT ĐẾM GIỜ CHẠY THỬ"}</span>
+                <span>{submitting ? "Đang ghi nhận..." : "🔒 ĐÓNG LẦN 1 – KÍCH HOẠT ĐẾM GIỜ CHẠY THỬ"}</span>
               </button>
             </div>
           )}
@@ -399,7 +465,6 @@ export function IssueDetailWorkflow({ issue }: { issue: IssueData }) {
 
           {isDangChayThu && (
             <div className="space-y-6">
-              {/* Input Repaired Defect Quantity */}
               <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-2">
                 <label className="block text-xs font-bold uppercase tracking-wider text-[#004724]">
                   Số Lượng Hàng Lỗi Phát Sinh Sau Khi Sửa (Cái / Đôi) *
@@ -414,7 +479,6 @@ export function IssueDetailWorkflow({ issue }: { issue: IssueData }) {
                 />
               </div>
 
-              {/* Upload Repaired Images */}
               <div className="space-y-3">
                 <label className="block text-xs font-bold uppercase tracking-wider text-[#004724] flex items-center space-x-1.5">
                   <ImageIcon className="w-4 h-4 text-[#004724]" />
@@ -452,7 +516,7 @@ export function IssueDetailWorkflow({ issue }: { issue: IssueData }) {
       )}
 
       {/* ========================================================================= */}
-      {/* BƯỚC 5: BẢNG SO SÁNH ĐỐI CHỨNG TRƯỚC VS SAU SỬA CHỮA (HIỂN THỊ KHI ĐÃ ĐÓNG LẦN 2) */}
+      {/* BƯỚC 5: BẢNG SO SÁNH ĐỐI CHỨNG TRƯỚC VS SAU SỬA CHỮA */}
       {/* ========================================================================= */}
       {isDaXuLy && (
         <BeforeAfterComparison

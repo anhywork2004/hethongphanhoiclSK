@@ -45,12 +45,12 @@ export default async function DashboardLayout({
   const issueCounts = await getIssueCounts();
 
   return (
-    <div className="min-h-screen bg-[#061810] text-emerald-100 flex font-sans antialiased">
+    <div className="min-h-screen bg-[#f4f7f5] text-slate-900 flex font-sans antialiased">
       {/* Fixed Leftbar Navigation */}
       <LeftBar user={user} counts={issueCounts} />
 
       {/* Main Content Area */}
-      <main className="flex-1 min-w-0 bg-[#061810] overflow-y-auto min-h-screen">
+      <main className="flex-1 min-w-0 bg-[#f4f7f5] overflow-y-auto min-h-screen">
         <div className="p-6 md:p-8 max-w-7xl mx-auto">{children}</div>
       </main>
     </div>

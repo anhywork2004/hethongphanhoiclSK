@@ -21,6 +21,7 @@ export const ISSUE_STATUSES = [
   "cho_xu_ly",
   "dang_xu_ly",
   "theo_doi",
+  "cho_nghiem_thu",
   "da_xu_ly",
   "khong_the_xu_ly",
 ] as const;
@@ -87,8 +88,12 @@ export const issues = sqliteTable("issues", {
   createdByName: text("created_by_name").notNull(),
   createdAt: text("created_at").notNull(),
   
-  // Phase 2 Fields (ready for extension)
-  assignedNotifyRoles: text("assigned_notify_roles"), // JSON string array
+  // Advanced Phase 2/3 Fields
+  investigationDeadline: text("investigation_deadline"),
+  slaDeadline: text("sla_deadline"),
+  escalatedLevel: integer("escalated_level").default(0),
+  qaApproverMnv: text("qa_approver_mnv"),
+  qaApprovedAt: text("qa_approved_at"),
   rootCauseData: text("root_cause_data"), // JSON string object (5M+1E)
   assignedTechnicianId: text("assigned_technician_id"),
   resolvedAt: text("resolved_at"),

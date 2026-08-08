@@ -1,8 +1,9 @@
-import { ClipboardList, Wrench, ShieldCheck, Filter, Search, CheckCircle2, Clock, AlertTriangle } from "lucide-react";
+import { ClipboardList, Wrench, ShieldCheck, Filter, Search, CheckCircle2, Clock, AlertTriangle, CheckSquare } from "lucide-react";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { getDb } from "@/db";
 import { issues } from "@/db/schema";
 import { desc } from "drizzle-orm";
+import { SlaTimerBadge } from "@/components/dashboard/sla-timer-badge";
 
 export default async function RepairLogsPage() {
   let issueLogs: Array<{
@@ -48,6 +49,8 @@ export default async function RepairLogsPage() {
     switch (status) {
       case "da_xu_ly":
         return <span className="px-2.5 py-1 rounded-lg bg-emerald-950 text-emerald-300 border border-emerald-800 text-[11px] font-semibold flex items-center space-x-1"><CheckCircle2 className="w-3 h-3 text-emerald-400" /><span>Đã Xử Lý</span></span>;
+      case "cho_nghiem_thu":
+        return <span className="px-2.5 py-1 rounded-lg bg-purple-950 text-purple-300 border border-purple-800 text-[11px] font-semibold flex items-center space-x-1"><CheckSquare className="w-3 h-3 text-purple-400" /><span>Chờ QA Duyệt</span></span>;
       case "dang_xu_ly":
         return <span className="px-2.5 py-1 rounded-lg bg-blue-950 text-blue-300 border border-blue-800 text-[11px] font-semibold flex items-center space-x-1"><Clock className="w-3 h-3 text-blue-400" /><span>Đang Xử Lý</span></span>;
       default:
@@ -115,6 +118,7 @@ export default async function RepairLogsPage() {
                 <th className="px-5 py-3.5">Công Đoạn</th>
                 <th className="px-5 py-3.5">Người Báo Lỗi</th>
                 <th className="px-5 py-3.5">Mức Độ</th>
+                <th className="px-5 py-3.5">SLA 2 Giờ</th>
                 <th className="px-5 py-3.5">Trạng Thái</th>
                 <th className="px-5 py-3.5">Thời Gian</th>
               </tr>
@@ -122,7 +126,7 @@ export default async function RepairLogsPage() {
             <tbody className="divide-y divide-slate-800/80 text-slate-300">
               {issueLogs.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-6 py-10 text-center text-slate-500">
+                  <td colSpan={9} className="px-6 py-10 text-center text-slate-500">
                     Chưa có nhật ký ghi nhận. Bạn có thể bấm &quot;Báo Cáo Vấn Đề&quot; để tạo phiếu mới.
                   </td>
                 </tr>
@@ -141,6 +145,9 @@ export default async function RepairLogsPage() {
                       <span className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-[10px] uppercase font-bold text-slate-300">
                         {log.severity}
                       </span>
+                    </td>
+                    <td className="px-5 py-4">
+                      <SlaTimerBadge createdAt={log.createdAt} status={log.status} />
                     </td>
                     <td className="px-5 py-4">{statusBadge(log.status)}</td>
                     <td className="px-5 py-4 text-slate-400 font-mono text-[11px]">{log.createdAt}</td>

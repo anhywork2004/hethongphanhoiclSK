@@ -8,7 +8,7 @@ import { issues } from "@/db/schema";
 import { eq, count } from "drizzle-orm";
 
 async function getIssueCounts() {
-  const counts = { cho_xu_ly: 0, dang_xu_ly: 0, da_xu_ly: 0, khong_the_xu_ly: 0 };
+  const counts = { cho_xu_ly: 0, dang_xu_ly: 0, dang_chay_thu: 0, da_xu_ly: 0, khong_the_xu_ly: 0 };
   try {
     const ctx = await getCloudflareContext({ async: true });
     const env = ctx.env as unknown as CloudflareEnv;
@@ -16,11 +16,13 @@ async function getIssueCounts() {
       const db = drizzle(env.DB);
       const resCho = await db.select({ value: count() }).from(issues).where(eq(issues.status, "cho_xu_ly"));
       const resDang = await db.select({ value: count() }).from(issues).where(eq(issues.status, "dang_xu_ly"));
+      const resChayThu = await db.select({ value: count() }).from(issues).where(eq(issues.status, "dang_chay_thu"));
       const resDa = await db.select({ value: count() }).from(issues).where(eq(issues.status, "da_xu_ly"));
       const resKhong = await db.select({ value: count() }).from(issues).where(eq(issues.status, "khong_the_xu_ly"));
 
       counts.cho_xu_ly = resCho[0]?.value || 0;
       counts.dang_xu_ly = resDang[0]?.value || 0;
+      counts.dang_chay_thu = resChayThu[0]?.value || 0;
       counts.da_xu_ly = resDa[0]?.value || 0;
       counts.khong_the_xu_ly = resKhong[0]?.value || 0;
     }

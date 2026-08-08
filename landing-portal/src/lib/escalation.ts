@@ -1,7 +1,6 @@
 import { drizzle } from "drizzle-orm/d1";
-import { issues, zaloGroupMembers, users, zaloNotificationLog } from "@/db/schema";
+import { issues, zaloGroupMembers, employees, zaloNotificationLog } from "@/db/schema";
 import { eq, and, sql } from "drizzle-orm";
-import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 export async function processSlaEscalations(d1: D1Database): Promise<{
   escalated15mCount: number;
@@ -9,17 +8,16 @@ export async function processSlaEscalations(d1: D1Database): Promise<{
 }> {
   const db = drizzle(d1);
   const now = new Date();
-  const nowIso = now.toISOString();
 
   let escalated15mCount = 0;
   let escalated90mCount = 0;
 
   try {
-    // 1. Fetch pending issues (status = 'cho_xu_ly') that are past 15 minutes and escalatedLevel === 0
+    // 1. Fetch pending issues (status = 'pending') that are past 15 minutes and escalatedLevel === 0
     const pendingIssues = await db
       .select()
       .from(issues)
-      .where(and(eq(issues.status, "cho_xu_ly"), eq(issues.escalatedLevel, 0)));
+      .where(and(eq(issues.status, "pending"), eq(issues.escalatedLevel, 0)));
 
     for (const issue of pendingIssues) {
       const createdTime = new Date(issue.createdAt).getTime();
@@ -44,11 +42,11 @@ export async function processSlaEscalations(d1: D1Database): Promise<{
       }
     }
 
-    // 2. Fetch in-progress issues (status = 'dang_xu_ly') that are past 90 minutes and escalatedLevel <= 1
+    // 2. Fetch in-progress issues (status = 'processing') that are past 90 minutes and escalatedLevel <= 1
     const inProgressIssues = await db
       .select()
       .from(issues)
-      .where(and(eq(issues.status, "dang_xu_ly"), sql`${issues.escalatedLevel} <= 1`));
+      .where(and(eq(issues.status, "processing"), sql`${issues.escalatedLevel} <= 1`));
 
     for (const issue of inProgressIssues) {
       const createdTime = new Date(issue.createdAt).getTime();
@@ -90,10 +88,10 @@ async function dispatchEscalationZaloMessage(
   const members = await db
     .select({
       userId: zaloGroupMembers.userId,
-      zaloId: users.zaloId,
+      zaloId: employees.zaloId,
     })
     .from(zaloGroupMembers)
-    .leftJoin(users, eq(zaloGroupMembers.userId, users.id))
+    .leftJoin(employees, eq(zaloGroupMembers.userId, employees.id))
     .where(eq(zaloGroupMembers.groupType, targetGroupType));
 
   const nowIso = new Date().toISOString();

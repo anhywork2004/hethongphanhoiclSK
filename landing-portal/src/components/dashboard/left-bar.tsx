@@ -41,12 +41,13 @@ interface LeftBarProps {
   counts?: {
     cho_xu_ly: number;
     dang_xu_ly: number;
+    dang_chay_thu?: number;
     da_xu_ly: number;
     khong_the_xu_ly: number;
   };
 }
 
-export function LeftBar({ user, counts = { cho_xu_ly: 0, dang_xu_ly: 0, da_xu_ly: 0, khong_the_xu_ly: 0 } }: LeftBarProps) {
+export function LeftBar({ user, counts = { cho_xu_ly: 0, dang_xu_ly: 0, dang_chay_thu: 0, da_xu_ly: 0, khong_the_xu_ly: 0 } }: LeftBarProps) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(true);

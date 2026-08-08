@@ -47,8 +47,7 @@ export default async function LandingPage() {
       if (res.length > 0) {
         cmsSettings.heroTitle = res[0].heroTitle || cmsSettings.heroTitle;
         cmsSettings.heroSubtitle = res[0].heroSubtitle || cmsSettings.heroSubtitle;
-        cmsSettings.heroDescription = res[0].heroDescription || cmsSettings.heroDescription;
-        cmsSettings.bannerUrl = res[0].bannerUrl || cmsSettings.bannerUrl;
+        cmsSettings.bannerUrl = res[0].bannerImageUrl || cmsSettings.bannerUrl;
       }
     }
   } catch {

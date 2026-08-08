@@ -41,6 +41,8 @@ export const employees = sqliteTable("employees", {
   workshopId: text("workshop_id"),
   department: text("department"),
   phone: text("phone"),
+  zaloId: text("zalo_id"),
+  role: text("role"),
   isActive: integer("is_active").default(1),
   createdAt: integer("created_at"),
 });
@@ -99,6 +101,7 @@ export const issues = sqliteTable("issues", {
   description: text("description").notNull(),
   severity: text("severity").notNull().$type<IssueSeverity>().default("medium"),
   status: text("status").notNull().$type<Phase1IssueStatus>().default("pending"),
+  escalatedLevel: integer("escalated_level").default(0),
   reportedBy: text("reported_by").references(() => employees.id),
   createdByMnv: text("created_by_mnv"),
   createdByName: text("created_by_name"),
@@ -213,7 +216,7 @@ export const issueEscalations = sqliteTable("issue_escalations", {
 // 3.14 notifications (In-app notification)
 export const notifications = sqliteTable("notifications", {
   id: text("id").primaryKey(),
-  employeeId: text("employee_id").references(() => employees.id, { onDelete: "cascade text" }),
+  employeeId: text("employee_id").references(() => employees.id, { onDelete: "cascade" }),
   issueId: text("issue_id").references(() => issues.id, { onDelete: "cascade" }),
   type: text("type").notNull(),
   title: text("title").notNull(),

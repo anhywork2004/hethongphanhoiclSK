@@ -24,6 +24,7 @@ import {
   ChevronDown,
   KeyRound,
   LayoutDashboard,
+  Boxes,
 } from "lucide-react";
 import { useState } from "react";
 import { TBSMark } from "@/components/brand-logo";
@@ -292,17 +293,31 @@ export function LeftBar({ user, counts = { cho_xu_ly: 0, dang_xu_ly: 0, da_xu_ly
               LỊCH SỬ HỆ THỐNG
             </div>
           )}
-          <Link
-            href="/dashboard/logs"
-            className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
-              pathname === "/dashboard/logs"
-                ? "bg-[#e8f5e0] text-[#004724] border-l-4 border-[#004724] shadow-xs font-bold"
-                : "text-slate-700 hover:bg-emerald-50 hover:text-[#004724]"
-            }`}
-          >
-            <ClipboardList className="h-4 w-4 text-[#004724] shrink-0" />
-            {!collapsed && <span>Nhật ký sửa chữa</span>}
-          </Link>
+          <div className="space-y-1">
+            <Link
+              href="/dashboard/logs"
+              className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                pathname === "/dashboard/logs"
+                  ? "bg-[#e8f5e0] text-[#004724] border-l-4 border-[#004724] shadow-xs font-bold"
+                  : "text-slate-700 hover:bg-emerald-50 hover:text-[#004724]"
+              }`}
+            >
+              <ClipboardList className="h-4 w-4 text-[#004724] shrink-0" />
+              {!collapsed && <span>Nhật ký sửa chữa</span>}
+            </Link>
+
+            <Link
+              href="/dashboard/inventory"
+              className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                pathname === "/dashboard/inventory"
+                  ? "bg-[#e8f5e0] text-[#004724] border-l-4 border-[#004724] shadow-xs font-bold"
+                  : "text-slate-700 hover:bg-emerald-50 hover:text-[#004724]"
+              }`}
+            >
+              <Boxes className="h-4 w-4 text-[#004724] shrink-0" />
+              {!collapsed && <span>Kho phụ tùng linh kiện</span>}
+            </Link>
+          </div>
         </div>
 
         {/* MỤC QUẢN TRỊ DÀNH CHO ADMIN */}

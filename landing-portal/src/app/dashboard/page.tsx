@@ -24,6 +24,8 @@ import {
   Filter,
   Sparkles,
   UserCheck,
+  Siren,
+  FlaskConical,
 } from "lucide-react";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { getDb } from "@/db";
@@ -33,7 +35,7 @@ import { TBSMark } from "@/components/brand-logo";
 import { CountdownTimer } from "@/components/dashboard/countdown-timer";
 
 async function getDashboardStats() {
-  let stats = { total: 0, cho_xu_ly: 0, dang_xu_ly: 0, da_xu_ly: 0 };
+  let stats = { total: 0, cho_xu_ly: 0, dang_xu_ly: 0, dang_chay_thu: 0, da_xu_ly: 0, khong_the_xu_ly: 0 };
   try {
     const ctx = await getCloudflareContext({ async: true });
     const d1 = (ctx.env as unknown as CloudflareEnv).DB;
@@ -42,12 +44,16 @@ async function getDashboardStats() {
       const totalRes = await db.select({ value: count() }).from(issues);
       const choRes = await db.select({ value: count() }).from(issues).where(sql`${issues.status} IN ('cho_xu_ly', 'pending')`);
       const dangRes = await db.select({ value: count() }).from(issues).where(sql`${issues.status} IN ('dang_xu_ly', 'processing')`);
+      const chayRes = await db.select({ value: count() }).from(issues).where(sql`${issues.status} IN ('dang_chay_thu', 'monitoring')`);
       const daRes = await db.select({ value: count() }).from(issues).where(sql`${issues.status} IN ('da_xu_ly', 'resolved')`);
+      const khongRes = await db.select({ value: count() }).from(issues).where(sql`${issues.status} IN ('khong_the_xu_ly', 'cannot_resolve')`);
 
       stats.total = totalRes[0]?.value || 0;
       stats.cho_xu_ly = choRes[0]?.value || 0;
       stats.dang_xu_ly = dangRes[0]?.value || 0;
+      stats.dang_chay_thu = chayRes[0]?.value || 0;
       stats.da_xu_ly = daRes[0]?.value || 0;
+      stats.khong_the_xu_ly = khongRes[0]?.value || 0;
     }
   } catch {
     // Offline fallback
@@ -225,99 +231,115 @@ export default async function DashboardPage() {
       </div>
 
       {/* 3. QUICK STATS CARDS & VISUAL COUNTDOWN TIMERS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
         <Link
           href="/dashboard/categories/cho_xu_ly"
-          className="p-5 rounded-3xl bg-white border border-slate-200/90 hover:border-amber-400 transition-all group shadow-xs space-y-3"
+          className="p-4 rounded-3xl bg-white border border-slate-200/90 hover:border-amber-400 transition-all group shadow-xs space-y-2"
         >
           <div className="flex items-center justify-between">
-            <div className="w-10 h-10 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
-              <Clock className="w-5 h-5" />
+            <div className="w-9 h-9 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
+              <Clock className="w-4 h-4" />
             </div>
-            <span className="text-2xl font-black text-amber-600">{stats.cho_xu_ly}</span>
+            <span className="text-xl font-black text-amber-600">{stats.cho_xu_ly}</span>
           </div>
-
           <div>
-            <h3 className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors">
-              Chờ Xử Lý (15 Phút)
+            <h3 className="text-xs font-bold text-slate-900 group-hover:text-amber-600 transition-colors">
+              1. Chưa Xử Lý (15p)
             </h3>
-            <p className="text-xs text-slate-500 mt-0.5">Cảnh báo Zalo OA đã khởi tạo</p>
+            <p className="text-[10px] text-slate-500 mt-0.5">SLA 15 phút Zalo OA</p>
           </div>
-
-          {/* Visual 15m Countdown Timer Badge */}
           <div className="pt-1">
-            <CountdownTimer targetMinutes={15} label="Thời gian Zalo" />
+            <CountdownTimer targetMinutes={15} label="Hạn Zalo" />
           </div>
         </Link>
 
         <Link
           href="/dashboard/categories/dang_xu_ly"
-          className="p-5 rounded-3xl bg-white border border-slate-200/90 hover:border-blue-400 transition-all group shadow-xs space-y-3"
+          className="p-4 rounded-3xl bg-white border border-slate-200/90 hover:border-blue-400 transition-all group shadow-xs space-y-2"
         >
           <div className="flex items-center justify-between">
-            <div className="w-10 h-10 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600">
-              <ShieldAlert className="w-5 h-5" />
+            <div className="w-9 h-9 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600">
+              <ShieldAlert className="w-4 h-4" />
             </div>
-            <span className="text-2xl font-black text-blue-600">{stats.dang_xu_ly}</span>
+            <span className="text-xl font-black text-blue-600">{stats.dang_xu_ly}</span>
           </div>
-
           <div>
-            <h3 className="text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
-              Đang Xử Lý (2 Giờ)
+            <h3 className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+              2. Đang Xử Lý (2 Giờ)
             </h3>
-            <p className="text-xs text-slate-500 mt-0.5">Phân tích nguyên nhân 4M+1E</p>
+            <p className="text-[10px] text-slate-500 mt-0.5">Phân tích 5M+1E & Kỹ thuật</p>
           </div>
-
-          {/* Visual 2h Countdown Timer Badge */}
           <div className="pt-1">
-            <CountdownTimer targetMinutes={120} label="Thời gian 4M+1E" />
+            <CountdownTimer targetMinutes={120} label="Hạn 4M+1E" />
+          </div>
+        </Link>
+
+        <Link
+          href="/dashboard/categories/dang_chay_thu"
+          className="p-4 rounded-3xl bg-white border border-purple-200 hover:border-purple-500 transition-all group shadow-xs space-y-2"
+        >
+          <div className="flex items-center justify-between">
+            <div className="w-9 h-9 rounded-2xl bg-purple-50 border border-purple-200 flex items-center justify-center text-purple-600">
+              <FlaskConical className="w-4 h-4" />
+            </div>
+            <span className="text-xl font-black text-purple-600">{stats.dang_chay_thu}</span>
+          </div>
+          <div>
+            <h3 className="text-xs font-bold text-slate-900 group-hover:text-purple-600 transition-colors">
+              3. 🧪 Chạy Thử
+            </h3>
+            <p className="text-[10px] text-purple-700 font-bold mt-0.5">Chạy thử 3h - 48h</p>
+          </div>
+          <div className="pt-1 text-[10px] font-extrabold text-purple-800 flex items-center space-x-1">
+            <FlaskConical className="w-3 h-3 text-purple-600" />
+            <span>Theo dõi chất lượng</span>
           </div>
         </Link>
 
         <Link
           href="/dashboard/categories/da_xu_ly"
-          className="p-5 rounded-3xl bg-white border border-slate-200/90 hover:border-emerald-500 transition-all group shadow-xs space-y-3"
+          className="p-4 rounded-3xl bg-white border border-slate-200/90 hover:border-emerald-500 transition-all group shadow-xs space-y-2"
         >
           <div className="flex items-center justify-between">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700">
-              <CheckCircle2 className="w-5 h-5" />
+            <div className="w-9 h-9 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700">
+              <CheckCircle2 className="w-4 h-4" />
             </div>
-            <span className="text-2xl font-black text-emerald-700">{stats.da_xu_ly}</span>
+            <span className="text-xl font-black text-emerald-700">{stats.da_xu_ly}</span>
           </div>
-
           <div>
-            <h3 className="text-sm font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
-              Đã Xử Lý Xong
+            <h3 className="text-xs font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
+              4. Đã Xử Lý Xong
             </h3>
-            <p className="text-xs text-slate-500 mt-0.5">Đã phê duyệt QA & khôi phục chuyền</p>
+            <p className="text-[10px] text-slate-500 mt-0.5">Đã duyệt QA hoàn tất</p>
           </div>
-
-          <div className="pt-1 inline-flex items-center space-x-1.5 text-xs text-[#004724] font-bold">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+          <div className="pt-1 inline-flex items-center space-x-1 text-[10px] text-[#004724] font-extrabold">
+            <CheckCircle2 className="w-3 h-3 text-emerald-600" />
             <span>Đạt chuẩn CLSK</span>
           </div>
         </Link>
 
         <Link
-          href="/dashboard/report"
-          className="p-5 rounded-3xl bg-gradient-to-br from-[#004724] to-[#07361e] border border-emerald-800 text-white transition-all group shadow-md hover:scale-[1.02] flex flex-col justify-between"
+          href="/dashboard/categories/khong_the_xu_ly"
+          className="p-4 rounded-3xl bg-rose-50/80 border-2 border-rose-300 hover:border-rose-600 transition-all group shadow-xs space-y-2 relative overflow-hidden"
         >
           <div className="flex items-center justify-between">
-            <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center text-[#004724] shadow-xs">
-              <PlusCircle className="w-5 h-5 stroke-[2.5]" />
+            <div className="w-9 h-9 rounded-2xl bg-rose-600 text-white flex items-center justify-center shadow-xs">
+              <Siren className="w-4 h-4 animate-bounce" />
             </div>
-            <ArrowRight className="w-5 h-5 text-emerald-300 group-hover:translate-x-1 transition-transform" />
+            <span className="text-xl font-black text-rose-700">{stats.khong_the_xu_ly}</span>
           </div>
-
           <div>
-            <h3 className="text-sm font-black text-white transition-colors">
-              + Báo Cáo Phiếu Mới
+            <h3 className="text-xs font-black text-rose-900 group-hover:text-rose-700 transition-colors">
+              5. 🚨 SOS Không Thể Xử Lý
             </h3>
-            <p className="text-xs text-emerald-200/80 mt-0.5">Nhập lỗi sản phẩm 1-Touch</p>
+            <p className="text-[10px] text-rose-700 font-bold mt-0.5">Báo động Ban Giám Đốc</p>
           </div>
-
-          <div className="pt-2 text-[10px] font-bold text-emerald-300 uppercase tracking-widest">
-            Nhanh chóng • Chính xác
+          <div className="pt-1 text-[10px] font-black text-rose-800 uppercase tracking-wider flex items-center space-x-1">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-600"></span>
+            </span>
+            <span>Can thiệp gấp</span>
           </div>
         </Link>
       </div>

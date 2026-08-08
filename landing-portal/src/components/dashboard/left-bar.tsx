@@ -12,6 +12,7 @@ import {
   CheckCircle2,
   AlertTriangle,
   XCircle,
+  Siren,
   LogOut,
   ChevronLeft,
   ChevronRight,
@@ -300,21 +301,25 @@ export function LeftBar({ user, counts = { cho_xu_ly: 0, dang_xu_ly: 0, dang_cha
                 )}
               </Link>
 
-              {/* 4. Không thể xử lý */}
+              {/* 5. 🚨 SOS Không thể xử lý */}
               <Link
                 href="/dashboard/categories/khong_the_xu_ly"
-                className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-extrabold transition-all ${
                   pathname.includes("khong_the_xu_ly")
-                    ? "bg-rose-50 text-rose-900 border border-rose-300 font-bold"
-                    : "text-slate-600 hover:bg-emerald-50 hover:text-[#004724]"
+                    ? "bg-rose-100 text-rose-900 border border-rose-400 font-black shadow-xs"
+                    : "text-rose-700 hover:bg-rose-50 hover:text-rose-900"
                 }`}
               >
                 <div className="flex items-center space-x-2 min-w-0">
-                  <XCircle className="h-3.5 w-3.5 text-rose-600 shrink-0" />
-                  {!collapsed && <span className="truncate">Không thể xử lý</span>}
+                  <span className="relative flex h-2.5 w-2.5 shrink-0">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-600"></span>
+                  </span>
+                  <Siren className="h-3.5 w-3.5 text-rose-600 shrink-0" />
+                  {!collapsed && <span className="truncate font-black text-rose-700">🚨 SOS Không thể xử lý</span>}
                 </div>
                 {!collapsed && (
-                  <span className="px-1.5 py-0.5 text-[10px] font-black rounded-full bg-slate-200 text-slate-700">
+                  <span className="px-1.5 py-0.5 text-[10px] font-black rounded-full bg-rose-600 text-white shadow-xs animate-pulse">
                     {counts.khong_the_xu_ly}
                   </span>
                 )}

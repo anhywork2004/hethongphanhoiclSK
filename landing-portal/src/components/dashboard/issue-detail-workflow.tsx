@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Clock, CheckCircle2, AlertTriangle, Lock, LockKeyholeOpen, Upload, X, ArrowLeft, Image as ImageIcon, ShieldAlert, Sparkles, Building, Layers, Package, Check, RotateCcw, Wrench } from "lucide-react";
+import { Clock, CheckCircle2, AlertTriangle, Siren, Lock, LockKeyholeOpen, Upload, X, ArrowLeft, Image as ImageIcon, ShieldAlert, Sparkles, Building, Layers, Package, Check, RotateCcw, Wrench } from "lucide-react";
 import { AI5M1EAssistant } from "@/components/dashboard/ai-5m1e-assistant";
 import { BeforeAfterComparison } from "@/components/dashboard/before-after-comparison";
 import { CountdownTimer } from "@/components/dashboard/countdown-timer";
@@ -56,10 +56,11 @@ export function IssueDetailWorkflow({ issue }: { issue: IssueData }) {
   const [msg, setMsg] = useState<string | null>(null);
 
   // Status flags
-  const isChoXuLy = currentStatus === "cho_xu_ly";
-  const isDangXuLy = currentStatus === "dang_xu_ly";
-  const isDangChayThu = currentStatus === "dang_chay_thu" || currentStatus === "theo_doi";
-  const isDaXuLy = currentStatus === "da_xu_ly";
+  const isChoXuLy = currentStatus === "cho_xu_ly" || currentStatus === "pending";
+  const isDangXuLy = currentStatus === "dang_xu_ly" || currentStatus === "processing";
+  const isDangChayThu = currentStatus === "dang_chay_thu" || currentStatus === "monitoring" || currentStatus === "theo_doi";
+  const isDaXuLy = currentStatus === "da_xu_ly" || currentStatus === "resolved";
+  const isKhongTheXuLy = currentStatus === "khong_the_xu_ly" || currentStatus === "cannot_resolve";
 
   async function handleUploadRepairedImage(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files;
@@ -215,12 +216,15 @@ export function IssueDetailWorkflow({ issue }: { issue: IssueData }) {
                   ? "bg-blue-100 text-blue-900 border border-blue-300"
                   : isDangChayThu
                   ? "bg-purple-100 text-purple-900 border border-purple-300"
+                  : isKhongTheXuLy
+                  ? "bg-rose-600 text-white border border-rose-700 animate-pulse shadow-xs"
                   : "bg-emerald-100 text-[#004724] border border-emerald-300"
               }`}
             >
               {isChoXuLy && "Bước 1: Chờ tiếp nhận (15p SLA)"}
               {isDangXuLy && "Bước 2: Trưởng line & Kỹ thuật xử lý"}
               {isDangChayThu && "Bước 3: Đang chạy thử nghiệm"}
+              {isKhongTheXuLy && "🚨 SOS KHẨN CẤP: Không thể xử lý"}
               {isDaXuLy && "Bước 4: Đã xử lý xong (Hoàn tất)"}
             </span>
           </div>

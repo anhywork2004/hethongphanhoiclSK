@@ -3,7 +3,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { drizzle } from "drizzle-orm/d1";
 import { issues, issueImages } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
-import { Clock, AlertTriangle, CheckCircle2, XCircle, FlaskConical, Package, Factory, User, Image as ImageIcon, PlusCircle, ArrowRight } from "lucide-react";
+import { Clock, AlertTriangle, CheckCircle2, XCircle, Siren, FlaskConical, Package, Factory, User, Image as ImageIcon, PlusCircle, ArrowRight } from "lucide-react";
 import { CountdownTimer } from "@/components/dashboard/countdown-timer";
 
 export default async function CategoryStatusPage({
@@ -21,7 +21,7 @@ export default async function CategoryStatusPage({
     dang_xu_ly: { title: "Phiếu Đang Xử Lý (Chẩn Đoán 5M+1E & Kỹ Thuật Sửa Chữa)", badgeBg: "bg-blue-50 border-blue-200", textCol: "text-blue-700", icon: AlertTriangle, timerMinutes: 120 },
     dang_chay_thu: { title: "Phiếu Đang Chạy Thử Nghiệm (Min 3h – Max 48h)", badgeBg: "bg-purple-50 border-purple-200", textCol: "text-purple-700", icon: FlaskConical, timerMinutes: 180 },
     da_xu_ly: { title: "Phiếu Đã Xử Lý Thành Công (Đạt Chuẩn CLSK)", badgeBg: "bg-emerald-50 border-emerald-200", textCol: "text-emerald-700", icon: CheckCircle2 },
-    khong_the_xu_ly: { title: "Phiếu Không Thể Xử Lý (Chuyển Khu Vực / Tạm Dừng)", badgeBg: "bg-rose-50 border-rose-200", textCol: "text-rose-700", icon: XCircle },
+    khong_the_xu_ly: { title: "🚨 SOS KHẨN CẤP - Phiếu Không Thể Xử Lý (Báo Động Ban Giám Đốc)", badgeBg: "bg-rose-100 border-rose-300", textCol: "text-rose-700", icon: Siren },
   };
 
   const currentCfg = statusConfig[currentStatus];
@@ -89,7 +89,7 @@ export default async function CategoryStatusPage({
           { key: "dang_xu_ly", label: "⚠️ Đang Xử Lý", color: "hover:border-blue-400" },
           { key: "dang_chay_thu", label: "🧪 Chạy Thử", color: "hover:border-purple-400" },
           { key: "da_xu_ly", label: "✅ Đã Xử Lý", color: "hover:border-emerald-400" },
-          { key: "khong_the_xu_ly", label: "❌ Không Thể Xử Lý", color: "hover:border-rose-400" },
+          { key: "khong_the_xu_ly", label: "🚨 SOS Không Thể Xử Lý", color: "hover:border-rose-500 font-black text-rose-700" },
         ].map((t) => (
           <Link
             key={t.key}

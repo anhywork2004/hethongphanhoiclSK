@@ -23,6 +23,7 @@ import {
   Factory,
   Tag,
   ChevronDown,
+  KeyRound,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -115,9 +116,19 @@ export function LeftBar({ user, counts = { cho_xu_ly: 0, dang_xu_ly: 0, da_xu_ly
               <div className="text-[11px] text-slate-300 truncate mt-0.5">
                 {user.position || "Cán bộ sản xuất"}
               </div>
-              <div className="mt-1 inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800/60 text-[10px] font-bold">
-                <ShieldCheck className="w-3 h-3 text-blue-400" />
-                <span>{roleLabelMap[user.role || ""] || user.role || "reporter"}</span>
+              <div className="mt-1 flex items-center justify-between">
+                <div className="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800/60 text-[10px] font-bold">
+                  <ShieldCheck className="w-3 h-3 text-blue-400" />
+                  <span>{roleLabelMap[user.role || ""] || user.role || "reporter"}</span>
+                </div>
+                <Link
+                  href="/dashboard/change-password"
+                  className="text-[10px] font-bold text-amber-400 hover:text-amber-300 flex items-center space-x-1 underline decoration-amber-500/40"
+                  title="Đổi mật khẩu tài khoản"
+                >
+                  <KeyRound className="w-3 h-3" />
+                  <span>Đổi MK</span>
+                </Link>
               </div>
             </div>
           )}

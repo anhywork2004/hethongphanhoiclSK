@@ -7,9 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "cf:build": "node scripts/patch-prisma-wasm.js && cross-env BUILDING_FOR_CLOUDFLARE=1 opennextjs-cloudflare build",
-    "cf:preview": "cross-env BUILDING_FOR_CLOUDFLARE=1 opennextjs-cloudflare preview",
-    "cf:deploy": "npm run cf:build && opennextjs-cloudflare deploy"
+    "cf:build": "node scripts/patch-prisma-wasm.js && npx @opennextjs/cloudflare build",
+    "cf:preview": "npx @opennextjs/cloudflare preview",
+    "cf:deploy": "npm run cf:build && npx @opennextjs/cloudflare deploy"
   },
   "dependencies": {
     "@prisma/adapter-better-sqlite3": "^7.9.1",

@@ -81,8 +81,8 @@ export async function POST(req: Request) {
       workshopName: workshopName || "Phân xưởng Chặt & Chuẩn bị",
       detectionStage: detectionStage.trim(),
       description: description.trim(),
-      severity: severity || "trung_binh",
-      status: "cho_xu_ly" as const,
+      severity: (severity as any) || "medium",
+      status: "pending" as const,
       createdByMnv: user?.mnv || "NV001",
       createdByName: user?.fullName || "Người dùng",
       createdAt: timestampStr,
@@ -102,7 +102,8 @@ export async function POST(req: Request) {
               id: imgId,
               issueId,
               imageUrl: img.imageUrl,
-              r2Key: img.r2Key || null,
+              r2Key: img.r2Key || img.imageUrl,
+              stage: "report",
               createdAt: timestampStr,
             })
             .execute();

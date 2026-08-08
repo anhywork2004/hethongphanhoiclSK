@@ -4,7 +4,7 @@ import { workshops } from "@/db/schema";
 import { Factory, Plus, Check, ShieldAlert } from "lucide-react";
 
 export default async function AdminWorkshopsPage() {
-  let list = [];
+  let list: any[] = [];
   try {
     const ctx = await getCloudflareContext({ async: true });
     const env = ctx.env as unknown as CloudflareEnv;

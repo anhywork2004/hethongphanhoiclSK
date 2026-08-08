@@ -4,7 +4,7 @@ import { departments } from "@/db/schema";
 import { Sliders } from "lucide-react";
 
 export default async function AdminDepartmentsPage() {
-  let list = [];
+  let list: any[] = [];
   try {
     const ctx = await getCloudflareContext({ async: true });
     const env = ctx.env as unknown as CloudflareEnv;

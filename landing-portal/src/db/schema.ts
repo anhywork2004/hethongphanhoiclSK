@@ -123,6 +123,9 @@ export const issues = sqliteTable("issues", {
   repairedImages: text("repaired_images"),
   aiCauseDiagnosis: text("ai_cause_diagnosis"),
   testRunHours: integer("test_run_hours").default(3),
+  qaApproverMnv: text("qa_approver_mnv"),
+  qaApprovedAt: text("qa_approved_at"),
+  resolvedAt: text("resolved_at"),
 });
 
 // 3.7 issue_images

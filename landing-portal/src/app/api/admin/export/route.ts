@@ -17,7 +17,7 @@ export async function GET() {
       detectionStage: string;
       severity: string;
       status: string;
-      createdByName: string;
+      createdByName: string | null;
       createdAt: string;
     }> = [];
 

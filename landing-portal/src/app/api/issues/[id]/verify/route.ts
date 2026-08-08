@@ -43,7 +43,7 @@ export async function POST(
     await db
       .update(issues)
       .set({
-        status: "da_xu_ly",
+        status: "resolved",
         qaApproverMnv: user.mnv || user.id,
         qaApprovedAt: nowIso,
         resolvedAt: nowIso,

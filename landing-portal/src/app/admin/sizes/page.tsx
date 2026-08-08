@@ -4,7 +4,7 @@ import { productSizes } from "@/db/schema";
 import { Ruler } from "lucide-react";
 
 export default async function AdminSizesPage() {
-  let list = [];
+  let list: any[] = [];
   try {
     const ctx = await getCloudflareContext({ async: true });
     const env = ctx.env as unknown as CloudflareEnv;

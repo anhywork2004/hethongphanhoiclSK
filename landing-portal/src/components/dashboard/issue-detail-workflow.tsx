@@ -28,14 +28,14 @@ interface IssueData {
   createdByName?: string | null;
   createdByMnv?: string | null;
   createdAt: string;
-  initialDefectQty?: number;
-  repairedDefectQty?: number;
-  closedOnceAt?: string;
-  closedTwiceAt?: string;
+  initialDefectQty?: number | null;
+  repairedDefectQty?: number | null;
+  closedOnceAt?: string | null;
+  closedTwiceAt?: string | null;
   repairedImages?: string[];
   initialImages?: string[];
-  aiCauseDiagnosis?: string;
-  testRunHours?: number;
+  aiCauseDiagnosis?: string | null;
+  testRunHours?: number | null;
 }
 
 export function IssueDetailWorkflow({ issue }: { issue: IssueData }) {

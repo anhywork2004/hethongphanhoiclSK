@@ -4,7 +4,7 @@ import { employees, userRoles } from "@/db/schema";
 import { User, ShieldCheck } from "lucide-react";
 
 export default async function AdminEmployeesPage() {
-  let list = [];
+  let list: any[] = [];
   try {
     const ctx = await getCloudflareContext({ async: true });
     const env = ctx.env as unknown as CloudflareEnv;

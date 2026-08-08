@@ -23,6 +23,7 @@ import {
   Tag,
   ChevronDown,
   KeyRound,
+  LayoutDashboard,
 } from "lucide-react";
 import { useState } from "react";
 import { TBSMark } from "@/components/brand-logo";
@@ -156,6 +157,21 @@ export function LeftBar({ user, counts = { cho_xu_ly: 0, dang_xu_ly: 0, da_xu_ly
             </Link>
           </div>
         )}
+
+        {/* NÚT TỔNG QUAN DASHBOARD TRẢ VỀ TRANG CHỦ DASHBOARD */}
+        <div>
+          <Link
+            href="/dashboard"
+            className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
+              pathname === "/dashboard"
+                ? "bg-[#e8f5e0] text-[#004724] border-l-4 border-[#004724] shadow-xs"
+                : "text-slate-700 hover:bg-emerald-50 hover:text-[#004724]"
+            }`}
+          >
+            <LayoutDashboard className="h-4 w-4 text-[#004724] shrink-0" />
+            {!collapsed && <span>Dashboard</span>}
+          </Link>
+        </div>
 
         {/* MỤC 3 TRONG SPEC: PHÂN LOẠI TRẠNG THÁI (GÔM THÀNH DROPDOWN TAG) */}
         <div>

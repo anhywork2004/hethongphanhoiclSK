@@ -18,6 +18,8 @@ import {
   Ruler,
   ShieldCheck,
   MessageSquare,
+  BookOpen,
+  Wrench,
 } from "lucide-react";
 
 interface LeftBarProps {
@@ -224,6 +226,17 @@ export function LeftBar({ user, counts = { cho_xu_ly: 0, dang_xu_ly: 0, da_xu_ly
             <ClipboardList className="h-4 w-4 text-slate-400" />
             <span>Nhật ký sửa chữa</span>
           </Link>
+          <Link
+            href="/dashboard/training"
+            className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all mt-1 ${
+              pathname === "/dashboard/training"
+                ? "bg-slate-800 text-blue-400 border border-slate-700"
+                : "text-slate-300 hover:bg-slate-800/50 hover:text-white"
+            }`}
+          >
+            <BookOpen className="h-4 w-4 text-slate-400" />
+            <span>Thư viện & Đào tạo</span>
+          </Link>
         </div>
 
         {/* Admin Management Tools (If Admin) */}
@@ -265,6 +278,17 @@ export function LeftBar({ user, counts = { cho_xu_ly: 0, dang_xu_ly: 0, da_xu_ly
               >
                 <Ruler className="h-3.5 w-3.5 text-slate-400" />
                 <span>Quản lý Bảng Size</span>
+              </Link>
+              <Link
+                href="/dashboard/admin/preventive-maintenance"
+                className={`flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+                  pathname.includes("/admin/preventive-maintenance")
+                    ? "bg-slate-800 text-blue-400"
+                    : "text-slate-400 hover:bg-slate-800/40 hover:text-slate-200"
+                }`}
+              >
+                <Wrench className="h-3.5 w-3.5 text-blue-400" />
+                <span>Bảo Trì Định Kỳ (Preventive)</span>
               </Link>
             </div>
           </div>

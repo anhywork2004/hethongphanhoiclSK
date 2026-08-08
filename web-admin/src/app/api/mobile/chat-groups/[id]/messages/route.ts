@@ -48,7 +48,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   });
 
   // Mobile app chỉ cần tên danh mục (Tổ/Chuyền) để hiển thị trên thẻ cảnh báo sự cố.
-  const flattened = messages.map((m) => {
+  const flattened = messages.map((m: any) => {
     if (!m.incident) return m;
     return {
       ...m,

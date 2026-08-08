@@ -46,25 +46,25 @@ export async function GET(req: Request) {
   ]);
 
   const items = [
-    ...invitations.map((inv) => ({
+    ...invitations.map((inv: any) => ({
       kind: "INVITATION" as const,
       id: inv.id,
       createdAt: inv.createdAt,
       invitation: inv,
     })),
-    ...announcements.map((ann) => ({
+    ...announcements.map((ann: any) => ({
       kind: "ANNOUNCEMENT" as const,
       id: ann.id,
       createdAt: ann.createdAt,
       announcement: ann,
     })),
-    ...ratingRequests.map((r) => ({
+    ...ratingRequests.map((r: any) => ({
       kind: "RATING_REQUEST" as const,
       id: r.id,
       createdAt: r.createdAt,
       ratingRequest: r,
     })),
-    ...acceptedIncidents.map((inc) => ({
+    ...acceptedIncidents.map((inc: any) => ({
       kind: "INCIDENT_ACCEPTED" as const,
       id: inc.id,
       createdAt: inc.acceptedAt!,

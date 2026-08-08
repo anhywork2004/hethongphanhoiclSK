@@ -1,5 +1,14 @@
 import type { NextAuthConfig } from "next-auth";
 
+export interface CustomUserSession {
+  id: string;
+  mnv: string;
+  fullName: string;
+  position: string;
+  department: string;
+  role: string;
+}
+
 export const authConfig = {
   trustHost: true,
   session: { strategy: "jwt" },
@@ -8,17 +17,25 @@ export const authConfig = {
   callbacks: {
     jwt({ token, user }) {
       if (user) {
-        token.role = (user as { role: string }).role;
-        token.employeeCode = (user as { employeeCode: string }).employeeCode;
-        token.id = user.id;
+        const u = user as unknown as CustomUserSession;
+        token.id = u.id;
+        token.mnv = u.mnv;
+        token.fullName = u.fullName;
+        token.position = u.position;
+        token.department = u.department;
+        token.role = u.role;
       }
       return token;
     },
     session({ session, token }) {
       if (session.user) {
-        (session.user as { id?: string }).id = token.id as string;
-        (session.user as { role?: string }).role = token.role as string;
-        (session.user as { employeeCode?: string }).employeeCode = token.employeeCode as string;
+        const u = session.user as unknown as CustomUserSession;
+        u.id = token.id as string;
+        u.mnv = token.mnv as string;
+        u.fullName = token.fullName as string;
+        u.position = token.position as string;
+        u.department = token.department as string;
+        u.role = token.role as string;
       }
       return session;
     },

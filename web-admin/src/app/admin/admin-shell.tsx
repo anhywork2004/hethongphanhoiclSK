@@ -9,6 +9,7 @@ import {
   Wrench,
   Users,
   AlertTriangle,
+  ClipboardList,
   Megaphone,
   Tags,
   Menu,
@@ -23,7 +24,7 @@ const categoryTypeItems = [
   { type: "AREA", label: "Khu vực / Xưởng" },
   { type: "PRODUCTION_LINE", label: "Chuyền" },
   { type: "TEAM", label: "Tổ" },
-  { type: "FAILURE", label: "Danh mục hư" },
+  { type: "FAILURE", label: "Danh mục hư máy" },
   { type: "MAINTENANCE_PERIOD", label: "Bảo trì định kỳ" },
   { type: "MACHINE_STATUS", label: "Trạng thái máy" },
   { type: "MACHINE_TYPE", label: "Phân loại máy" },
@@ -31,9 +32,10 @@ const categoryTypeItems = [
 
 const navItems = [
   { href: "/admin", label: "Tổng quan", icon: LayoutDashboard },
-  { href: "/admin/machines", label: "Máy móc", icon: Wrench },
-  { href: "/admin/employees", label: "Nhân sự", icon: Users },
-  { href: "/admin/incidents", label: "Sự cố", icon: AlertTriangle },
+  { href: "/admin/machines", label: "Máy móc & Mã QR", icon: Wrench },
+  { href: "/admin/incidents", label: "Sự cố Máy", icon: AlertTriangle },
+  { href: "/admin/issues", label: "Sự cố CLSK (QA)", icon: ClipboardList },
+  { href: "/admin/employees", label: "Nhân sự (7 Roles)", icon: Users },
   { label: "Danh mục", icon: Tags, children: categoryTypeItems },
   { href: "/admin/announcements", label: "Thông báo", icon: Megaphone },
 ];

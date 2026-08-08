@@ -10,9 +10,13 @@
 */
 
 export const Role = {
+  ADMIN: 'ADMIN',
   OPERATOR: 'OPERATOR',
-  MAINTENANCE: 'MAINTENANCE',
-  ADMIN: 'ADMIN'
+  QA: 'QA',
+  LINE_LEADER: 'LINE_LEADER',
+  TECHNOLOGY: 'TECHNOLOGY',
+  DEPARTMENT_HEAD: 'DEPARTMENT_HEAD',
+  MAINTENANCE: 'MAINTENANCE'
 } as const
 
 export type Role = (typeof Role)[keyof typeof Role]
@@ -72,3 +76,42 @@ export const RatingStatus = {
 } as const
 
 export type RatingStatus = (typeof RatingStatus)[keyof typeof RatingStatus]
+
+
+export const IssueStatus = {
+  REPORTED: 'REPORTED',
+  INVESTIGATING: 'INVESTIGATING',
+  ROOT_CAUSE_FOUND: 'ROOT_CAUSE_FOUND',
+  ASSIGNED: 'ASSIGNED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  DONE: 'DONE'
+} as const
+
+export type IssueStatus = (typeof IssueStatus)[keyof typeof IssueStatus]
+
+
+export const SubmitterRole = {
+  QA: 'QA',
+  LINE_LEADER: 'LINE_LEADER',
+  TECHNOLOGY: 'TECHNOLOGY'
+} as const
+
+export type SubmitterRole = (typeof SubmitterRole)[keyof typeof SubmitterRole]
+
+
+export const TaskStatus = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  DONE: 'DONE'
+} as const
+
+export type TaskStatus = (typeof TaskStatus)[keyof typeof TaskStatus]
+
+
+export const VerifyStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED_DONE: 'CONFIRMED_DONE',
+  REJECTED: 'REJECTED'
+} as const
+
+export type VerifyStatus = (typeof VerifyStatus)[keyof typeof VerifyStatus]

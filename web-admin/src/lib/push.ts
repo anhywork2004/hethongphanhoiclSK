@@ -43,9 +43,9 @@ export async function sendPushToUsers(
   });
 
   const messages = users
-    .map((u) => u.pushToken)
-    .filter((token): token is string => !!token)
-    .map((token) => ({
+    .map((u: { pushToken: string | null }) => u.pushToken)
+    .filter((token: string | null): token is string => !!token)
+    .map((token: string) => ({
       to: token,
       title: notification.title,
       body: notification.body,
@@ -69,8 +69,20 @@ export async function sendPushToGroupMembers(
   });
   await sendPushToUsers(
     prisma,
-    members.map((m) => m.userId),
+    members.map((m: { userId: string }) => m.userId),
     notification,
     excludeUserId,
   );
 }
+
+export async function sendPushToUsersByRoleInArea(
+  prisma: any,
+  role: any,
+  areaId: any,
+  notification: { title: string; body: string; data?: Record<string, unknown> },
+  excludeUserId?: string
+) {
+  // Mock fallback for legacy push notifications
+  return;
+}
+

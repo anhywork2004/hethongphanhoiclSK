@@ -158,11 +158,102 @@ async function main() {
     },
   });
 
-  for (const user of [tech1, tech2]) {
-    await prisma.chatGroupMember.upsert({
-      where: { groupId_userId: { groupId: group.id, userId: user.id } },
-      update: {},
-      create: { groupId: group.id, userId: user.id },
+  // Seed Categories for Area, Line, Team
+  const areaA = await prisma.category.upsert({
+    where: { type_name: { type: "AREA", name: "Xưởng A - May 1" } },
+    update: {},
+    create: { type: "AREA", name: "Xưởng A - May 1", order: 0 },
+  });
+
+  const areaB = await prisma.category.upsert({
+    where: { type_name: { type: "AREA", name: "Xưởng B - Đế & Hoàn thiện" } },
+    update: {},
+    create: { type: "AREA", name: "Xưởng B - Đế & Hoàn thiện", order: 1 },
+  });
+
+  const line1 = await prisma.category.upsert({
+    where: { type_name: { type: "PRODUCTION_LINE", name: "Chuyền 1" } },
+    update: {},
+    create: { type: "PRODUCTION_LINE", name: "Chuyền 1", order: 0 },
+  });
+
+  const team1 = await prisma.category.upsert({
+    where: { type_name: { type: "TEAM", name: "Tổ 1" } },
+    update: {},
+    create: { type: "TEAM", name: "Tổ 1", order: 0 },
+  });
+
+  // Seed Users for all 7 roles
+  const qaUser = await prisma.user.upsert({
+    where: { employeeCode: "QA001" },
+    update: { areaId: areaA.id },
+    create: {
+      employeeCode: "QA001",
+      name: "Phạm Thị QA",
+      phone: "0900000005",
+      passwordHash: password,
+      role: "QA",
+      areaId: areaA.id,
+    },
+  });
+
+  const lineLeaderUser = await prisma.user.upsert({
+    where: { employeeCode: "TL001" },
+    update: { areaId: areaA.id },
+    create: {
+      employeeCode: "TL001",
+      name: "Nguyễn Văn Trưởng Line",
+      phone: "0900000006",
+      passwordHash: password,
+      role: "LINE_LEADER",
+      areaId: areaA.id,
+    },
+  });
+
+  const techRoleUser = await prisma.user.upsert({
+    where: { employeeCode: "CN001" },
+    update: { areaId: areaA.id },
+    create: {
+      employeeCode: "CN001",
+      name: "Vũ Văn Công Nghệ",
+      phone: "0900000007",
+      passwordHash: password,
+      role: "TECHNOLOGY",
+      areaId: areaA.id,
+    },
+  });
+
+  const deptHeadUser = await prisma.user.upsert({
+    where: { employeeCode: "TP001" },
+    update: { areaId: areaA.id },
+    create: {
+      employeeCode: "TP001",
+      name: "Đỗ Văn Trưởng Phòng",
+      phone: "0900000008",
+      passwordHash: password,
+      role: "DEPARTMENT_HEAD",
+      areaId: areaA.id,
+    },
+  });
+
+  // Seed Issue Failure Categories & Part Categories
+  const issueFailures = ["Lỗi đường may", "Lỗi keo dán", "Lỗi rách da / xước mạ", "Lỗi lệch khuôn", "Lỗi cơ khí thiết bị"];
+  for (let i = 0; i < issueFailures.length; i++) {
+    const name = issueFailures[i];
+    await prisma.issueFailureCategory.upsert({
+      where: { id: `ifc-${i + 1}` },
+      update: { name },
+      create: { id: `ifc-${i + 1}`, name, order: i + 1 },
+    });
+  }
+
+  const parts = ["Kim may công nghiệp", "Băng tải cao su", "Động cơ bước 24V", "Cảm biến quang học", "Xi lanh khí nén SMC"];
+  for (let i = 0; i < parts.length; i++) {
+    const name = parts[i];
+    await prisma.partCategory.upsert({
+      where: { id: `pc-${i + 1}` },
+      update: { name },
+      create: { id: `pc-${i + 1}`, name, order: i + 1 },
     });
   }
 

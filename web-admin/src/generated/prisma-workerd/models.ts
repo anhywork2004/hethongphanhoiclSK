@@ -9,6 +9,8 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/Category'
+export type * from './models/IssueFailureCategory'
+export type * from './models/PartCategory'
 export type * from './models/User'
 export type * from './models/Machine'
 export type * from './models/FailureCategory'
@@ -20,4 +22,7 @@ export type * from './models/ChatGroupMember'
 export type * from './models/ChatMessage'
 export type * from './models/GroupInvitation'
 export type * from './models/Announcement'
+export type * from './models/QualityIssue'
+export type * from './models/FiveMOneESubmission'
+export type * from './models/MaintenanceTask'
 export type * from './commonInputTypes'

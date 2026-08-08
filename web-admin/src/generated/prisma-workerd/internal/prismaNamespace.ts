@@ -398,6 +398,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   Category: 'Category',
+  IssueFailureCategory: 'IssueFailureCategory',
+  PartCategory: 'PartCategory',
   User: 'User',
   Machine: 'Machine',
   FailureCategory: 'FailureCategory',
@@ -408,7 +410,10 @@ export const ModelName = {
   ChatGroupMember: 'ChatGroupMember',
   ChatMessage: 'ChatMessage',
   GroupInvitation: 'GroupInvitation',
-  Announcement: 'Announcement'
+  Announcement: 'Announcement',
+  QualityIssue: 'QualityIssue',
+  FiveMOneESubmission: 'FiveMOneESubmission',
+  MaintenanceTask: 'MaintenanceTask'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -424,7 +429,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "category" | "user" | "machine" | "failureCategory" | "incident" | "maintenanceLog" | "ratingRequest" | "chatGroup" | "chatGroupMember" | "chatMessage" | "groupInvitation" | "announcement"
+    modelProps: "category" | "issueFailureCategory" | "partCategory" | "user" | "machine" | "failureCategory" | "incident" | "maintenanceLog" | "ratingRequest" | "chatGroup" | "chatGroupMember" | "chatMessage" | "groupInvitation" | "announcement" | "qualityIssue" | "fiveMOneESubmission" | "maintenanceTask"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -499,6 +504,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.CategoryCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.CategoryCountAggregateOutputType> | number
+        }
+      }
+    }
+    IssueFailureCategory: {
+      payload: Prisma.$IssueFailureCategoryPayload<ExtArgs>
+      fields: Prisma.IssueFailureCategoryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.IssueFailureCategoryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IssueFailureCategoryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.IssueFailureCategoryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IssueFailureCategoryPayload>
+        }
+        findFirst: {
+          args: Prisma.IssueFailureCategoryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IssueFailureCategoryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.IssueFailureCategoryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IssueFailureCategoryPayload>
+        }
+        findMany: {
+          args: Prisma.IssueFailureCategoryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IssueFailureCategoryPayload>[]
+        }
+        create: {
+          args: Prisma.IssueFailureCategoryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IssueFailureCategoryPayload>
+        }
+        createMany: {
+          args: Prisma.IssueFailureCategoryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.IssueFailureCategoryCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IssueFailureCategoryPayload>[]
+        }
+        delete: {
+          args: Prisma.IssueFailureCategoryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IssueFailureCategoryPayload>
+        }
+        update: {
+          args: Prisma.IssueFailureCategoryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IssueFailureCategoryPayload>
+        }
+        deleteMany: {
+          args: Prisma.IssueFailureCategoryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.IssueFailureCategoryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.IssueFailureCategoryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IssueFailureCategoryPayload>[]
+        }
+        upsert: {
+          args: Prisma.IssueFailureCategoryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IssueFailureCategoryPayload>
+        }
+        aggregate: {
+          args: Prisma.IssueFailureCategoryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateIssueFailureCategory>
+        }
+        groupBy: {
+          args: Prisma.IssueFailureCategoryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.IssueFailureCategoryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.IssueFailureCategoryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.IssueFailureCategoryCountAggregateOutputType> | number
+        }
+      }
+    }
+    PartCategory: {
+      payload: Prisma.$PartCategoryPayload<ExtArgs>
+      fields: Prisma.PartCategoryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PartCategoryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PartCategoryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PartCategoryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PartCategoryPayload>
+        }
+        findFirst: {
+          args: Prisma.PartCategoryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PartCategoryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PartCategoryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PartCategoryPayload>
+        }
+        findMany: {
+          args: Prisma.PartCategoryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PartCategoryPayload>[]
+        }
+        create: {
+          args: Prisma.PartCategoryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PartCategoryPayload>
+        }
+        createMany: {
+          args: Prisma.PartCategoryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PartCategoryCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PartCategoryPayload>[]
+        }
+        delete: {
+          args: Prisma.PartCategoryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PartCategoryPayload>
+        }
+        update: {
+          args: Prisma.PartCategoryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PartCategoryPayload>
+        }
+        deleteMany: {
+          args: Prisma.PartCategoryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PartCategoryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PartCategoryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PartCategoryPayload>[]
+        }
+        upsert: {
+          args: Prisma.PartCategoryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PartCategoryPayload>
+        }
+        aggregate: {
+          args: Prisma.PartCategoryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePartCategory>
+        }
+        groupBy: {
+          args: Prisma.PartCategoryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PartCategoryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PartCategoryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PartCategoryCountAggregateOutputType> | number
         }
       }
     }
@@ -1316,6 +1469,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    QualityIssue: {
+      payload: Prisma.$QualityIssuePayload<ExtArgs>
+      fields: Prisma.QualityIssueFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.QualityIssueFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QualityIssuePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.QualityIssueFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QualityIssuePayload>
+        }
+        findFirst: {
+          args: Prisma.QualityIssueFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QualityIssuePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.QualityIssueFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QualityIssuePayload>
+        }
+        findMany: {
+          args: Prisma.QualityIssueFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QualityIssuePayload>[]
+        }
+        create: {
+          args: Prisma.QualityIssueCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QualityIssuePayload>
+        }
+        createMany: {
+          args: Prisma.QualityIssueCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.QualityIssueCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QualityIssuePayload>[]
+        }
+        delete: {
+          args: Prisma.QualityIssueDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QualityIssuePayload>
+        }
+        update: {
+          args: Prisma.QualityIssueUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QualityIssuePayload>
+        }
+        deleteMany: {
+          args: Prisma.QualityIssueDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.QualityIssueUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.QualityIssueUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QualityIssuePayload>[]
+        }
+        upsert: {
+          args: Prisma.QualityIssueUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$QualityIssuePayload>
+        }
+        aggregate: {
+          args: Prisma.QualityIssueAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateQualityIssue>
+        }
+        groupBy: {
+          args: Prisma.QualityIssueGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.QualityIssueGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.QualityIssueCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.QualityIssueCountAggregateOutputType> | number
+        }
+      }
+    }
+    FiveMOneESubmission: {
+      payload: Prisma.$FiveMOneESubmissionPayload<ExtArgs>
+      fields: Prisma.FiveMOneESubmissionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FiveMOneESubmissionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FiveMOneESubmissionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FiveMOneESubmissionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FiveMOneESubmissionPayload>
+        }
+        findFirst: {
+          args: Prisma.FiveMOneESubmissionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FiveMOneESubmissionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FiveMOneESubmissionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FiveMOneESubmissionPayload>
+        }
+        findMany: {
+          args: Prisma.FiveMOneESubmissionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FiveMOneESubmissionPayload>[]
+        }
+        create: {
+          args: Prisma.FiveMOneESubmissionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FiveMOneESubmissionPayload>
+        }
+        createMany: {
+          args: Prisma.FiveMOneESubmissionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FiveMOneESubmissionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FiveMOneESubmissionPayload>[]
+        }
+        delete: {
+          args: Prisma.FiveMOneESubmissionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FiveMOneESubmissionPayload>
+        }
+        update: {
+          args: Prisma.FiveMOneESubmissionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FiveMOneESubmissionPayload>
+        }
+        deleteMany: {
+          args: Prisma.FiveMOneESubmissionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FiveMOneESubmissionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FiveMOneESubmissionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FiveMOneESubmissionPayload>[]
+        }
+        upsert: {
+          args: Prisma.FiveMOneESubmissionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FiveMOneESubmissionPayload>
+        }
+        aggregate: {
+          args: Prisma.FiveMOneESubmissionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFiveMOneESubmission>
+        }
+        groupBy: {
+          args: Prisma.FiveMOneESubmissionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FiveMOneESubmissionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FiveMOneESubmissionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FiveMOneESubmissionCountAggregateOutputType> | number
+        }
+      }
+    }
+    MaintenanceTask: {
+      payload: Prisma.$MaintenanceTaskPayload<ExtArgs>
+      fields: Prisma.MaintenanceTaskFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MaintenanceTaskFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceTaskPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MaintenanceTaskFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceTaskPayload>
+        }
+        findFirst: {
+          args: Prisma.MaintenanceTaskFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceTaskPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MaintenanceTaskFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceTaskPayload>
+        }
+        findMany: {
+          args: Prisma.MaintenanceTaskFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceTaskPayload>[]
+        }
+        create: {
+          args: Prisma.MaintenanceTaskCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceTaskPayload>
+        }
+        createMany: {
+          args: Prisma.MaintenanceTaskCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MaintenanceTaskCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceTaskPayload>[]
+        }
+        delete: {
+          args: Prisma.MaintenanceTaskDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceTaskPayload>
+        }
+        update: {
+          args: Prisma.MaintenanceTaskUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceTaskPayload>
+        }
+        deleteMany: {
+          args: Prisma.MaintenanceTaskDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MaintenanceTaskUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MaintenanceTaskUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceTaskPayload>[]
+        }
+        upsert: {
+          args: Prisma.MaintenanceTaskUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceTaskPayload>
+        }
+        aggregate: {
+          args: Prisma.MaintenanceTaskAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMaintenanceTask>
+        }
+        groupBy: {
+          args: Prisma.MaintenanceTaskGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MaintenanceTaskGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MaintenanceTaskCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MaintenanceTaskCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1365,6 +1740,26 @@ export const CategoryScalarFieldEnum = {
 } as const
 
 export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum]
+
+
+export const IssueFailureCategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  order: 'order',
+  createdAt: 'createdAt'
+} as const
+
+export type IssueFailureCategoryScalarFieldEnum = (typeof IssueFailureCategoryScalarFieldEnum)[keyof typeof IssueFailureCategoryScalarFieldEnum]
+
+
+export const PartCategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  order: 'order',
+  createdAt: 'createdAt'
+} as const
+
+export type PartCategoryScalarFieldEnum = (typeof PartCategoryScalarFieldEnum)[keyof typeof PartCategoryScalarFieldEnum]
 
 
 export const UserScalarFieldEnum = {
@@ -1533,6 +1928,74 @@ export const AnnouncementScalarFieldEnum = {
 export type AnnouncementScalarFieldEnum = (typeof AnnouncementScalarFieldEnum)[keyof typeof AnnouncementScalarFieldEnum]
 
 
+export const QualityIssueScalarFieldEnum = {
+  id: 'id',
+  reporterId: 'reporterId',
+  description: 'description',
+  images: 'images',
+  poCode: 'poCode',
+  status: 'status',
+  areaId: 'areaId',
+  teamId: 'teamId',
+  productionLineId: 'productionLineId',
+  failureCategoryId: 'failureCategoryId',
+  investigationDeadline: 'investigationDeadline',
+  investigationLocked: 'investigationLocked',
+  rootCause: 'rootCause',
+  solution: 'solution',
+  rootCauseDecidedById: 'rootCauseDecidedById',
+  rootCauseDecidedAt: 'rootCauseDecidedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type QualityIssueScalarFieldEnum = (typeof QualityIssueScalarFieldEnum)[keyof typeof QualityIssueScalarFieldEnum]
+
+
+export const FiveMOneESubmissionScalarFieldEnum = {
+  id: 'id',
+  issueId: 'issueId',
+  submitterId: 'submitterId',
+  submitterRole: 'submitterRole',
+  poCode: 'poCode',
+  images: 'images',
+  man: 'man',
+  machine: 'machine',
+  material: 'material',
+  method: 'method',
+  measurement: 'measurement',
+  environment: 'environment',
+  submittedAt: 'submittedAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FiveMOneESubmissionScalarFieldEnum = (typeof FiveMOneESubmissionScalarFieldEnum)[keyof typeof FiveMOneESubmissionScalarFieldEnum]
+
+
+export const MaintenanceTaskScalarFieldEnum = {
+  id: 'id',
+  issueId: 'issueId',
+  assignedById: 'assignedById',
+  assigneeId: 'assigneeId',
+  status: 'status',
+  acceptedAt: 'acceptedAt',
+  completedAt: 'completedAt',
+  repairDetail: 'repairDetail',
+  partsReplaced: 'partsReplaced',
+  imagesBefore: 'imagesBefore',
+  imagesAfter: 'imagesAfter',
+  verifyDeadline: 'verifyDeadline',
+  lastVerifyPingAt: 'lastVerifyPingAt',
+  verifiedStatus: 'verifiedStatus',
+  verifiedAt: 'verifiedAt',
+  verifiedById: 'verifiedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MaintenanceTaskScalarFieldEnum = (typeof MaintenanceTaskScalarFieldEnum)[keyof typeof MaintenanceTaskScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1636,6 +2099,34 @@ export type EnumChatMessageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$
  * Reference to a field of type 'InvitationStatus'
  */
 export type EnumInvitationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InvitationStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'IssueStatus'
+ */
+export type EnumIssueStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'IssueStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'SubmitterRole'
+ */
+export type EnumSubmitterRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubmitterRole'>
+    
+
+
+/**
+ * Reference to a field of type 'TaskStatus'
+ */
+export type EnumTaskStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TaskStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'VerifyStatus'
+ */
+export type EnumVerifyStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VerifyStatus'>
     
 
 /**
@@ -1790,6 +2281,8 @@ export interface PrismaClientOptionsWithAdapter extends PrismaClientBaseOptions 
 export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaClientOptionsWithAdapter
 export type GlobalOmitConfig = {
   category?: Prisma.CategoryOmit
+  issueFailureCategory?: Prisma.IssueFailureCategoryOmit
+  partCategory?: Prisma.PartCategoryOmit
   user?: Prisma.UserOmit
   machine?: Prisma.MachineOmit
   failureCategory?: Prisma.FailureCategoryOmit
@@ -1801,6 +2294,9 @@ export type GlobalOmitConfig = {
   chatMessage?: Prisma.ChatMessageOmit
   groupInvitation?: Prisma.GroupInvitationOmit
   announcement?: Prisma.AnnouncementOmit
+  qualityIssue?: Prisma.QualityIssueOmit
+  fiveMOneESubmission?: Prisma.FiveMOneESubmissionOmit
+  maintenanceTask?: Prisma.MaintenanceTaskOmit
 }
 
 /* Types for Logging */

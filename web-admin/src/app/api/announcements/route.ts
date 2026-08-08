@@ -33,7 +33,7 @@ export async function POST(req: Request) {
   const allUsers = await prisma.user.findMany({ select: { id: true } });
   await sendPushToUsers(
     prisma,
-    allUsers.map((u) => u.id),
+    allUsers.map((u: { id: string }) => u.id),
     { title: `📢 ${title}`, body: content, data: { type: "ANNOUNCEMENT", announcementId: announcement.id } },
   );
 

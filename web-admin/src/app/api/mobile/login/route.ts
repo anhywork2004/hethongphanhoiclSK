@@ -24,7 +24,7 @@ export async function POST(req: Request) {
   const token = signMobileToken({
     userId: user.id,
     employeeCode: user.employeeCode,
-    role: user.role,
+    role: user.role as any,
     name: user.name,
   });
 

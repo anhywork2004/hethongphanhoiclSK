@@ -44,6 +44,16 @@ export { Prisma }
  */
 export type Category = Prisma.CategoryModel
 /**
+ * Model IssueFailureCategory
+ * 
+ */
+export type IssueFailureCategory = Prisma.IssueFailureCategoryModel
+/**
+ * Model PartCategory
+ * 
+ */
+export type PartCategory = Prisma.PartCategoryModel
+/**
  * Model User
  * 
  */
@@ -98,3 +108,18 @@ export type GroupInvitation = Prisma.GroupInvitationModel
  * 
  */
 export type Announcement = Prisma.AnnouncementModel
+/**
+ * Model QualityIssue
+ * 
+ */
+export type QualityIssue = Prisma.QualityIssueModel
+/**
+ * Model FiveMOneESubmission
+ * 
+ */
+export type FiveMOneESubmission = Prisma.FiveMOneESubmissionModel
+/**
+ * Model MaintenanceTask
+ * 
+ */
+export type MaintenanceTask = Prisma.MaintenanceTaskModel

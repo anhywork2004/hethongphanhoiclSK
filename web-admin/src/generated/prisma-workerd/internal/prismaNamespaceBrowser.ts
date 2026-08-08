@@ -52,6 +52,8 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Category: 'Category',
+  IssueFailureCategory: 'IssueFailureCategory',
+  PartCategory: 'PartCategory',
   User: 'User',
   Machine: 'Machine',
   FailureCategory: 'FailureCategory',
@@ -62,7 +64,10 @@ export const ModelName = {
   ChatGroupMember: 'ChatGroupMember',
   ChatMessage: 'ChatMessage',
   GroupInvitation: 'GroupInvitation',
-  Announcement: 'Announcement'
+  Announcement: 'Announcement',
+  QualityIssue: 'QualityIssue',
+  FiveMOneESubmission: 'FiveMOneESubmission',
+  MaintenanceTask: 'MaintenanceTask'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -91,6 +96,26 @@ export const CategoryScalarFieldEnum = {
 } as const
 
 export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum]
+
+
+export const IssueFailureCategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  order: 'order',
+  createdAt: 'createdAt'
+} as const
+
+export type IssueFailureCategoryScalarFieldEnum = (typeof IssueFailureCategoryScalarFieldEnum)[keyof typeof IssueFailureCategoryScalarFieldEnum]
+
+
+export const PartCategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  order: 'order',
+  createdAt: 'createdAt'
+} as const
+
+export type PartCategoryScalarFieldEnum = (typeof PartCategoryScalarFieldEnum)[keyof typeof PartCategoryScalarFieldEnum]
 
 
 export const UserScalarFieldEnum = {
@@ -257,6 +282,74 @@ export const AnnouncementScalarFieldEnum = {
 } as const
 
 export type AnnouncementScalarFieldEnum = (typeof AnnouncementScalarFieldEnum)[keyof typeof AnnouncementScalarFieldEnum]
+
+
+export const QualityIssueScalarFieldEnum = {
+  id: 'id',
+  reporterId: 'reporterId',
+  description: 'description',
+  images: 'images',
+  poCode: 'poCode',
+  status: 'status',
+  areaId: 'areaId',
+  teamId: 'teamId',
+  productionLineId: 'productionLineId',
+  failureCategoryId: 'failureCategoryId',
+  investigationDeadline: 'investigationDeadline',
+  investigationLocked: 'investigationLocked',
+  rootCause: 'rootCause',
+  solution: 'solution',
+  rootCauseDecidedById: 'rootCauseDecidedById',
+  rootCauseDecidedAt: 'rootCauseDecidedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type QualityIssueScalarFieldEnum = (typeof QualityIssueScalarFieldEnum)[keyof typeof QualityIssueScalarFieldEnum]
+
+
+export const FiveMOneESubmissionScalarFieldEnum = {
+  id: 'id',
+  issueId: 'issueId',
+  submitterId: 'submitterId',
+  submitterRole: 'submitterRole',
+  poCode: 'poCode',
+  images: 'images',
+  man: 'man',
+  machine: 'machine',
+  material: 'material',
+  method: 'method',
+  measurement: 'measurement',
+  environment: 'environment',
+  submittedAt: 'submittedAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FiveMOneESubmissionScalarFieldEnum = (typeof FiveMOneESubmissionScalarFieldEnum)[keyof typeof FiveMOneESubmissionScalarFieldEnum]
+
+
+export const MaintenanceTaskScalarFieldEnum = {
+  id: 'id',
+  issueId: 'issueId',
+  assignedById: 'assignedById',
+  assigneeId: 'assigneeId',
+  status: 'status',
+  acceptedAt: 'acceptedAt',
+  completedAt: 'completedAt',
+  repairDetail: 'repairDetail',
+  partsReplaced: 'partsReplaced',
+  imagesBefore: 'imagesBefore',
+  imagesAfter: 'imagesAfter',
+  verifyDeadline: 'verifyDeadline',
+  lastVerifyPingAt: 'lastVerifyPingAt',
+  verifiedStatus: 'verifiedStatus',
+  verifiedAt: 'verifiedAt',
+  verifiedById: 'verifiedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MaintenanceTaskScalarFieldEnum = (typeof MaintenanceTaskScalarFieldEnum)[keyof typeof MaintenanceTaskScalarFieldEnum]
 
 
 export const SortOrder = {

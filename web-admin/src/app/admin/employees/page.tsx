@@ -5,12 +5,21 @@ import { PageHeader } from "@/components/page-header";
 import { SearchInput } from "@/components/search-input";
 import { DetailModal, DetailRow } from "@/components/detail-modal";
 
+type Role =
+  | "ADMIN"
+  | "OPERATOR"
+  | "QA"
+  | "LINE_LEADER"
+  | "TECHNOLOGY"
+  | "DEPARTMENT_HEAD"
+  | "MAINTENANCE";
+
 type Employee = {
   id: string;
   employeeCode: string;
   name: string;
   phone: string | null;
-  role: "OPERATOR" | "MAINTENANCE" | "ADMIN";
+  role: Role;
   areaId: string | null;
   area: { id: string; name: string } | null;
 };
@@ -26,11 +35,25 @@ const emptyForm = {
   areaId: "",
 };
 
-const roleLabel: Record<Employee["role"], string> = {
-  OPERATOR: "Nhân viên vận hành",
-  MAINTENANCE: "Nhân viên bảo trì",
+const roleLabel: Record<Role, string> = {
   ADMIN: "Admin",
+  OPERATOR: "Nhân viên vận hành",
+  QA: "QA",
+  LINE_LEADER: "Trưởng line",
+  TECHNOLOGY: "Công nghệ",
+  DEPARTMENT_HEAD: "Trưởng phòng ban",
+  MAINTENANCE: "Bảo trì",
 };
+
+const ROLE_OPTIONS: Role[] = [
+  "OPERATOR",
+  "QA",
+  "LINE_LEADER",
+  "TECHNOLOGY",
+  "DEPARTMENT_HEAD",
+  "MAINTENANCE",
+  "ADMIN",
+];
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -128,9 +151,11 @@ export default function EmployeesPage() {
           className="rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-brand focus:outline-none"
         >
           <option value="ALL">Tất cả vai trò</option>
-          <option value="OPERATOR">Nhân viên vận hành</option>
-          <option value="MAINTENANCE">Nhân viên bảo trì</option>
-          <option value="ADMIN">Admin</option>
+          {ROLE_OPTIONS.map((r) => (
+            <option key={r} value={r}>
+              {roleLabel[r]}
+            </option>
+          ))}
         </select>
         <button
           onClick={openCreate}
@@ -248,9 +273,11 @@ export default function EmployeesPage() {
               onChange={(e) => setForm({ ...form, role: e.target.value as Employee["role"] })}
               className="mb-3 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
             >
-              <option value="OPERATOR">Nhân viên vận hành</option>
-              <option value="MAINTENANCE">Nhân viên bảo trì</option>
-              <option value="ADMIN">Admin</option>
+              {ROLE_OPTIONS.map((r) => (
+                <option key={r} value={r}>
+                  {roleLabel[r]}
+                </option>
+              ))}
             </select>
 
             <label className="mb-1 block text-sm font-medium text-slate-700">
@@ -268,9 +295,9 @@ export default function EmployeesPage() {
                 </option>
               ))}
             </select>
-            {form.role === "MAINTENANCE" && (
+            {form.role !== "ADMIN" && form.role !== "OPERATOR" && (
               <p className="-mt-3 mb-4 text-xs text-slate-500">
-                Nhân viên bảo trì sẽ tự động được xếp vào nhóm chat theo khu vực/xưởng này.
+                Khu vực/xưởng dùng để lọc thông báo, giao việc và điều tra sự cố đúng phạm vi.
               </p>
             )}
 

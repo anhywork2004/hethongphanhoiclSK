@@ -259,6 +259,9 @@ export type CategoryWhereInput = {
   machinesByMaintenancePeriod?: Prisma.MachineListRelationFilter
   machinesByType?: Prisma.MachineListRelationFilter
   usersByArea?: Prisma.UserListRelationFilter
+  issuesByArea?: Prisma.QualityIssueListRelationFilter
+  issuesByTeam?: Prisma.QualityIssueListRelationFilter
+  issuesByProductionLine?: Prisma.QualityIssueListRelationFilter
 }
 
 export type CategoryOrderByWithRelationInput = {
@@ -278,6 +281,9 @@ export type CategoryOrderByWithRelationInput = {
   machinesByMaintenancePeriod?: Prisma.MachineOrderByRelationAggregateInput
   machinesByType?: Prisma.MachineOrderByRelationAggregateInput
   usersByArea?: Prisma.UserOrderByRelationAggregateInput
+  issuesByArea?: Prisma.QualityIssueOrderByRelationAggregateInput
+  issuesByTeam?: Prisma.QualityIssueOrderByRelationAggregateInput
+  issuesByProductionLine?: Prisma.QualityIssueOrderByRelationAggregateInput
 }
 
 export type CategoryWhereUniqueInput = Prisma.AtLeast<{
@@ -301,6 +307,9 @@ export type CategoryWhereUniqueInput = Prisma.AtLeast<{
   machinesByMaintenancePeriod?: Prisma.MachineListRelationFilter
   machinesByType?: Prisma.MachineListRelationFilter
   usersByArea?: Prisma.UserListRelationFilter
+  issuesByArea?: Prisma.QualityIssueListRelationFilter
+  issuesByTeam?: Prisma.QualityIssueListRelationFilter
+  issuesByProductionLine?: Prisma.QualityIssueListRelationFilter
 }, "id" | "type_name">
 
 export type CategoryOrderByWithAggregationInput = {
@@ -352,6 +361,9 @@ export type CategoryCreateInput = {
   machinesByMaintenancePeriod?: Prisma.MachineCreateNestedManyWithoutMaintenancePeriodInput
   machinesByType?: Prisma.MachineCreateNestedManyWithoutMachineTypeInput
   usersByArea?: Prisma.UserCreateNestedManyWithoutAreaInput
+  issuesByArea?: Prisma.QualityIssueCreateNestedManyWithoutAreaInput
+  issuesByTeam?: Prisma.QualityIssueCreateNestedManyWithoutTeamInput
+  issuesByProductionLine?: Prisma.QualityIssueCreateNestedManyWithoutProductionLineInput
 }
 
 export type CategoryUncheckedCreateInput = {
@@ -371,6 +383,9 @@ export type CategoryUncheckedCreateInput = {
   machinesByMaintenancePeriod?: Prisma.MachineUncheckedCreateNestedManyWithoutMaintenancePeriodInput
   machinesByType?: Prisma.MachineUncheckedCreateNestedManyWithoutMachineTypeInput
   usersByArea?: Prisma.UserUncheckedCreateNestedManyWithoutAreaInput
+  issuesByArea?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutAreaInput
+  issuesByTeam?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutTeamInput
+  issuesByProductionLine?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutProductionLineInput
 }
 
 export type CategoryUpdateInput = {
@@ -390,6 +405,9 @@ export type CategoryUpdateInput = {
   machinesByMaintenancePeriod?: Prisma.MachineUpdateManyWithoutMaintenancePeriodNestedInput
   machinesByType?: Prisma.MachineUpdateManyWithoutMachineTypeNestedInput
   usersByArea?: Prisma.UserUpdateManyWithoutAreaNestedInput
+  issuesByArea?: Prisma.QualityIssueUpdateManyWithoutAreaNestedInput
+  issuesByTeam?: Prisma.QualityIssueUpdateManyWithoutTeamNestedInput
+  issuesByProductionLine?: Prisma.QualityIssueUpdateManyWithoutProductionLineNestedInput
 }
 
 export type CategoryUncheckedUpdateInput = {
@@ -409,6 +427,9 @@ export type CategoryUncheckedUpdateInput = {
   machinesByMaintenancePeriod?: Prisma.MachineUncheckedUpdateManyWithoutMaintenancePeriodNestedInput
   machinesByType?: Prisma.MachineUncheckedUpdateManyWithoutMachineTypeNestedInput
   usersByArea?: Prisma.UserUncheckedUpdateManyWithoutAreaNestedInput
+  issuesByArea?: Prisma.QualityIssueUncheckedUpdateManyWithoutAreaNestedInput
+  issuesByTeam?: Prisma.QualityIssueUncheckedUpdateManyWithoutTeamNestedInput
+  issuesByProductionLine?: Prisma.QualityIssueUncheckedUpdateManyWithoutProductionLineNestedInput
 }
 
 export type CategoryCreateManyInput = {
@@ -658,6 +679,54 @@ export type CategoryUpdateOneWithoutMachinesByTypeNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CategoryUpdateToOneWithWhereWithoutMachinesByTypeInput, Prisma.CategoryUpdateWithoutMachinesByTypeInput>, Prisma.CategoryUncheckedUpdateWithoutMachinesByTypeInput>
 }
 
+export type CategoryCreateNestedOneWithoutIssuesByAreaInput = {
+  create?: Prisma.XOR<Prisma.CategoryCreateWithoutIssuesByAreaInput, Prisma.CategoryUncheckedCreateWithoutIssuesByAreaInput>
+  connectOrCreate?: Prisma.CategoryCreateOrConnectWithoutIssuesByAreaInput
+  connect?: Prisma.CategoryWhereUniqueInput
+}
+
+export type CategoryCreateNestedOneWithoutIssuesByTeamInput = {
+  create?: Prisma.XOR<Prisma.CategoryCreateWithoutIssuesByTeamInput, Prisma.CategoryUncheckedCreateWithoutIssuesByTeamInput>
+  connectOrCreate?: Prisma.CategoryCreateOrConnectWithoutIssuesByTeamInput
+  connect?: Prisma.CategoryWhereUniqueInput
+}
+
+export type CategoryCreateNestedOneWithoutIssuesByProductionLineInput = {
+  create?: Prisma.XOR<Prisma.CategoryCreateWithoutIssuesByProductionLineInput, Prisma.CategoryUncheckedCreateWithoutIssuesByProductionLineInput>
+  connectOrCreate?: Prisma.CategoryCreateOrConnectWithoutIssuesByProductionLineInput
+  connect?: Prisma.CategoryWhereUniqueInput
+}
+
+export type CategoryUpdateOneWithoutIssuesByAreaNestedInput = {
+  create?: Prisma.XOR<Prisma.CategoryCreateWithoutIssuesByAreaInput, Prisma.CategoryUncheckedCreateWithoutIssuesByAreaInput>
+  connectOrCreate?: Prisma.CategoryCreateOrConnectWithoutIssuesByAreaInput
+  upsert?: Prisma.CategoryUpsertWithoutIssuesByAreaInput
+  disconnect?: Prisma.CategoryWhereInput | boolean
+  delete?: Prisma.CategoryWhereInput | boolean
+  connect?: Prisma.CategoryWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CategoryUpdateToOneWithWhereWithoutIssuesByAreaInput, Prisma.CategoryUpdateWithoutIssuesByAreaInput>, Prisma.CategoryUncheckedUpdateWithoutIssuesByAreaInput>
+}
+
+export type CategoryUpdateOneWithoutIssuesByTeamNestedInput = {
+  create?: Prisma.XOR<Prisma.CategoryCreateWithoutIssuesByTeamInput, Prisma.CategoryUncheckedCreateWithoutIssuesByTeamInput>
+  connectOrCreate?: Prisma.CategoryCreateOrConnectWithoutIssuesByTeamInput
+  upsert?: Prisma.CategoryUpsertWithoutIssuesByTeamInput
+  disconnect?: Prisma.CategoryWhereInput | boolean
+  delete?: Prisma.CategoryWhereInput | boolean
+  connect?: Prisma.CategoryWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CategoryUpdateToOneWithWhereWithoutIssuesByTeamInput, Prisma.CategoryUpdateWithoutIssuesByTeamInput>, Prisma.CategoryUncheckedUpdateWithoutIssuesByTeamInput>
+}
+
+export type CategoryUpdateOneWithoutIssuesByProductionLineNestedInput = {
+  create?: Prisma.XOR<Prisma.CategoryCreateWithoutIssuesByProductionLineInput, Prisma.CategoryUncheckedCreateWithoutIssuesByProductionLineInput>
+  connectOrCreate?: Prisma.CategoryCreateOrConnectWithoutIssuesByProductionLineInput
+  upsert?: Prisma.CategoryUpsertWithoutIssuesByProductionLineInput
+  disconnect?: Prisma.CategoryWhereInput | boolean
+  delete?: Prisma.CategoryWhereInput | boolean
+  connect?: Prisma.CategoryWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CategoryUpdateToOneWithWhereWithoutIssuesByProductionLineInput, Prisma.CategoryUpdateWithoutIssuesByProductionLineInput>, Prisma.CategoryUncheckedUpdateWithoutIssuesByProductionLineInput>
+}
+
 export type CategoryCreateWithoutUsersByAreaInput = {
   id?: string
   type: $Enums.CategoryType
@@ -674,6 +743,9 @@ export type CategoryCreateWithoutUsersByAreaInput = {
   machinesByStatus?: Prisma.MachineCreateNestedManyWithoutStatusInput
   machinesByMaintenancePeriod?: Prisma.MachineCreateNestedManyWithoutMaintenancePeriodInput
   machinesByType?: Prisma.MachineCreateNestedManyWithoutMachineTypeInput
+  issuesByArea?: Prisma.QualityIssueCreateNestedManyWithoutAreaInput
+  issuesByTeam?: Prisma.QualityIssueCreateNestedManyWithoutTeamInput
+  issuesByProductionLine?: Prisma.QualityIssueCreateNestedManyWithoutProductionLineInput
 }
 
 export type CategoryUncheckedCreateWithoutUsersByAreaInput = {
@@ -692,6 +764,9 @@ export type CategoryUncheckedCreateWithoutUsersByAreaInput = {
   machinesByStatus?: Prisma.MachineUncheckedCreateNestedManyWithoutStatusInput
   machinesByMaintenancePeriod?: Prisma.MachineUncheckedCreateNestedManyWithoutMaintenancePeriodInput
   machinesByType?: Prisma.MachineUncheckedCreateNestedManyWithoutMachineTypeInput
+  issuesByArea?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutAreaInput
+  issuesByTeam?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutTeamInput
+  issuesByProductionLine?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutProductionLineInput
 }
 
 export type CategoryCreateOrConnectWithoutUsersByAreaInput = {
@@ -726,6 +801,9 @@ export type CategoryUpdateWithoutUsersByAreaInput = {
   machinesByStatus?: Prisma.MachineUpdateManyWithoutStatusNestedInput
   machinesByMaintenancePeriod?: Prisma.MachineUpdateManyWithoutMaintenancePeriodNestedInput
   machinesByType?: Prisma.MachineUpdateManyWithoutMachineTypeNestedInput
+  issuesByArea?: Prisma.QualityIssueUpdateManyWithoutAreaNestedInput
+  issuesByTeam?: Prisma.QualityIssueUpdateManyWithoutTeamNestedInput
+  issuesByProductionLine?: Prisma.QualityIssueUpdateManyWithoutProductionLineNestedInput
 }
 
 export type CategoryUncheckedUpdateWithoutUsersByAreaInput = {
@@ -744,6 +822,9 @@ export type CategoryUncheckedUpdateWithoutUsersByAreaInput = {
   machinesByStatus?: Prisma.MachineUncheckedUpdateManyWithoutStatusNestedInput
   machinesByMaintenancePeriod?: Prisma.MachineUncheckedUpdateManyWithoutMaintenancePeriodNestedInput
   machinesByType?: Prisma.MachineUncheckedUpdateManyWithoutMachineTypeNestedInput
+  issuesByArea?: Prisma.QualityIssueUncheckedUpdateManyWithoutAreaNestedInput
+  issuesByTeam?: Prisma.QualityIssueUncheckedUpdateManyWithoutTeamNestedInput
+  issuesByProductionLine?: Prisma.QualityIssueUncheckedUpdateManyWithoutProductionLineNestedInput
 }
 
 export type CategoryCreateWithoutMachinesByAreaInput = {
@@ -762,6 +843,9 @@ export type CategoryCreateWithoutMachinesByAreaInput = {
   machinesByMaintenancePeriod?: Prisma.MachineCreateNestedManyWithoutMaintenancePeriodInput
   machinesByType?: Prisma.MachineCreateNestedManyWithoutMachineTypeInput
   usersByArea?: Prisma.UserCreateNestedManyWithoutAreaInput
+  issuesByArea?: Prisma.QualityIssueCreateNestedManyWithoutAreaInput
+  issuesByTeam?: Prisma.QualityIssueCreateNestedManyWithoutTeamInput
+  issuesByProductionLine?: Prisma.QualityIssueCreateNestedManyWithoutProductionLineInput
 }
 
 export type CategoryUncheckedCreateWithoutMachinesByAreaInput = {
@@ -780,6 +864,9 @@ export type CategoryUncheckedCreateWithoutMachinesByAreaInput = {
   machinesByMaintenancePeriod?: Prisma.MachineUncheckedCreateNestedManyWithoutMaintenancePeriodInput
   machinesByType?: Prisma.MachineUncheckedCreateNestedManyWithoutMachineTypeInput
   usersByArea?: Prisma.UserUncheckedCreateNestedManyWithoutAreaInput
+  issuesByArea?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutAreaInput
+  issuesByTeam?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutTeamInput
+  issuesByProductionLine?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutProductionLineInput
 }
 
 export type CategoryCreateOrConnectWithoutMachinesByAreaInput = {
@@ -803,6 +890,9 @@ export type CategoryCreateWithoutMachinesByTeamInput = {
   machinesByMaintenancePeriod?: Prisma.MachineCreateNestedManyWithoutMaintenancePeriodInput
   machinesByType?: Prisma.MachineCreateNestedManyWithoutMachineTypeInput
   usersByArea?: Prisma.UserCreateNestedManyWithoutAreaInput
+  issuesByArea?: Prisma.QualityIssueCreateNestedManyWithoutAreaInput
+  issuesByTeam?: Prisma.QualityIssueCreateNestedManyWithoutTeamInput
+  issuesByProductionLine?: Prisma.QualityIssueCreateNestedManyWithoutProductionLineInput
 }
 
 export type CategoryUncheckedCreateWithoutMachinesByTeamInput = {
@@ -821,6 +911,9 @@ export type CategoryUncheckedCreateWithoutMachinesByTeamInput = {
   machinesByMaintenancePeriod?: Prisma.MachineUncheckedCreateNestedManyWithoutMaintenancePeriodInput
   machinesByType?: Prisma.MachineUncheckedCreateNestedManyWithoutMachineTypeInput
   usersByArea?: Prisma.UserUncheckedCreateNestedManyWithoutAreaInput
+  issuesByArea?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutAreaInput
+  issuesByTeam?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutTeamInput
+  issuesByProductionLine?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutProductionLineInput
 }
 
 export type CategoryCreateOrConnectWithoutMachinesByTeamInput = {
@@ -844,6 +937,9 @@ export type CategoryCreateWithoutMachinesByProductionLineInput = {
   machinesByMaintenancePeriod?: Prisma.MachineCreateNestedManyWithoutMaintenancePeriodInput
   machinesByType?: Prisma.MachineCreateNestedManyWithoutMachineTypeInput
   usersByArea?: Prisma.UserCreateNestedManyWithoutAreaInput
+  issuesByArea?: Prisma.QualityIssueCreateNestedManyWithoutAreaInput
+  issuesByTeam?: Prisma.QualityIssueCreateNestedManyWithoutTeamInput
+  issuesByProductionLine?: Prisma.QualityIssueCreateNestedManyWithoutProductionLineInput
 }
 
 export type CategoryUncheckedCreateWithoutMachinesByProductionLineInput = {
@@ -862,6 +958,9 @@ export type CategoryUncheckedCreateWithoutMachinesByProductionLineInput = {
   machinesByMaintenancePeriod?: Prisma.MachineUncheckedCreateNestedManyWithoutMaintenancePeriodInput
   machinesByType?: Prisma.MachineUncheckedCreateNestedManyWithoutMachineTypeInput
   usersByArea?: Prisma.UserUncheckedCreateNestedManyWithoutAreaInput
+  issuesByArea?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutAreaInput
+  issuesByTeam?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutTeamInput
+  issuesByProductionLine?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutProductionLineInput
 }
 
 export type CategoryCreateOrConnectWithoutMachinesByProductionLineInput = {
@@ -885,6 +984,9 @@ export type CategoryCreateWithoutMachinesByStatusInput = {
   machinesByMaintenancePeriod?: Prisma.MachineCreateNestedManyWithoutMaintenancePeriodInput
   machinesByType?: Prisma.MachineCreateNestedManyWithoutMachineTypeInput
   usersByArea?: Prisma.UserCreateNestedManyWithoutAreaInput
+  issuesByArea?: Prisma.QualityIssueCreateNestedManyWithoutAreaInput
+  issuesByTeam?: Prisma.QualityIssueCreateNestedManyWithoutTeamInput
+  issuesByProductionLine?: Prisma.QualityIssueCreateNestedManyWithoutProductionLineInput
 }
 
 export type CategoryUncheckedCreateWithoutMachinesByStatusInput = {
@@ -903,6 +1005,9 @@ export type CategoryUncheckedCreateWithoutMachinesByStatusInput = {
   machinesByMaintenancePeriod?: Prisma.MachineUncheckedCreateNestedManyWithoutMaintenancePeriodInput
   machinesByType?: Prisma.MachineUncheckedCreateNestedManyWithoutMachineTypeInput
   usersByArea?: Prisma.UserUncheckedCreateNestedManyWithoutAreaInput
+  issuesByArea?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutAreaInput
+  issuesByTeam?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutTeamInput
+  issuesByProductionLine?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutProductionLineInput
 }
 
 export type CategoryCreateOrConnectWithoutMachinesByStatusInput = {
@@ -926,6 +1031,9 @@ export type CategoryCreateWithoutMachinesByMaintenancePeriodInput = {
   machinesByStatus?: Prisma.MachineCreateNestedManyWithoutStatusInput
   machinesByType?: Prisma.MachineCreateNestedManyWithoutMachineTypeInput
   usersByArea?: Prisma.UserCreateNestedManyWithoutAreaInput
+  issuesByArea?: Prisma.QualityIssueCreateNestedManyWithoutAreaInput
+  issuesByTeam?: Prisma.QualityIssueCreateNestedManyWithoutTeamInput
+  issuesByProductionLine?: Prisma.QualityIssueCreateNestedManyWithoutProductionLineInput
 }
 
 export type CategoryUncheckedCreateWithoutMachinesByMaintenancePeriodInput = {
@@ -944,6 +1052,9 @@ export type CategoryUncheckedCreateWithoutMachinesByMaintenancePeriodInput = {
   machinesByStatus?: Prisma.MachineUncheckedCreateNestedManyWithoutStatusInput
   machinesByType?: Prisma.MachineUncheckedCreateNestedManyWithoutMachineTypeInput
   usersByArea?: Prisma.UserUncheckedCreateNestedManyWithoutAreaInput
+  issuesByArea?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutAreaInput
+  issuesByTeam?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutTeamInput
+  issuesByProductionLine?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutProductionLineInput
 }
 
 export type CategoryCreateOrConnectWithoutMachinesByMaintenancePeriodInput = {
@@ -967,6 +1078,9 @@ export type CategoryCreateWithoutMachinesByTypeInput = {
   machinesByStatus?: Prisma.MachineCreateNestedManyWithoutStatusInput
   machinesByMaintenancePeriod?: Prisma.MachineCreateNestedManyWithoutMaintenancePeriodInput
   usersByArea?: Prisma.UserCreateNestedManyWithoutAreaInput
+  issuesByArea?: Prisma.QualityIssueCreateNestedManyWithoutAreaInput
+  issuesByTeam?: Prisma.QualityIssueCreateNestedManyWithoutTeamInput
+  issuesByProductionLine?: Prisma.QualityIssueCreateNestedManyWithoutProductionLineInput
 }
 
 export type CategoryUncheckedCreateWithoutMachinesByTypeInput = {
@@ -985,6 +1099,9 @@ export type CategoryUncheckedCreateWithoutMachinesByTypeInput = {
   machinesByStatus?: Prisma.MachineUncheckedCreateNestedManyWithoutStatusInput
   machinesByMaintenancePeriod?: Prisma.MachineUncheckedCreateNestedManyWithoutMaintenancePeriodInput
   usersByArea?: Prisma.UserUncheckedCreateNestedManyWithoutAreaInput
+  issuesByArea?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutAreaInput
+  issuesByTeam?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutTeamInput
+  issuesByProductionLine?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutProductionLineInput
 }
 
 export type CategoryCreateOrConnectWithoutMachinesByTypeInput = {
@@ -1019,6 +1136,9 @@ export type CategoryUpdateWithoutMachinesByAreaInput = {
   machinesByMaintenancePeriod?: Prisma.MachineUpdateManyWithoutMaintenancePeriodNestedInput
   machinesByType?: Prisma.MachineUpdateManyWithoutMachineTypeNestedInput
   usersByArea?: Prisma.UserUpdateManyWithoutAreaNestedInput
+  issuesByArea?: Prisma.QualityIssueUpdateManyWithoutAreaNestedInput
+  issuesByTeam?: Prisma.QualityIssueUpdateManyWithoutTeamNestedInput
+  issuesByProductionLine?: Prisma.QualityIssueUpdateManyWithoutProductionLineNestedInput
 }
 
 export type CategoryUncheckedUpdateWithoutMachinesByAreaInput = {
@@ -1037,6 +1157,9 @@ export type CategoryUncheckedUpdateWithoutMachinesByAreaInput = {
   machinesByMaintenancePeriod?: Prisma.MachineUncheckedUpdateManyWithoutMaintenancePeriodNestedInput
   machinesByType?: Prisma.MachineUncheckedUpdateManyWithoutMachineTypeNestedInput
   usersByArea?: Prisma.UserUncheckedUpdateManyWithoutAreaNestedInput
+  issuesByArea?: Prisma.QualityIssueUncheckedUpdateManyWithoutAreaNestedInput
+  issuesByTeam?: Prisma.QualityIssueUncheckedUpdateManyWithoutTeamNestedInput
+  issuesByProductionLine?: Prisma.QualityIssueUncheckedUpdateManyWithoutProductionLineNestedInput
 }
 
 export type CategoryUpsertWithoutMachinesByTeamInput = {
@@ -1066,6 +1189,9 @@ export type CategoryUpdateWithoutMachinesByTeamInput = {
   machinesByMaintenancePeriod?: Prisma.MachineUpdateManyWithoutMaintenancePeriodNestedInput
   machinesByType?: Prisma.MachineUpdateManyWithoutMachineTypeNestedInput
   usersByArea?: Prisma.UserUpdateManyWithoutAreaNestedInput
+  issuesByArea?: Prisma.QualityIssueUpdateManyWithoutAreaNestedInput
+  issuesByTeam?: Prisma.QualityIssueUpdateManyWithoutTeamNestedInput
+  issuesByProductionLine?: Prisma.QualityIssueUpdateManyWithoutProductionLineNestedInput
 }
 
 export type CategoryUncheckedUpdateWithoutMachinesByTeamInput = {
@@ -1084,6 +1210,9 @@ export type CategoryUncheckedUpdateWithoutMachinesByTeamInput = {
   machinesByMaintenancePeriod?: Prisma.MachineUncheckedUpdateManyWithoutMaintenancePeriodNestedInput
   machinesByType?: Prisma.MachineUncheckedUpdateManyWithoutMachineTypeNestedInput
   usersByArea?: Prisma.UserUncheckedUpdateManyWithoutAreaNestedInput
+  issuesByArea?: Prisma.QualityIssueUncheckedUpdateManyWithoutAreaNestedInput
+  issuesByTeam?: Prisma.QualityIssueUncheckedUpdateManyWithoutTeamNestedInput
+  issuesByProductionLine?: Prisma.QualityIssueUncheckedUpdateManyWithoutProductionLineNestedInput
 }
 
 export type CategoryUpsertWithoutMachinesByProductionLineInput = {
@@ -1113,6 +1242,9 @@ export type CategoryUpdateWithoutMachinesByProductionLineInput = {
   machinesByMaintenancePeriod?: Prisma.MachineUpdateManyWithoutMaintenancePeriodNestedInput
   machinesByType?: Prisma.MachineUpdateManyWithoutMachineTypeNestedInput
   usersByArea?: Prisma.UserUpdateManyWithoutAreaNestedInput
+  issuesByArea?: Prisma.QualityIssueUpdateManyWithoutAreaNestedInput
+  issuesByTeam?: Prisma.QualityIssueUpdateManyWithoutTeamNestedInput
+  issuesByProductionLine?: Prisma.QualityIssueUpdateManyWithoutProductionLineNestedInput
 }
 
 export type CategoryUncheckedUpdateWithoutMachinesByProductionLineInput = {
@@ -1131,6 +1263,9 @@ export type CategoryUncheckedUpdateWithoutMachinesByProductionLineInput = {
   machinesByMaintenancePeriod?: Prisma.MachineUncheckedUpdateManyWithoutMaintenancePeriodNestedInput
   machinesByType?: Prisma.MachineUncheckedUpdateManyWithoutMachineTypeNestedInput
   usersByArea?: Prisma.UserUncheckedUpdateManyWithoutAreaNestedInput
+  issuesByArea?: Prisma.QualityIssueUncheckedUpdateManyWithoutAreaNestedInput
+  issuesByTeam?: Prisma.QualityIssueUncheckedUpdateManyWithoutTeamNestedInput
+  issuesByProductionLine?: Prisma.QualityIssueUncheckedUpdateManyWithoutProductionLineNestedInput
 }
 
 export type CategoryUpsertWithoutMachinesByStatusInput = {
@@ -1160,6 +1295,9 @@ export type CategoryUpdateWithoutMachinesByStatusInput = {
   machinesByMaintenancePeriod?: Prisma.MachineUpdateManyWithoutMaintenancePeriodNestedInput
   machinesByType?: Prisma.MachineUpdateManyWithoutMachineTypeNestedInput
   usersByArea?: Prisma.UserUpdateManyWithoutAreaNestedInput
+  issuesByArea?: Prisma.QualityIssueUpdateManyWithoutAreaNestedInput
+  issuesByTeam?: Prisma.QualityIssueUpdateManyWithoutTeamNestedInput
+  issuesByProductionLine?: Prisma.QualityIssueUpdateManyWithoutProductionLineNestedInput
 }
 
 export type CategoryUncheckedUpdateWithoutMachinesByStatusInput = {
@@ -1178,6 +1316,9 @@ export type CategoryUncheckedUpdateWithoutMachinesByStatusInput = {
   machinesByMaintenancePeriod?: Prisma.MachineUncheckedUpdateManyWithoutMaintenancePeriodNestedInput
   machinesByType?: Prisma.MachineUncheckedUpdateManyWithoutMachineTypeNestedInput
   usersByArea?: Prisma.UserUncheckedUpdateManyWithoutAreaNestedInput
+  issuesByArea?: Prisma.QualityIssueUncheckedUpdateManyWithoutAreaNestedInput
+  issuesByTeam?: Prisma.QualityIssueUncheckedUpdateManyWithoutTeamNestedInput
+  issuesByProductionLine?: Prisma.QualityIssueUncheckedUpdateManyWithoutProductionLineNestedInput
 }
 
 export type CategoryUpsertWithoutMachinesByMaintenancePeriodInput = {
@@ -1207,6 +1348,9 @@ export type CategoryUpdateWithoutMachinesByMaintenancePeriodInput = {
   machinesByStatus?: Prisma.MachineUpdateManyWithoutStatusNestedInput
   machinesByType?: Prisma.MachineUpdateManyWithoutMachineTypeNestedInput
   usersByArea?: Prisma.UserUpdateManyWithoutAreaNestedInput
+  issuesByArea?: Prisma.QualityIssueUpdateManyWithoutAreaNestedInput
+  issuesByTeam?: Prisma.QualityIssueUpdateManyWithoutTeamNestedInput
+  issuesByProductionLine?: Prisma.QualityIssueUpdateManyWithoutProductionLineNestedInput
 }
 
 export type CategoryUncheckedUpdateWithoutMachinesByMaintenancePeriodInput = {
@@ -1225,6 +1369,9 @@ export type CategoryUncheckedUpdateWithoutMachinesByMaintenancePeriodInput = {
   machinesByStatus?: Prisma.MachineUncheckedUpdateManyWithoutStatusNestedInput
   machinesByType?: Prisma.MachineUncheckedUpdateManyWithoutMachineTypeNestedInput
   usersByArea?: Prisma.UserUncheckedUpdateManyWithoutAreaNestedInput
+  issuesByArea?: Prisma.QualityIssueUncheckedUpdateManyWithoutAreaNestedInput
+  issuesByTeam?: Prisma.QualityIssueUncheckedUpdateManyWithoutTeamNestedInput
+  issuesByProductionLine?: Prisma.QualityIssueUncheckedUpdateManyWithoutProductionLineNestedInput
 }
 
 export type CategoryUpsertWithoutMachinesByTypeInput = {
@@ -1254,6 +1401,9 @@ export type CategoryUpdateWithoutMachinesByTypeInput = {
   machinesByStatus?: Prisma.MachineUpdateManyWithoutStatusNestedInput
   machinesByMaintenancePeriod?: Prisma.MachineUpdateManyWithoutMaintenancePeriodNestedInput
   usersByArea?: Prisma.UserUpdateManyWithoutAreaNestedInput
+  issuesByArea?: Prisma.QualityIssueUpdateManyWithoutAreaNestedInput
+  issuesByTeam?: Prisma.QualityIssueUpdateManyWithoutTeamNestedInput
+  issuesByProductionLine?: Prisma.QualityIssueUpdateManyWithoutProductionLineNestedInput
 }
 
 export type CategoryUncheckedUpdateWithoutMachinesByTypeInput = {
@@ -1272,6 +1422,309 @@ export type CategoryUncheckedUpdateWithoutMachinesByTypeInput = {
   machinesByStatus?: Prisma.MachineUncheckedUpdateManyWithoutStatusNestedInput
   machinesByMaintenancePeriod?: Prisma.MachineUncheckedUpdateManyWithoutMaintenancePeriodNestedInput
   usersByArea?: Prisma.UserUncheckedUpdateManyWithoutAreaNestedInput
+  issuesByArea?: Prisma.QualityIssueUncheckedUpdateManyWithoutAreaNestedInput
+  issuesByTeam?: Prisma.QualityIssueUncheckedUpdateManyWithoutTeamNestedInput
+  issuesByProductionLine?: Prisma.QualityIssueUncheckedUpdateManyWithoutProductionLineNestedInput
+}
+
+export type CategoryCreateWithoutIssuesByAreaInput = {
+  id?: string
+  type: $Enums.CategoryType
+  name: string
+  days?: number | null
+  statusKind?: $Enums.StatusKind | null
+  isDefault?: boolean
+  colorHex?: string | null
+  order?: number
+  createdAt?: Date | string
+  machinesByArea?: Prisma.MachineCreateNestedManyWithoutAreaInput
+  machinesByTeam?: Prisma.MachineCreateNestedManyWithoutTeamInput
+  machinesByProductionLine?: Prisma.MachineCreateNestedManyWithoutProductionLineInput
+  machinesByStatus?: Prisma.MachineCreateNestedManyWithoutStatusInput
+  machinesByMaintenancePeriod?: Prisma.MachineCreateNestedManyWithoutMaintenancePeriodInput
+  machinesByType?: Prisma.MachineCreateNestedManyWithoutMachineTypeInput
+  usersByArea?: Prisma.UserCreateNestedManyWithoutAreaInput
+  issuesByTeam?: Prisma.QualityIssueCreateNestedManyWithoutTeamInput
+  issuesByProductionLine?: Prisma.QualityIssueCreateNestedManyWithoutProductionLineInput
+}
+
+export type CategoryUncheckedCreateWithoutIssuesByAreaInput = {
+  id?: string
+  type: $Enums.CategoryType
+  name: string
+  days?: number | null
+  statusKind?: $Enums.StatusKind | null
+  isDefault?: boolean
+  colorHex?: string | null
+  order?: number
+  createdAt?: Date | string
+  machinesByArea?: Prisma.MachineUncheckedCreateNestedManyWithoutAreaInput
+  machinesByTeam?: Prisma.MachineUncheckedCreateNestedManyWithoutTeamInput
+  machinesByProductionLine?: Prisma.MachineUncheckedCreateNestedManyWithoutProductionLineInput
+  machinesByStatus?: Prisma.MachineUncheckedCreateNestedManyWithoutStatusInput
+  machinesByMaintenancePeriod?: Prisma.MachineUncheckedCreateNestedManyWithoutMaintenancePeriodInput
+  machinesByType?: Prisma.MachineUncheckedCreateNestedManyWithoutMachineTypeInput
+  usersByArea?: Prisma.UserUncheckedCreateNestedManyWithoutAreaInput
+  issuesByTeam?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutTeamInput
+  issuesByProductionLine?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutProductionLineInput
+}
+
+export type CategoryCreateOrConnectWithoutIssuesByAreaInput = {
+  where: Prisma.CategoryWhereUniqueInput
+  create: Prisma.XOR<Prisma.CategoryCreateWithoutIssuesByAreaInput, Prisma.CategoryUncheckedCreateWithoutIssuesByAreaInput>
+}
+
+export type CategoryCreateWithoutIssuesByTeamInput = {
+  id?: string
+  type: $Enums.CategoryType
+  name: string
+  days?: number | null
+  statusKind?: $Enums.StatusKind | null
+  isDefault?: boolean
+  colorHex?: string | null
+  order?: number
+  createdAt?: Date | string
+  machinesByArea?: Prisma.MachineCreateNestedManyWithoutAreaInput
+  machinesByTeam?: Prisma.MachineCreateNestedManyWithoutTeamInput
+  machinesByProductionLine?: Prisma.MachineCreateNestedManyWithoutProductionLineInput
+  machinesByStatus?: Prisma.MachineCreateNestedManyWithoutStatusInput
+  machinesByMaintenancePeriod?: Prisma.MachineCreateNestedManyWithoutMaintenancePeriodInput
+  machinesByType?: Prisma.MachineCreateNestedManyWithoutMachineTypeInput
+  usersByArea?: Prisma.UserCreateNestedManyWithoutAreaInput
+  issuesByArea?: Prisma.QualityIssueCreateNestedManyWithoutAreaInput
+  issuesByProductionLine?: Prisma.QualityIssueCreateNestedManyWithoutProductionLineInput
+}
+
+export type CategoryUncheckedCreateWithoutIssuesByTeamInput = {
+  id?: string
+  type: $Enums.CategoryType
+  name: string
+  days?: number | null
+  statusKind?: $Enums.StatusKind | null
+  isDefault?: boolean
+  colorHex?: string | null
+  order?: number
+  createdAt?: Date | string
+  machinesByArea?: Prisma.MachineUncheckedCreateNestedManyWithoutAreaInput
+  machinesByTeam?: Prisma.MachineUncheckedCreateNestedManyWithoutTeamInput
+  machinesByProductionLine?: Prisma.MachineUncheckedCreateNestedManyWithoutProductionLineInput
+  machinesByStatus?: Prisma.MachineUncheckedCreateNestedManyWithoutStatusInput
+  machinesByMaintenancePeriod?: Prisma.MachineUncheckedCreateNestedManyWithoutMaintenancePeriodInput
+  machinesByType?: Prisma.MachineUncheckedCreateNestedManyWithoutMachineTypeInput
+  usersByArea?: Prisma.UserUncheckedCreateNestedManyWithoutAreaInput
+  issuesByArea?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutAreaInput
+  issuesByProductionLine?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutProductionLineInput
+}
+
+export type CategoryCreateOrConnectWithoutIssuesByTeamInput = {
+  where: Prisma.CategoryWhereUniqueInput
+  create: Prisma.XOR<Prisma.CategoryCreateWithoutIssuesByTeamInput, Prisma.CategoryUncheckedCreateWithoutIssuesByTeamInput>
+}
+
+export type CategoryCreateWithoutIssuesByProductionLineInput = {
+  id?: string
+  type: $Enums.CategoryType
+  name: string
+  days?: number | null
+  statusKind?: $Enums.StatusKind | null
+  isDefault?: boolean
+  colorHex?: string | null
+  order?: number
+  createdAt?: Date | string
+  machinesByArea?: Prisma.MachineCreateNestedManyWithoutAreaInput
+  machinesByTeam?: Prisma.MachineCreateNestedManyWithoutTeamInput
+  machinesByProductionLine?: Prisma.MachineCreateNestedManyWithoutProductionLineInput
+  machinesByStatus?: Prisma.MachineCreateNestedManyWithoutStatusInput
+  machinesByMaintenancePeriod?: Prisma.MachineCreateNestedManyWithoutMaintenancePeriodInput
+  machinesByType?: Prisma.MachineCreateNestedManyWithoutMachineTypeInput
+  usersByArea?: Prisma.UserCreateNestedManyWithoutAreaInput
+  issuesByArea?: Prisma.QualityIssueCreateNestedManyWithoutAreaInput
+  issuesByTeam?: Prisma.QualityIssueCreateNestedManyWithoutTeamInput
+}
+
+export type CategoryUncheckedCreateWithoutIssuesByProductionLineInput = {
+  id?: string
+  type: $Enums.CategoryType
+  name: string
+  days?: number | null
+  statusKind?: $Enums.StatusKind | null
+  isDefault?: boolean
+  colorHex?: string | null
+  order?: number
+  createdAt?: Date | string
+  machinesByArea?: Prisma.MachineUncheckedCreateNestedManyWithoutAreaInput
+  machinesByTeam?: Prisma.MachineUncheckedCreateNestedManyWithoutTeamInput
+  machinesByProductionLine?: Prisma.MachineUncheckedCreateNestedManyWithoutProductionLineInput
+  machinesByStatus?: Prisma.MachineUncheckedCreateNestedManyWithoutStatusInput
+  machinesByMaintenancePeriod?: Prisma.MachineUncheckedCreateNestedManyWithoutMaintenancePeriodInput
+  machinesByType?: Prisma.MachineUncheckedCreateNestedManyWithoutMachineTypeInput
+  usersByArea?: Prisma.UserUncheckedCreateNestedManyWithoutAreaInput
+  issuesByArea?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutAreaInput
+  issuesByTeam?: Prisma.QualityIssueUncheckedCreateNestedManyWithoutTeamInput
+}
+
+export type CategoryCreateOrConnectWithoutIssuesByProductionLineInput = {
+  where: Prisma.CategoryWhereUniqueInput
+  create: Prisma.XOR<Prisma.CategoryCreateWithoutIssuesByProductionLineInput, Prisma.CategoryUncheckedCreateWithoutIssuesByProductionLineInput>
+}
+
+export type CategoryUpsertWithoutIssuesByAreaInput = {
+  update: Prisma.XOR<Prisma.CategoryUpdateWithoutIssuesByAreaInput, Prisma.CategoryUncheckedUpdateWithoutIssuesByAreaInput>
+  create: Prisma.XOR<Prisma.CategoryCreateWithoutIssuesByAreaInput, Prisma.CategoryUncheckedCreateWithoutIssuesByAreaInput>
+  where?: Prisma.CategoryWhereInput
+}
+
+export type CategoryUpdateToOneWithWhereWithoutIssuesByAreaInput = {
+  where?: Prisma.CategoryWhereInput
+  data: Prisma.XOR<Prisma.CategoryUpdateWithoutIssuesByAreaInput, Prisma.CategoryUncheckedUpdateWithoutIssuesByAreaInput>
+}
+
+export type CategoryUpdateWithoutIssuesByAreaInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  days?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  statusKind?: Prisma.NullableEnumStatusKindFieldUpdateOperationsInput | $Enums.StatusKind | null
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  colorHex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  machinesByArea?: Prisma.MachineUpdateManyWithoutAreaNestedInput
+  machinesByTeam?: Prisma.MachineUpdateManyWithoutTeamNestedInput
+  machinesByProductionLine?: Prisma.MachineUpdateManyWithoutProductionLineNestedInput
+  machinesByStatus?: Prisma.MachineUpdateManyWithoutStatusNestedInput
+  machinesByMaintenancePeriod?: Prisma.MachineUpdateManyWithoutMaintenancePeriodNestedInput
+  machinesByType?: Prisma.MachineUpdateManyWithoutMachineTypeNestedInput
+  usersByArea?: Prisma.UserUpdateManyWithoutAreaNestedInput
+  issuesByTeam?: Prisma.QualityIssueUpdateManyWithoutTeamNestedInput
+  issuesByProductionLine?: Prisma.QualityIssueUpdateManyWithoutProductionLineNestedInput
+}
+
+export type CategoryUncheckedUpdateWithoutIssuesByAreaInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  days?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  statusKind?: Prisma.NullableEnumStatusKindFieldUpdateOperationsInput | $Enums.StatusKind | null
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  colorHex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  machinesByArea?: Prisma.MachineUncheckedUpdateManyWithoutAreaNestedInput
+  machinesByTeam?: Prisma.MachineUncheckedUpdateManyWithoutTeamNestedInput
+  machinesByProductionLine?: Prisma.MachineUncheckedUpdateManyWithoutProductionLineNestedInput
+  machinesByStatus?: Prisma.MachineUncheckedUpdateManyWithoutStatusNestedInput
+  machinesByMaintenancePeriod?: Prisma.MachineUncheckedUpdateManyWithoutMaintenancePeriodNestedInput
+  machinesByType?: Prisma.MachineUncheckedUpdateManyWithoutMachineTypeNestedInput
+  usersByArea?: Prisma.UserUncheckedUpdateManyWithoutAreaNestedInput
+  issuesByTeam?: Prisma.QualityIssueUncheckedUpdateManyWithoutTeamNestedInput
+  issuesByProductionLine?: Prisma.QualityIssueUncheckedUpdateManyWithoutProductionLineNestedInput
+}
+
+export type CategoryUpsertWithoutIssuesByTeamInput = {
+  update: Prisma.XOR<Prisma.CategoryUpdateWithoutIssuesByTeamInput, Prisma.CategoryUncheckedUpdateWithoutIssuesByTeamInput>
+  create: Prisma.XOR<Prisma.CategoryCreateWithoutIssuesByTeamInput, Prisma.CategoryUncheckedCreateWithoutIssuesByTeamInput>
+  where?: Prisma.CategoryWhereInput
+}
+
+export type CategoryUpdateToOneWithWhereWithoutIssuesByTeamInput = {
+  where?: Prisma.CategoryWhereInput
+  data: Prisma.XOR<Prisma.CategoryUpdateWithoutIssuesByTeamInput, Prisma.CategoryUncheckedUpdateWithoutIssuesByTeamInput>
+}
+
+export type CategoryUpdateWithoutIssuesByTeamInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  days?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  statusKind?: Prisma.NullableEnumStatusKindFieldUpdateOperationsInput | $Enums.StatusKind | null
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  colorHex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  machinesByArea?: Prisma.MachineUpdateManyWithoutAreaNestedInput
+  machinesByTeam?: Prisma.MachineUpdateManyWithoutTeamNestedInput
+  machinesByProductionLine?: Prisma.MachineUpdateManyWithoutProductionLineNestedInput
+  machinesByStatus?: Prisma.MachineUpdateManyWithoutStatusNestedInput
+  machinesByMaintenancePeriod?: Prisma.MachineUpdateManyWithoutMaintenancePeriodNestedInput
+  machinesByType?: Prisma.MachineUpdateManyWithoutMachineTypeNestedInput
+  usersByArea?: Prisma.UserUpdateManyWithoutAreaNestedInput
+  issuesByArea?: Prisma.QualityIssueUpdateManyWithoutAreaNestedInput
+  issuesByProductionLine?: Prisma.QualityIssueUpdateManyWithoutProductionLineNestedInput
+}
+
+export type CategoryUncheckedUpdateWithoutIssuesByTeamInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  days?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  statusKind?: Prisma.NullableEnumStatusKindFieldUpdateOperationsInput | $Enums.StatusKind | null
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  colorHex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  machinesByArea?: Prisma.MachineUncheckedUpdateManyWithoutAreaNestedInput
+  machinesByTeam?: Prisma.MachineUncheckedUpdateManyWithoutTeamNestedInput
+  machinesByProductionLine?: Prisma.MachineUncheckedUpdateManyWithoutProductionLineNestedInput
+  machinesByStatus?: Prisma.MachineUncheckedUpdateManyWithoutStatusNestedInput
+  machinesByMaintenancePeriod?: Prisma.MachineUncheckedUpdateManyWithoutMaintenancePeriodNestedInput
+  machinesByType?: Prisma.MachineUncheckedUpdateManyWithoutMachineTypeNestedInput
+  usersByArea?: Prisma.UserUncheckedUpdateManyWithoutAreaNestedInput
+  issuesByArea?: Prisma.QualityIssueUncheckedUpdateManyWithoutAreaNestedInput
+  issuesByProductionLine?: Prisma.QualityIssueUncheckedUpdateManyWithoutProductionLineNestedInput
+}
+
+export type CategoryUpsertWithoutIssuesByProductionLineInput = {
+  update: Prisma.XOR<Prisma.CategoryUpdateWithoutIssuesByProductionLineInput, Prisma.CategoryUncheckedUpdateWithoutIssuesByProductionLineInput>
+  create: Prisma.XOR<Prisma.CategoryCreateWithoutIssuesByProductionLineInput, Prisma.CategoryUncheckedCreateWithoutIssuesByProductionLineInput>
+  where?: Prisma.CategoryWhereInput
+}
+
+export type CategoryUpdateToOneWithWhereWithoutIssuesByProductionLineInput = {
+  where?: Prisma.CategoryWhereInput
+  data: Prisma.XOR<Prisma.CategoryUpdateWithoutIssuesByProductionLineInput, Prisma.CategoryUncheckedUpdateWithoutIssuesByProductionLineInput>
+}
+
+export type CategoryUpdateWithoutIssuesByProductionLineInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  days?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  statusKind?: Prisma.NullableEnumStatusKindFieldUpdateOperationsInput | $Enums.StatusKind | null
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  colorHex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  machinesByArea?: Prisma.MachineUpdateManyWithoutAreaNestedInput
+  machinesByTeam?: Prisma.MachineUpdateManyWithoutTeamNestedInput
+  machinesByProductionLine?: Prisma.MachineUpdateManyWithoutProductionLineNestedInput
+  machinesByStatus?: Prisma.MachineUpdateManyWithoutStatusNestedInput
+  machinesByMaintenancePeriod?: Prisma.MachineUpdateManyWithoutMaintenancePeriodNestedInput
+  machinesByType?: Prisma.MachineUpdateManyWithoutMachineTypeNestedInput
+  usersByArea?: Prisma.UserUpdateManyWithoutAreaNestedInput
+  issuesByArea?: Prisma.QualityIssueUpdateManyWithoutAreaNestedInput
+  issuesByTeam?: Prisma.QualityIssueUpdateManyWithoutTeamNestedInput
+}
+
+export type CategoryUncheckedUpdateWithoutIssuesByProductionLineInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  days?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  statusKind?: Prisma.NullableEnumStatusKindFieldUpdateOperationsInput | $Enums.StatusKind | null
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  colorHex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  order?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  machinesByArea?: Prisma.MachineUncheckedUpdateManyWithoutAreaNestedInput
+  machinesByTeam?: Prisma.MachineUncheckedUpdateManyWithoutTeamNestedInput
+  machinesByProductionLine?: Prisma.MachineUncheckedUpdateManyWithoutProductionLineNestedInput
+  machinesByStatus?: Prisma.MachineUncheckedUpdateManyWithoutStatusNestedInput
+  machinesByMaintenancePeriod?: Prisma.MachineUncheckedUpdateManyWithoutMaintenancePeriodNestedInput
+  machinesByType?: Prisma.MachineUncheckedUpdateManyWithoutMachineTypeNestedInput
+  usersByArea?: Prisma.UserUncheckedUpdateManyWithoutAreaNestedInput
+  issuesByArea?: Prisma.QualityIssueUncheckedUpdateManyWithoutAreaNestedInput
+  issuesByTeam?: Prisma.QualityIssueUncheckedUpdateManyWithoutTeamNestedInput
 }
 
 
@@ -1287,6 +1740,9 @@ export type CategoryCountOutputType = {
   machinesByMaintenancePeriod: number
   machinesByType: number
   usersByArea: number
+  issuesByArea: number
+  issuesByTeam: number
+  issuesByProductionLine: number
 }
 
 export type CategoryCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1297,6 +1753,9 @@ export type CategoryCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensio
   machinesByMaintenancePeriod?: boolean | CategoryCountOutputTypeCountMachinesByMaintenancePeriodArgs
   machinesByType?: boolean | CategoryCountOutputTypeCountMachinesByTypeArgs
   usersByArea?: boolean | CategoryCountOutputTypeCountUsersByAreaArgs
+  issuesByArea?: boolean | CategoryCountOutputTypeCountIssuesByAreaArgs
+  issuesByTeam?: boolean | CategoryCountOutputTypeCountIssuesByTeamArgs
+  issuesByProductionLine?: boolean | CategoryCountOutputTypeCountIssuesByProductionLineArgs
 }
 
 /**
@@ -1358,6 +1817,27 @@ export type CategoryCountOutputTypeCountUsersByAreaArgs<ExtArgs extends runtime.
   where?: Prisma.UserWhereInput
 }
 
+/**
+ * CategoryCountOutputType without action
+ */
+export type CategoryCountOutputTypeCountIssuesByAreaArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.QualityIssueWhereInput
+}
+
+/**
+ * CategoryCountOutputType without action
+ */
+export type CategoryCountOutputTypeCountIssuesByTeamArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.QualityIssueWhereInput
+}
+
+/**
+ * CategoryCountOutputType without action
+ */
+export type CategoryCountOutputTypeCountIssuesByProductionLineArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.QualityIssueWhereInput
+}
+
 
 export type CategorySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1376,6 +1856,9 @@ export type CategorySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   machinesByMaintenancePeriod?: boolean | Prisma.Category$machinesByMaintenancePeriodArgs<ExtArgs>
   machinesByType?: boolean | Prisma.Category$machinesByTypeArgs<ExtArgs>
   usersByArea?: boolean | Prisma.Category$usersByAreaArgs<ExtArgs>
+  issuesByArea?: boolean | Prisma.Category$issuesByAreaArgs<ExtArgs>
+  issuesByTeam?: boolean | Prisma.Category$issuesByTeamArgs<ExtArgs>
+  issuesByProductionLine?: boolean | Prisma.Category$issuesByProductionLineArgs<ExtArgs>
   _count?: boolean | Prisma.CategoryCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["category"]>
 
@@ -1424,6 +1907,9 @@ export type CategoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   machinesByMaintenancePeriod?: boolean | Prisma.Category$machinesByMaintenancePeriodArgs<ExtArgs>
   machinesByType?: boolean | Prisma.Category$machinesByTypeArgs<ExtArgs>
   usersByArea?: boolean | Prisma.Category$usersByAreaArgs<ExtArgs>
+  issuesByArea?: boolean | Prisma.Category$issuesByAreaArgs<ExtArgs>
+  issuesByTeam?: boolean | Prisma.Category$issuesByTeamArgs<ExtArgs>
+  issuesByProductionLine?: boolean | Prisma.Category$issuesByProductionLineArgs<ExtArgs>
   _count?: boolean | Prisma.CategoryCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CategoryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1439,6 +1925,9 @@ export type $CategoryPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     machinesByMaintenancePeriod: Prisma.$MachinePayload<ExtArgs>[]
     machinesByType: Prisma.$MachinePayload<ExtArgs>[]
     usersByArea: Prisma.$UserPayload<ExtArgs>[]
+    issuesByArea: Prisma.$QualityIssuePayload<ExtArgs>[]
+    issuesByTeam: Prisma.$QualityIssuePayload<ExtArgs>[]
+    issuesByProductionLine: Prisma.$QualityIssuePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1851,6 +2340,9 @@ export interface Prisma__CategoryClient<T, Null = never, ExtArgs extends runtime
   machinesByMaintenancePeriod<T extends Prisma.Category$machinesByMaintenancePeriodArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Category$machinesByMaintenancePeriodArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MachinePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   machinesByType<T extends Prisma.Category$machinesByTypeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Category$machinesByTypeArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MachinePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   usersByArea<T extends Prisma.Category$usersByAreaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Category$usersByAreaArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  issuesByArea<T extends Prisma.Category$issuesByAreaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Category$issuesByAreaArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QualityIssuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  issuesByTeam<T extends Prisma.Category$issuesByTeamArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Category$issuesByTeamArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QualityIssuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  issuesByProductionLine<T extends Prisma.Category$issuesByProductionLineArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Category$issuesByProductionLineArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QualityIssuePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2445,6 +2937,78 @@ export type Category$usersByAreaArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.UserScalarFieldEnum | Prisma.UserScalarFieldEnum[]
+}
+
+/**
+ * Category.issuesByArea
+ */
+export type Category$issuesByAreaArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the QualityIssue
+   */
+  select?: Prisma.QualityIssueSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the QualityIssue
+   */
+  omit?: Prisma.QualityIssueOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.QualityIssueInclude<ExtArgs> | null
+  where?: Prisma.QualityIssueWhereInput
+  orderBy?: Prisma.QualityIssueOrderByWithRelationInput | Prisma.QualityIssueOrderByWithRelationInput[]
+  cursor?: Prisma.QualityIssueWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.QualityIssueScalarFieldEnum | Prisma.QualityIssueScalarFieldEnum[]
+}
+
+/**
+ * Category.issuesByTeam
+ */
+export type Category$issuesByTeamArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the QualityIssue
+   */
+  select?: Prisma.QualityIssueSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the QualityIssue
+   */
+  omit?: Prisma.QualityIssueOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.QualityIssueInclude<ExtArgs> | null
+  where?: Prisma.QualityIssueWhereInput
+  orderBy?: Prisma.QualityIssueOrderByWithRelationInput | Prisma.QualityIssueOrderByWithRelationInput[]
+  cursor?: Prisma.QualityIssueWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.QualityIssueScalarFieldEnum | Prisma.QualityIssueScalarFieldEnum[]
+}
+
+/**
+ * Category.issuesByProductionLine
+ */
+export type Category$issuesByProductionLineArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the QualityIssue
+   */
+  select?: Prisma.QualityIssueSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the QualityIssue
+   */
+  omit?: Prisma.QualityIssueOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.QualityIssueInclude<ExtArgs> | null
+  where?: Prisma.QualityIssueWhereInput
+  orderBy?: Prisma.QualityIssueOrderByWithRelationInput | Prisma.QualityIssueOrderByWithRelationInput[]
+  cursor?: Prisma.QualityIssueWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.QualityIssueScalarFieldEnum | Prisma.QualityIssueScalarFieldEnum[]
 }
 
 /**

@@ -5,7 +5,7 @@ import { CustomUserSession } from "@/lib/auth.config";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { drizzle } from "drizzle-orm/d1";
 import { issues } from "@/db/schema";
-import { eq, count } from "drizzle-orm";
+import { eq, count, sql } from "drizzle-orm";
 
 async function getIssueCounts() {
   const counts = { cho_xu_ly: 0, dang_xu_ly: 0, dang_chay_thu: 0, da_xu_ly: 0, khong_the_xu_ly: 0 };
@@ -14,11 +14,11 @@ async function getIssueCounts() {
     const env = ctx.env as unknown as CloudflareEnv;
     if (env.DB) {
       const db = drizzle(env.DB);
-      const resCho = await db.select({ value: count() }).from(issues).where(eq(issues.status, "cho_xu_ly"));
-      const resDang = await db.select({ value: count() }).from(issues).where(eq(issues.status, "dang_xu_ly"));
-      const resChayThu = await db.select({ value: count() }).from(issues).where(eq(issues.status, "dang_chay_thu"));
-      const resDa = await db.select({ value: count() }).from(issues).where(eq(issues.status, "da_xu_ly"));
-      const resKhong = await db.select({ value: count() }).from(issues).where(eq(issues.status, "khong_the_xu_ly"));
+      const resCho = await db.select({ value: count() }).from(issues).where(sql`${issues.status} IN ('cho_xu_ly', 'pending')`);
+      const resDang = await db.select({ value: count() }).from(issues).where(sql`${issues.status} IN ('dang_xu_ly', 'processing')`);
+      const resChayThu = await db.select({ value: count() }).from(issues).where(sql`${issues.status} IN ('dang_chay_thu', 'monitoring')`);
+      const resDa = await db.select({ value: count() }).from(issues).where(sql`${issues.status} IN ('da_xu_ly', 'resolved')`);
+      const resKhong = await db.select({ value: count() }).from(issues).where(sql`${issues.status} IN ('khong_the_xu_ly', 'cannot_resolve')`);
 
       counts.cho_xu_ly = resCho[0]?.value || 0;
       counts.dang_xu_ly = resDang[0]?.value || 0;

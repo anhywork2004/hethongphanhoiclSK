@@ -28,7 +28,7 @@ import {
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { getDb } from "@/db";
 import { issues } from "@/db/schema";
-import { count, eq } from "drizzle-orm";
+import { count, eq, sql } from "drizzle-orm";
 import { TBSMark } from "@/components/brand-logo";
 import { CountdownTimer } from "@/components/dashboard/countdown-timer";
 

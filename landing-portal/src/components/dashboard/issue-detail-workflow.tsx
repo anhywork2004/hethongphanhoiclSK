@@ -20,7 +20,7 @@ interface IssueData {
   productCode: string;
   productName: string;
   affectedSizes: string[];
-  workshopName?: string;
+  workshopName?: string | null;
   detectionStage: string;
   description: string;
   severity: string;

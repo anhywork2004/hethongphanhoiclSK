@@ -5,7 +5,7 @@ import { PieChart, BarChart3, TrendingUp, ShieldCheck, Activity, Clock, CheckCir
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { getDb } from "@/db";
 import { issues } from "@/db/schema";
-import { count, eq } from "drizzle-orm";
+import { count, eq, sql } from "drizzle-orm";
 
 export default async function BIPage() {
   const session = await auth();
@@ -29,10 +29,10 @@ export default async function BIPage() {
       const totalRes = await db.select({ value: count() }).from(issues);
       totalIssuesCount = totalRes[0]?.value || 0;
 
-      const resolvedRes = await db.select({ value: count() }).from(issues).where(eq(issues.status, "da_xu_ly"));
+      const resolvedRes = await db.select({ value: count() }).from(issues).where(sql`${issues.status} IN ('da_xu_ly', 'resolved')`);
       resolvedCount = resolvedRes[0]?.value || 0;
 
-      const pendingRes = await db.select({ value: count() }).from(issues).where(eq(issues.status, "cho_xu_ly"));
+      const pendingRes = await db.select({ value: count() }).from(issues).where(sql`${issues.status} IN ('cho_xu_ly', 'pending')`);
       pendingCount = pendingRes[0]?.value || 0;
     }
   } catch {

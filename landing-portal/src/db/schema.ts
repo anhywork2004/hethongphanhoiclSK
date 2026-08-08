@@ -60,9 +60,13 @@ export const userRoles = sqliteTable("user_roles", {
 // 3.3 workshops (Phân xưởng)
 export const workshops = sqliteTable("workshops", {
   id: text("id").primaryKey(),
-  name: text("name").notNull(),
+  name: text("name"),
   code: text("code"),
+  workshopName: text("workshop_name"),
+  workshopCode: text("workshop_code"),
+  description: text("description"),
   isActive: integer("is_active").default(1),
+  createdAt: text("created_at"),
 });
 
 // 3.4 product_sizes

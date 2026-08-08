@@ -3,7 +3,7 @@ import { FlaskConical, ArrowRight, Clock, PlusCircle } from "lucide-react";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { getDb } from "@/db";
 import { issues } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { CountdownTimer } from "@/components/dashboard/countdown-timer";
 
 async function getChayThuIssues() {
@@ -13,7 +13,7 @@ async function getChayThuIssues() {
     if (!d1) return [];
 
     const db = getDb(d1);
-    const res = await db.select().from(issues).where(eq(issues.status, "dang_chay_thu"));
+    const res = await db.select().from(issues).where(sql`${issues.status} IN ('dang_chay_thu', 'monitoring')`);
     return res;
   } catch {
     return [];

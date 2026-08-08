@@ -15,21 +15,12 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
-  FolderKanban,
-  UploadCloud,
-  LayoutDashboard,
-  Filter,
-  Trophy,
-  Archive,
-  Building,
-  Tag,
-  Users,
-  Sliders,
+  ShieldCheck,
   MessageSquare,
+  Sliders,
   Ruler,
   Wrench,
-  BookOpen,
-  ChevronDown,
+  Factory,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -53,9 +44,22 @@ export function LeftBar({ user, counts = { cho_xu_ly: 0, dang_xu_ly: 0, da_xu_ly
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
 
-  // Role check
+  // Roles allowed to view BI Overview
   const biRoles = ["truong_phong_ban", "giam_doc", "tong_giam_doc", "admin"];
   const canViewBI = user.role ? biRoles.includes(user.role) : false;
+
+  const roleLabelMap: Record<string, string> = {
+    reporter: "Cán Bộ Báo Lỗi",
+    truong_line: "Trưởng Line",
+    to_truong: "Tổ Trưởng",
+    qa: "Chuyên Viên QA",
+    cong_nghe: "Kỹ Sư Công Nghệ",
+    truong_phong_ban: "Trưởng Phòng Ban",
+    nguoi_xu_ly: "Kỹ Thuật / Bảo Trì",
+    giam_doc: "Giám Đốc Phân Xưởng",
+    tong_giam_doc: "Tổng Giám Đốc",
+    admin: "Quản Trị Viên",
+  };
 
   return (
     <aside
@@ -63,7 +67,7 @@ export function LeftBar({ user, counts = { cho_xu_ly: 0, dang_xu_ly: 0, da_xu_ly
         collapsed ? "w-20" : "w-64"
       }`}
     >
-      {/* BRANDING HEADER (Matching Image 2) */}
+      {/* BRANDING HEADER */}
       <div className="p-4 border-b border-slate-800/80 flex items-center justify-between">
         <Link href="/dashboard" className="flex items-center space-x-3 min-w-0">
           <div className="h-9 w-9 rounded-xl bg-white p-1 flex items-center justify-center shrink-0 shadow-md">
@@ -94,184 +98,232 @@ export function LeftBar({ user, counts = { cho_xu_ly: 0, dang_xu_ly: 0, da_xu_ly
         </button>
       </div>
 
-      {/* NAVIGATION CONTENT */}
-      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6 scrollbar-thin scrollbar-thumb-slate-800">
-        
-        {/* MAIN MENU SECTION (Matching Image 2) */}
-        <div>
+      {/* MỤC 1: THÔNG TIN CÁ NHÂN (HIỂN THỊ TRÊN CÙNG theo spec yêu cầu) */}
+      <div className="p-3.5 m-3 rounded-2xl bg-[#0e1f3d] border border-blue-500/20 shadow-inner">
+        <div className="flex items-center space-x-3">
+          <div className="h-10 w-10 rounded-full bg-blue-600/30 border border-blue-400/50 flex items-center justify-center text-blue-300 font-bold shrink-0">
+            <User className="w-5 h-5" />
+          </div>
           {!collapsed && (
-            <div className="px-3 mb-2 text-[10px] font-black text-slate-500 uppercase tracking-widest">
-              MENU
+            <div className="min-w-0 flex-1">
+              <div className="text-xs font-black text-white truncate">
+                {user.fullName || user.mnv || "Cán Bộ CLSK"}
+              </div>
+              <div className="text-[11px] text-slate-300 truncate mt-0.5">
+                {user.position || "Cán bộ sản xuất"}
+              </div>
+              <div className="mt-1 inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800/60 text-[10px] font-bold">
+                <ShieldCheck className="w-3 h-3 text-blue-400" />
+                <span>{roleLabelMap[user.role || ""] || user.role || "reporter"}</span>
+              </div>
             </div>
           )}
-          <div className="space-y-1">
-            {/* Thư viện (Active Warm Gold Pill as in Image 2) */}
-            <Link
-              href="/dashboard"
-              className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
-                pathname === "/dashboard"
-                  ? "bg-gradient-to-r from-[#b8860b] to-[#d4af37] text-white shadow-lg shadow-amber-900/30"
-                  : "text-slate-300 hover:bg-slate-800/60 hover:text-white"
-              }`}
-            >
-              <FolderKanban className="w-4 h-4 shrink-0" />
-              {!collapsed && <span>Thư viện</span>}
-            </Link>
+        </div>
+      </div>
 
-            {/* Đăng tải / Báo cáo */}
-            <Link
-              href="/dashboard/report"
-              className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
-                pathname === "/dashboard/report"
-                  ? "bg-gradient-to-r from-[#b8860b] to-[#d4af37] text-white shadow-lg shadow-amber-900/30"
-                  : "text-slate-300 hover:bg-slate-800/60 hover:text-white"
-              }`}
-            >
-              <UploadCloud className="w-4 h-4 shrink-0" />
-              {!collapsed && <span>Đăng tải</span>}
-            </Link>
-
-            {/* Dashboard BI */}
-            {canViewBI && (
-              <Link
-                href="/dashboard/bi"
-                className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
-                  pathname === "/dashboard/bi"
-                    ? "bg-gradient-to-r from-[#b8860b] to-[#d4af37] text-white shadow-lg shadow-amber-900/30"
-                    : "text-slate-300 hover:bg-slate-800/60 hover:text-white"
-                }`}
-              >
-                <LayoutDashboard className="w-4 h-4 shrink-0" />
-                {!collapsed && <span>Dashboard</span>}
-              </Link>
-            )}
-          </div>
+      {/* NAVIGATION CONTENT */}
+      <div className="flex-1 overflow-y-auto px-3 py-2 space-y-5 scrollbar-thin scrollbar-thumb-slate-800">
+        
+        {/* MỤC 4 TRONG SPEC: NÚT CTA NỔI BẬT BÁO CÁO VẤN ĐỀ */}
+        <div>
+          <Link
+            href="/dashboard/report"
+            className={`w-full flex items-center justify-center space-x-2 py-3 px-4 rounded-xl font-black text-xs uppercase tracking-wider shadow-lg transition-all ${
+              pathname === "/dashboard/report"
+                ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-blue-600/40 ring-2 ring-blue-400"
+                : "bg-blue-600 hover:bg-blue-500 text-white shadow-blue-600/20 hover:scale-[1.02]"
+            }`}
+          >
+            <PlusCircle className="h-4 w-4 shrink-0" />
+            {!collapsed && <span>BÁO CÁO VẤN ĐỀ</span>}
+          </Link>
         </div>
 
-        {/* LỌC NHANH SECTION (Matching Image 2) */}
+        {/* MỤC 2 TRONG SPEC: BI TỔNG QUAN (Chỉ role có liên quan mới thấy) */}
+        {canViewBI && (
+          <div>
+            {!collapsed && (
+              <div className="px-3 mb-2 text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                PHÂN TÍCH & BÁO CÁO
+              </div>
+            )}
+            <Link
+              href="/dashboard/bi"
+              className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                pathname === "/dashboard/bi"
+                  ? "bg-gradient-to-r from-[#b8860b] to-[#d4af37] text-white shadow-lg shadow-amber-900/30"
+                  : "text-slate-300 hover:bg-slate-800/60 hover:text-white"
+              }`}
+            >
+              <PieChart className="h-4 w-4 text-indigo-400 shrink-0" />
+              {!collapsed && <span>BI Tổng quan</span>}
+            </Link>
+          </div>
+        )}
+
+        {/* MỤC 3 TRONG SPEC: PHÂN LOẠI 4 TAB ĐẾM SỐ LƯỢNG (Chưa xử lý / Đang xử lý / Đã xử lý / Không thể xử lý) */}
         <div>
           {!collapsed && (
-            <div className="px-3 mb-2 text-[10px] font-black text-slate-500 uppercase tracking-widest">
-              LỌC NHANH
+            <div className="px-3 mb-2 flex items-center justify-between text-[10px] font-black text-slate-500 uppercase tracking-widest">
+              <span>PHÂN LOẠI TRẠNG THÁI</span>
             </div>
           )}
-          <div className="space-y-1">
-            
-            {/* Loại đăng ký */}
-            <div className="px-3 py-2 text-xs font-medium text-slate-400 flex items-center justify-between hover:text-slate-200 cursor-pointer">
-              <div className="flex items-center space-x-2.5">
-                <Filter className="w-4 h-4 text-slate-400" />
-                {!collapsed && <span>Loại đăng ký</span>}
-              </div>
-              {!collapsed && <ChevronDown className="w-3.5 h-3.5 text-slate-500" />}
-            </div>
 
-            {/* Thi đua */}
-            <Link
-              href="/dashboard/categories/thi_dua"
-              className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:bg-slate-800/40"
-            >
-              <div className="flex items-center space-x-2.5">
-                <Trophy className="w-3.5 h-3.5 text-amber-400" />
-                {!collapsed && <span>Thi đua</span>}
-              </div>
-              {!collapsed && (
-                <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800/60">
-                  0
-                </span>
-              )}
-            </Link>
-
-            {/* Đã đánh giá */}
-            <Link
-              href="/dashboard/categories/da_xu_ly"
-              className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:bg-slate-800/40"
-            >
-              <div className="flex items-center space-x-2.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                {!collapsed && <span>Đã đánh giá</span>}
-              </div>
-              {!collapsed && (
-                <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800/60">
-                  {counts.da_xu_ly}
-                </span>
-              )}
-            </Link>
-
-            {/* Chờ đánh giá */}
+          <div className="space-y-1.5">
+            {/* 1. Chưa xử lý */}
             <Link
               href="/dashboard/categories/cho_xu_ly"
-              className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-amber-300 bg-amber-950/40 border border-amber-800/40"
+              className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                pathname.includes("cho_xu_ly")
+                  ? "bg-amber-950/80 text-amber-300 border border-amber-700/60 shadow-md"
+                  : "text-slate-300 hover:bg-slate-800/60 hover:text-white"
+              }`}
             >
-              <div className="flex items-center space-x-2.5">
-                <Clock className="w-3.5 h-3.5 text-amber-400" />
-                {!collapsed && <span>Chờ đánh giá</span>}
+              <div className="flex items-center space-x-2.5 min-w-0">
+                <Clock className="h-4 w-4 text-amber-400 shrink-0" />
+                {!collapsed && <span className="truncate">Chưa xử lý</span>}
               </div>
               {!collapsed && (
-                <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-amber-500 text-slate-950">
+                <span className="px-2 py-0.5 text-[10px] font-black rounded-full bg-amber-500 text-slate-950 shadow">
                   {counts.cho_xu_ly}
                 </span>
               )}
             </Link>
 
-            {/* Lưu trữ */}
+            {/* 2. Đang xử lý */}
             <Link
-              href="/dashboard/categories/khong_the_xu_ly"
-              className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:bg-slate-800/40"
+              href="/dashboard/categories/dang_xu_ly"
+              className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                pathname.includes("dang_xu_ly")
+                  ? "bg-blue-950/80 text-blue-300 border border-blue-700/60 shadow-md"
+                  : "text-slate-300 hover:bg-slate-800/60 hover:text-white"
+              }`}
             >
-              <div className="flex items-center space-x-2.5">
-                <Archive className="w-3.5 h-3.5 text-slate-400" />
-                {!collapsed && <span>Lưu trữ</span>}
+              <div className="flex items-center space-x-2.5 min-w-0">
+                <AlertTriangle className="h-4 w-4 text-blue-400 shrink-0" />
+                {!collapsed && <span className="truncate">Đang xử lý</span>}
               </div>
               {!collapsed && (
-                <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-slate-800 text-slate-400">
-                  {counts.khong_the_xu_ly}
+                <span className="px-2 py-0.5 text-[10px] font-black rounded-full bg-blue-600 text-white shadow">
+                  {counts.dang_xu_ly}
                 </span>
               )}
             </Link>
 
-            {/* Khu vực */}
-            <div className="px-3 py-2 text-xs font-medium text-slate-400 flex items-center justify-between hover:text-slate-200 cursor-pointer">
-              <div className="flex items-center space-x-2.5">
-                <Building className="w-4 h-4 text-slate-400" />
-                {!collapsed && <span>Khu vực</span>}
+            {/* 3. Đã xử lý */}
+            <Link
+              href="/dashboard/categories/da_xu_ly"
+              className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                pathname.includes("da_xu_ly")
+                  ? "bg-emerald-950/80 text-emerald-300 border border-emerald-700/60 shadow-md"
+                  : "text-slate-300 hover:bg-slate-800/60 hover:text-white"
+              }`}
+            >
+              <div className="flex items-center space-x-2.5 min-w-0">
+                <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                {!collapsed && <span className="truncate">Đã xử lý</span>}
               </div>
-              {!collapsed && <ChevronDown className="w-3.5 h-3.5 text-slate-500" />}
-            </div>
+              {!collapsed && (
+                <span className="px-2 py-0.5 text-[10px] font-black rounded-full bg-emerald-600 text-white shadow">
+                  {counts.da_xu_ly}
+                </span>
+              )}
+            </Link>
 
-            {/* Phân loại */}
-            <div className="px-3 py-2 text-xs font-medium text-slate-400 flex items-center justify-between hover:text-slate-200 cursor-pointer">
-              <div className="flex items-center space-x-2.5">
-                <Tag className="w-4 h-4 text-slate-400" />
-                {!collapsed && <span>Phân loại</span>}
+            {/* 4. Không thể xử lý */}
+            <Link
+              href="/dashboard/categories/khong_the_xu_ly"
+              className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                pathname.includes("khong_the_xu_ly")
+                  ? "bg-rose-950/80 text-rose-300 border border-rose-700/60 shadow-md"
+                  : "text-slate-300 hover:bg-slate-800/60 hover:text-white"
+              }`}
+            >
+              <div className="flex items-center space-x-2.5 min-w-0">
+                <XCircle className="h-4 w-4 text-rose-400 shrink-0" />
+                {!collapsed && <span className="truncate">Không thể xử lý</span>}
               </div>
-              {!collapsed && <ChevronRight className="w-3.5 h-3.5 text-slate-500" />}
-            </div>
+              {!collapsed && (
+                <span className="px-2 py-0.5 text-[10px] font-black rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+                  {counts.khong_the_xu_ly}
+                </span>
+              )}
+            </Link>
           </div>
         </div>
 
-        {/* QUẢN TRỊ SECTION (For Admin / Managers) */}
+        {/* MỤC 5 TRONG SPEC: NHẬT KÝ SỬA CHỮA */}
+        <div>
+          {!collapsed && (
+            <div className="px-3 mb-2 text-[10px] font-black text-slate-500 uppercase tracking-widest">
+              LỊCH SỬ HỆ THỐNG
+            </div>
+          )}
+          <Link
+            href="/dashboard/logs"
+            className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+              pathname === "/dashboard/logs"
+                ? "bg-slate-800 text-blue-400 border border-slate-700"
+                : "text-slate-300 hover:bg-slate-800/60 hover:text-white"
+            }`}
+          >
+            <ClipboardList className="h-4 w-4 text-slate-400 shrink-0" />
+            {!collapsed && <span>Nhật ký sửa chữa</span>}
+          </Link>
+        </div>
+
+        {/* MỤC QUẢN TRỊ DÀNH CHO ADMIN */}
         {user.role === "admin" && (
           <div>
             {!collapsed && (
               <div className="px-3 mb-2 text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                QUẢN TRỊ
+                QUẢN TRỊ CẤU HÌNH
               </div>
             )}
             <div className="space-y-1">
               <Link
-                href="/dashboard/admin/cms-settings"
-                className="flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-400 hover:bg-slate-800/40 hover:text-slate-200"
+                href="/dashboard/admin/zalo"
+                className={`flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                  pathname.includes("/admin/zalo")
+                    ? "bg-slate-800 text-blue-400 border border-slate-700"
+                    : "text-slate-400 hover:bg-slate-800/40 hover:text-slate-200"
+                }`}
               >
-                <Sliders className="w-3.5 h-3.5 text-blue-400" />
-                {!collapsed && <span>Cấu hình CMS</span>}
+                <MessageSquare className="h-3.5 w-3.5 text-blue-400 shrink-0" />
+                {!collapsed && <span>Zalo OA & Nhóm</span>}
               </Link>
               <Link
-                href="/dashboard/admin/zalo"
-                className="flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-400 hover:bg-slate-800/40 hover:text-slate-200"
+                href="/dashboard/admin/workshops"
+                className={`flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                  pathname.includes("/admin/workshops")
+                    ? "bg-slate-800 text-blue-400 border border-slate-700"
+                    : "text-slate-400 hover:bg-slate-800/40 hover:text-slate-200"
+                }`}
               >
-                <MessageSquare className="w-3.5 h-3.5 text-blue-400" />
-                {!collapsed && <span>Zalo OA & Group</span>}
+                <Factory className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                {!collapsed && <span>Quản lý Phân xưởng</span>}
+              </Link>
+              <Link
+                href="/dashboard/admin/sizes"
+                className={`flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                  pathname.includes("/admin/sizes")
+                    ? "bg-slate-800 text-blue-400 border border-slate-700"
+                    : "text-slate-400 hover:bg-slate-800/40 hover:text-slate-200"
+                }`}
+              >
+                <Ruler className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                {!collapsed && <span>Quản lý Bảng Size</span>}
+              </Link>
+              <Link
+                href="/dashboard/admin/cms-settings"
+                className={`flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                  pathname.includes("/admin/cms-settings")
+                    ? "bg-slate-800 text-blue-400 border border-slate-700"
+                    : "text-slate-400 hover:bg-slate-800/40 hover:text-slate-200"
+                }`}
+              >
+                <Sliders className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                {!collapsed && <span>Cấu hình Trang chủ</span>}
               </Link>
             </div>
           </div>
@@ -279,36 +331,16 @@ export function LeftBar({ user, counts = { cho_xu_ly: 0, dang_xu_ly: 0, da_xu_ly
 
       </div>
 
-      {/* USER PROFILE FOOTER (Matching Image 2) */}
+      {/* FOOTER ĐĂNG XUẤT */}
       <div className="p-3 border-t border-slate-800/80 bg-[#081022]">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3 min-w-0">
-            <div className="h-9 w-9 rounded-full bg-blue-600/30 border border-blue-500/50 flex items-center justify-center text-blue-400 font-bold shrink-0">
-              <User className="w-4 h-4 text-blue-300" />
-            </div>
-            {!collapsed && (
-              <div className="min-w-0 flex-1">
-                <div className="text-xs font-bold text-white truncate">
-                  {user.fullName || user.mnv || "Capybara Admin"}
-                </div>
-                <div className="text-[10px] text-slate-400 truncate">
-                  {user.position || "Quản trị hệ thống"}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {!collapsed && (
-            <button
-              type="button"
-              onClick={() => signOut({ callbackUrl: "/login" })}
-              className="p-1.5 rounded-lg hover:bg-red-950/60 text-slate-400 hover:text-red-400 transition-colors"
-              title="Đăng xuất"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
-          )}
-        </div>
+        <button
+          type="button"
+          onClick={() => signOut({ callbackUrl: "/login" })}
+          className="w-full flex items-center justify-center space-x-2 py-2.5 px-4 rounded-xl bg-slate-800/60 hover:bg-red-950/60 hover:text-red-300 text-slate-300 text-xs font-bold transition-all border border-slate-800 hover:border-red-800/50"
+        >
+          <LogOut className="h-4 w-4 shrink-0" />
+          {!collapsed && <span>ĐĂNG XUẤT</span>}
+        </button>
       </div>
     </aside>
   );

@@ -15,7 +15,7 @@ export default async function RepairLogsPage() {
     detectionStage: string;
     severity: string;
     status: string;
-    createdByName: string;
+    createdByName: string | null;
     createdAt: string;
   }> = [];
 

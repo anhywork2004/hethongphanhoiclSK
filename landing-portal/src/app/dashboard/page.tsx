@@ -40,9 +40,9 @@ async function getDashboardStats() {
     if (d1) {
       const db = getDb(d1);
       const totalRes = await db.select({ value: count() }).from(issues);
-      const choRes = await db.select({ value: count() }).from(issues).where(eq(issues.status, "cho_xu_ly"));
-      const dangRes = await db.select({ value: count() }).from(issues).where(eq(issues.status, "dang_xu_ly"));
-      const daRes = await db.select({ value: count() }).from(issues).where(eq(issues.status, "da_xu_ly"));
+      const choRes = await db.select({ value: count() }).from(issues).where(sql`${issues.status} IN ('cho_xu_ly', 'pending')`);
+      const dangRes = await db.select({ value: count() }).from(issues).where(sql`${issues.status} IN ('dang_xu_ly', 'processing')`);
+      const daRes = await db.select({ value: count() }).from(issues).where(sql`${issues.status} IN ('da_xu_ly', 'resolved')`);
 
       stats.total = totalRes[0]?.value || 0;
       stats.cho_xu_ly = choRes[0]?.value || 0;

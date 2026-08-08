@@ -8,7 +8,7 @@
     "crons": ["*/5 * * * *"]
   },
   "assets": {
-    "directory": "landing-portal/.open-next/assets",
+    "directory": "landing-portal/public",
     "binding": "ASSETS"
   },
   "services": [

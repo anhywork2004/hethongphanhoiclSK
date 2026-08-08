@@ -3,6 +3,7 @@ import { requireMobileAuth } from "@/lib/require-mobile-auth";
 import { userPublicSelect } from "@/lib/selects";
 import { getOrCreateAreaMaintenanceGroup } from "@/lib/area-chat-group";
 import { sendPushToGroupMembers } from "@/lib/push";
+import { sendZaloIssueNotifications } from "@/lib/zalo-oa";
 import { NextResponse } from "next/server";
 
 async function getDefaultStatusId(
@@ -107,6 +108,27 @@ export async function POST(req: Request) {
     },
     payload.userId,
   );
+
+  // Gửi Zalo OA notification cho 3 nhóm (Ban Giám đốc, Trưởng phòng, Trực tiếp xử lý)
+  const issueCode = `INC-${incident.id.slice(-8).toUpperCase()}`;
+  sendZaloIssueNotifications(
+    {
+      id: incident.id,
+      issueCode,
+      productCode: machine.code,
+      productName: machine.name,
+      affectedSizes: [],
+      workshopId: machine.areaId,
+      workshopName: machine.location,
+      detectionStage: categoryLabel,
+      description,
+      severity: "trung_binh",
+      createdByName: payload.name,
+      createdByMnv: payload.employeeCode,
+      createdAt: incident.createdAt.toISOString(),
+    },
+    images ? images.map((url: string) => ({ imageUrl: url })) : [],
+  ).catch((err) => console.error("[Zalo Async Error from Mobile]:", err));
 
   return NextResponse.json(incident, { status: 201 });
 }

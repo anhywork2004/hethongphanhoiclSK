@@ -15,7 +15,7 @@
 
 # next.js
 /.next/
-/.open-next/
+!/.open-next/assets/
 /out/
 
 # production

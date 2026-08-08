@@ -1,0 +1,11 @@
+{
+  "name": "tbs-may-moc-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "cd landing-portal && npm install && npm run cf:build",
+    "cf:build": "cd landing-portal && npm install && npm run cf:build",
+    "deploy": "cd landing-portal && npm run cf:deploy",
+    "cf:deploy": "cd landing-portal && npm run cf:deploy"
+  }
+}

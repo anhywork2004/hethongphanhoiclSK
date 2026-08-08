@@ -244,3 +244,29 @@ export const homepageSettings = sqliteTable("homepage_settings", {
   announcementTicker: text("announcement_ticker"),
   updatedAt: text("updated_at").notNull(),
 });
+
+// Zalo Group Types & Compatibility Tables
+export const ZALO_GROUP_TYPES = [
+  "truc_tiep_xu_ly",
+  "dua_giai_phap",
+  "tiep_nhan_thong_tin",
+] as const;
+export type ZaloGroupType = (typeof ZALO_GROUP_TYPES)[number];
+
+export const zaloGroupMembers = sqliteTable("zalo_group_members", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  groupType: text("group_type").notNull().$type<ZaloGroupType>(),
+  workshopId: text("workshop_id"),
+  createdAt: text("created_at").notNull(),
+});
+
+export const zaloNotificationLog = sqliteTable("zalo_notification_log", {
+  id: text("id").primaryKey(),
+  issueId: text("issue_id").notNull(),
+  userId: text("user_id"),
+  groupType: text("group_type").notNull().$type<ZaloGroupType>(),
+  status: text("status").notNull(),
+  errorMessage: text("error_message"),
+  sentAt: text("sent_at").notNull(),
+});

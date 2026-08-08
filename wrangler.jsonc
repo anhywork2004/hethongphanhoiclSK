@@ -17,12 +17,5 @@
       "binding": "WORKER_SELF_REFERENCE",
       "service": "hethongphanhoiclsk"
     }
-  ],
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "tbs-may-moc-db",
-      "database_id": "7cd8d3f7-1bf2-412f-b83d-01182509dd91"
-    }
   ]
 }

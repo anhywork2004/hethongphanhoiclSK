@@ -1,6 +1,6 @@
 "use client";
 
-import { User, Cpu, Package, Compass, SunCheck, Check } from "lucide-react";
+import { User, Cpu, Package, Compass, Sun, Check } from "lucide-react";
 
 interface Visual4M1EPickerProps {
   selectedCause: string;
@@ -49,7 +49,7 @@ export function Visual4M1EPicker({ selectedCause, onSelectCause }: Visual4M1EPic
       id: "Environment",
       label: "Environment (Môi trường)",
       desc: "Nhiệt độ lò sấy, độ ẩm, ánh sáng chuyền",
-      icon: SunCheck,
+      icon: Sun,
       bgColor: "bg-teal-50 hover:bg-teal-100/80",
       activeBg: "bg-teal-600 text-white shadow-md ring-2 ring-teal-400",
       iconColor: "text-teal-600",

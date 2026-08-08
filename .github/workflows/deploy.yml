@@ -27,6 +27,7 @@ jobs:
         run: |
           cd web-admin
           npm ci
+          npx prisma generate
 
       - name: Type Check & Verify Next.js App
         run: |

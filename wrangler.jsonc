@@ -1,6 +1,6 @@
 {
   "$schema": "landing-portal/node_modules/wrangler/config-schema.json",
-  "name": "tbs-may-moc-admin",
+  "name": "hethongphanhoiclsk",
   "main": "landing-portal/worker.ts",
   "compatibility_date": "2024-09-23",
   "compatibility_flags": ["nodejs_compat"],
@@ -14,7 +14,7 @@
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",
-      "service": "tbs-may-moc-admin"
+      "service": "hethongphanhoiclsk"
     }
   ],
   "d1_databases": [

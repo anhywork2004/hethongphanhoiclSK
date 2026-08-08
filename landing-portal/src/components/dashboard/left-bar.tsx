@@ -21,6 +21,8 @@ import {
   Ruler,
   Wrench,
   Factory,
+  Tag,
+  ChevronDown,
 } from "lucide-react";
 import { useState } from "react";
 

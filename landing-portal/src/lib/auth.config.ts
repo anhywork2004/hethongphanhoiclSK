@@ -10,6 +10,7 @@ export interface CustomUserSession {
 }
 
 export const authConfig = {
+  secret: process.env.NEXTAUTH_SECRET || "dev-secret-key-change-in-production",
   trustHost: true,
   session: { strategy: "jwt" },
   pages: { signIn: "/login" },

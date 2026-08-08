@@ -24,8 +24,9 @@ function LoginForm() {
     setLoading(true);
 
     try {
+      const normalizedMnv = mnv.trim().toUpperCase().replace(/O/g, "0");
       const res = await signIn("credentials", {
-        mnv: mnv.trim().toUpperCase(),
+        mnv: normalizedMnv,
         password,
         redirect: false,
       });

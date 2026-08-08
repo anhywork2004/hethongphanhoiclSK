@@ -1,43 +1,41 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { CustomUserSession } from "@/lib/auth.config";
 import {
-  ShieldAlert,
-  Clock,
-  ArrowRight,
-  Activity,
+  Sparkles,
+  ArrowDown,
+  LogIn,
   CheckCircle2,
-  Factory,
-  Layers,
-  MessageSquare,
-  Zap,
   ShieldCheck,
-  User,
-  LogOut,
-  BarChart3,
-  ClipboardList,
-  Wrench,
-  BookOpen,
-  Sliders,
-  Ruler,
+  Building2,
+  Users,
+  Award,
+  Factory,
+  ArrowRight,
+  Clock,
+  Zap,
 } from "lucide-react";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { getDb } from "@/db";
-import { issues, homepageSettings } from "@/db/schema";
-import { count, eq } from "drizzle-orm";
+import { homepageSettings } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export default async function LandingPage() {
   const session = await auth();
   const user = session?.user as unknown as CustomUserSession | undefined;
 
-  let totalIssues = 0;
-  let resolvedIssues = 0;
+  // If user is already logged in, redirect directly to the workspace dashboard
+  if (user) {
+    redirect("/dashboard");
+  }
 
-  let cmsData = {
-    heroTitle: "Hệ thống phản hồi chất lượng & Khắc phục sự cố trong 2 Giờ Vàng",
-    heroSubtitle: "Số hóa quy trình báo lỗi chất lượng sản phẩm trực tiếp từ chuyền sản xuất đến đội ngũ Kỹ thuật, QA/QC, Công nghệ và Ban Giám Đốc. Tích hợp Zalo Official Account (OA) cảnh báo tức thì trong 15 phút.",
-    bannerImageUrl: "",
-    announcementTicker: "Sáng kiến \"2-Hour Fast Feedback Loop\" — Nhà máy Skechers Kiên Giang 1",
+  let cmsSettings = {
+    heroTitle: "TBS Group Kiên Giang 1",
+    heroSubtitle: "Excellence in Manufacturing. Excellence in Leadership.",
+    heroDescription:
+      "Không gian điều hành đại diện cho năng lực quản trị, văn hóa doanh nghiệp và tiêu chuẩn vận hành của nhà máy TBS Kiên Giang 1. Thiết kế hướng đến sự tinh gọn, hiện đại và chuyên nghiệp, phản ánh vị thế của một doanh nghiệp sản xuất trong chuỗi cung ứng toàn cầu.",
+    bannerUrl: "/login-bg.png",
   };
 
   try {
@@ -45,368 +43,252 @@ export default async function LandingPage() {
     const d1 = (ctx.env as unknown as CloudflareEnv).DB;
     if (d1) {
       const db = getDb(d1);
-      const t = await db.select({ value: count() }).from(issues);
-      totalIssues = t[0]?.value || 0;
-
-      const r = await db.select({ value: count() }).from(issues).where(eq(issues.status, "da_xu_ly"));
-      resolvedIssues = r[0]?.value || 0;
-
-      const cmsRes = await db.select().from(homepageSettings).where(eq(homepageSettings.id, "main"));
-      if (cmsRes.length > 0) {
-        cmsData = {
-          heroTitle: cmsRes[0].heroTitle || cmsData.heroTitle,
-          heroSubtitle: cmsRes[0].heroSubtitle || cmsData.heroSubtitle,
-          bannerImageUrl: cmsRes[0].bannerImageUrl || "",
-          announcementTicker: cmsRes[0].announcementTicker || cmsData.announcementTicker,
-        };
+      const res = await db.select().from(homepageSettings).where(eq(homepageSettings.id, "main"));
+      if (res.length > 0) {
+        cmsSettings.heroTitle = res[0].heroTitle || cmsSettings.heroTitle;
+        cmsSettings.heroSubtitle = res[0].heroSubtitle || cmsSettings.heroSubtitle;
+        cmsSettings.heroDescription = res[0].heroDescription || cmsSettings.heroDescription;
+        cmsSettings.bannerUrl = res[0].bannerUrl || cmsSettings.bannerUrl;
       }
     }
   } catch {
-    // Fallback if D1 context is not bound during static build
+    // Offline fallback
   }
 
-  const slaRate = totalIssues > 0 ? Math.round((resolvedIssues / totalIssues) * 100) : 100;
-
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased selection:bg-blue-600 selection:text-white">
-      {/* Top Bar Navigation (Thanh Bar Điều Hướng Chuẩn) */}
-      <header className="sticky top-0 z-50 bg-slate-900 border-b border-slate-800 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          {/* Brand Logo & Title */}
-          <Link href="/" className="flex items-center space-x-3">
-            <div className="h-9 w-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-600/20">
-              <Factory className="h-5 w-5 text-white" />
+    <div className="min-h-screen bg-[#071711] text-slate-100 font-sans antialiased selection:bg-emerald-500 selection:text-white relative overflow-x-hidden">
+      {/* Background Image Overlay with Rich Emerald & Teal Tint */}
+      <div className="fixed inset-0 z-0 opacity-40 mix-blend-luminosity bg-cover bg-center pointer-events-none transition-opacity duration-1000"
+           style={{ backgroundImage: `url('${cmsSettings.bannerUrl}')` }}>
+      </div>
+      <div className="fixed inset-0 z-0 bg-gradient-to-br from-[#061812]/95 via-[#0a231b]/90 to-[#07130e]/98 pointer-events-none" />
+
+      {/* TOP NAVIGATION BAR (Matching Image 1) */}
+      <header className="relative z-50 border-b border-emerald-900/30 bg-[#061812]/80 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+          {/* Logo & Corporate Title */}
+          <Link href="/" className="flex items-center space-x-3 group">
+            <div className="h-11 w-11 rounded-xl bg-white p-1.5 flex items-center justify-center shadow-lg shadow-emerald-950/50 border border-emerald-100/20 group-hover:scale-105 transition-transform">
+              {/* TBS Green Leaf Logo */}
+              <svg viewBox="0 0 100 100" className="w-full h-full fill-[#1b5238]">
+                <path d="M20,50 Q40,20 80,30 Q60,80 20,50 Z" />
+                <path d="M30,65 Q50,35 85,45" stroke="#8dc63f" strokeWidth="6" fill="none" />
+              </svg>
             </div>
             <div>
-              <div className="flex items-center space-x-2">
-                <span className="text-sm font-extrabold tracking-tight text-white uppercase leading-none">
-                  TBS Group
-                </span>
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-950 text-blue-400 border border-blue-800 uppercase">
-                  Skechers KG1
-                </span>
+              <div className="text-base font-black tracking-wider text-white flex items-center gap-1.5">
+                TBS GROUP
               </div>
-              <span className="text-[11px] font-medium text-slate-400 block mt-0.5">
-                Fast Feedback 2H
-              </span>
+              <div className="text-[10px] font-bold tracking-widest text-emerald-400 uppercase">
+                KIÊN GIANG 1
+              </div>
             </div>
           </Link>
 
-          {/* Navigation Items on Bar */}
-          <nav className="hidden md:flex items-center space-x-6 text-xs font-bold tracking-wider uppercase">
-            {user ? (
-              // Navigation Bar Items AFTER LOGIN (Đã Đăng Nhập)
-              <>
-                <Link href="/dashboard/report" className="text-blue-400 hover:text-blue-300 transition-colors flex items-center space-x-1.5">
-                  <ShieldAlert className="w-3.5 h-3.5" />
-                  <span>Báo Cáo Vấn Đề</span>
-                </Link>
-                <Link href="/dashboard/logs" className="text-slate-300 hover:text-white transition-colors flex items-center space-x-1.5">
-                  <ClipboardList className="w-3.5 h-3.5 text-slate-400" />
-                  <span>Nhật Ký Sửa Chữa</span>
-                </Link>
-                {["truong_phong_ban", "giam_doc", "tong_giam_doc", "admin"].includes(user.role || "") && (
-                  <Link href="/dashboard/bi" className="text-slate-300 hover:text-white transition-colors flex items-center space-x-1.5">
-                    <BarChart3 className="w-3.5 h-3.5 text-indigo-400" />
-                    <span>BI Sếp Tổng</span>
-                  </Link>
-                )}
-                {user.role === "admin" && (
-                  <Link href="/dashboard/admin/preventive-maintenance" className="text-slate-300 hover:text-white transition-colors flex items-center space-x-1.5">
-                    <Wrench className="w-3.5 h-3.5 text-slate-400" />
-                    <span>Bảo Trì MMTB</span>
-                  </Link>
-                )}
-                <Link href="/dashboard/training" className="text-slate-300 hover:text-white transition-colors flex items-center space-x-1.5">
-                  <BookOpen className="w-3.5 h-3.5 text-slate-400" />
-                  <span>Thư Viện Đào Tạo</span>
-                </Link>
-              </>
-            ) : (
-              // Navigation Bar Items BEFORE LOGIN (Chưa Đăng Nhập)
-              <>
-                <a href="#sang-kien" className="text-slate-300 hover:text-white transition-colors">
-                  Sáng Kiến 2H
-                </a>
-                <a href="#quy-trinh" className="text-slate-300 hover:text-white transition-colors">
-                  Quy Trình 4M+1E
-                </a>
-                <a href="#phan-xuong" className="text-slate-300 hover:text-white transition-colors">
-                  Phân Xưởng Sản Xuất
-                </a>
-                <a href="#ung-dung" className="text-slate-300 hover:text-white transition-colors">
-                  Hệ Thống Ứng Dụng
-                </a>
-              </>
-            )}
+          {/* Navigation Links */}
+          <nav className="hidden md:flex items-center space-x-10 text-xs font-bold uppercase tracking-widest text-emerald-200/80">
+            <a href="#about" className="hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-all">GIỚI THIỆU</a>
+            <a href="#phong-ban" className="hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-all">PHÒNG BAN</a>
+            <a href="#thuong-hieu" className="hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-all">THƯƠNG HIỆU</a>
           </nav>
 
-          {/* Action Bar Right Section */}
-          <div className="flex items-center space-x-3">
-            {user ? (
-              // Profile Badge & Dashboard Button after Login
-              <div className="flex items-center space-x-3">
-                <div className="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center space-x-2 text-xs">
-                  <User className="w-3.5 h-3.5 text-blue-400" />
-                  <span className="font-bold text-white">{user.mnv || user.fullName}</span>
-                  <span className="text-[10px] text-blue-400 uppercase font-semibold">({user.role})</span>
-                </div>
-                <Link
-                  href="/dashboard"
-                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md shadow-blue-600/20 transition-all"
-                >
-                  Dashboard
-                </Link>
-              </div>
-            ) : (
-              // Login Button Before Login
-              <Link
-                href="/login"
-                className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md shadow-blue-600/20 transition-all"
-              >
-                <span>Đăng Nhập MNV</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            )}
-          </div>
+          {/* Login Button CTA */}
+          <Link
+            href="/login"
+            className="px-6 py-2.5 rounded-full bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-emerald-900/40 hover:shadow-emerald-500/20 border border-emerald-400/30 transition-all flex items-center gap-2 group"
+          >
+            <LogIn className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            <span>ĐĂNG NHẬP HỆ THỐNG</span>
+          </Link>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="relative pt-12 pb-16 lg:pt-20 lg:pb-24 border-b border-slate-900">
+      {/* HERO MAIN SECTION (Matching Image 1 Design Layout) */}
+      <section className="relative z-10 pt-10 pb-20 md:pt-16 md:pb-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-blue-400 text-xs font-semibold mb-6">
-            <Clock className="w-3.5 h-3.5 text-blue-400" />
-            <span>{cmsData.announcementTicker}</span>
-          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            {/* LEFT COLUMN: HERO TEXT & STATS (7 cols) */}
+            <div className="lg:col-span-7 space-y-8">
+              
+              {/* Category Pill Tag */}
+              <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-500/40 backdrop-blur-md">
+                <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="text-xs font-bold text-emerald-300 uppercase tracking-widest">
+                  TBS GROUP KIÊN GIANG 1
+                </span>
+              </div>
 
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight max-w-4xl">
-            {cmsData.heroTitle}
-          </h1>
+              {/* Main Headline */}
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight font-serif-luxury tracking-tight drop-shadow-md">
+                {cmsSettings.heroTitle}
+              </h1>
 
-          <p className="mt-5 text-sm sm:text-base text-slate-300 max-w-3xl font-normal leading-relaxed">
-            {cmsData.heroSubtitle}
-          </p>
+              {/* Gold Italic Subtitle */}
+              <p className="text-xl sm:text-2xl font-serif-luxury italic text-[#d4af37] tracking-wide font-light">
+                {cmsSettings.heroSubtitle}
+              </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link
-              href={user ? "/dashboard/report" : "/login"}
-              className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md shadow-blue-600/20 transition-all flex items-center space-x-2"
-            >
-              <span>{user ? "TẠO PHIẾU BÁO SỰ CỐ CLSK" : "BÁO CÁO SỰ CỐ NGAY (ĐĂNG NHẬP)"}</span>
-              <ShieldAlert className="w-4 h-4" />
-            </Link>
-            <a
-              href="#quy-trinh"
-              className="px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 font-semibold text-xs transition-all"
-            >
-              Xem Quy Trình 4M+1E
-            </a>
-          </div>
+              {/* Description Paragraph */}
+              <p className="text-sm sm:text-base text-slate-300/90 leading-relaxed font-normal max-w-xl">
+                {cmsSettings.heroDescription}
+              </p>
 
-          {/* Real-time KPI Counter Cards */}
-          <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 p-5 rounded-2xl bg-slate-900 border border-slate-800">
-            <div className="p-4 border-r border-slate-800/80 last:border-0">
-              <div className="text-2xl sm:text-3xl font-black text-amber-400">15 Phút</div>
-              <div className="text-[11px] text-slate-400 mt-1 uppercase font-bold tracking-wider">
-                Phản hồi ban đầu
+              {/* Call to Action Buttons */}
+              <div className="flex flex-wrap items-center gap-4 pt-2">
+                <Link
+                  href="/login"
+                  className="px-7 py-3.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-xl shadow-emerald-950/80 border border-emerald-400/40 transition-all flex items-center gap-3 group"
+                >
+                  <ShieldCheck className="w-5 h-5 text-emerald-200" />
+                  <span>TRUY CẬP HỆ THỐNG PHẢN HỒI CLSK</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+
+              {/* Bottom Key Stats Row (Matching Image 1) */}
+              <div className="grid grid-cols-3 gap-6 pt-6 border-t border-emerald-900/40 max-w-lg">
+                <div>
+                  <div className="text-2xl sm:text-3xl font-black text-emerald-400 font-serif-luxury">
+                    30+
+                  </div>
+                  <div className="text-[10px] sm:text-xs font-bold tracking-wider text-slate-400 uppercase mt-1">
+                    NĂM KINH NGHIỆM
+                  </div>
+                </div>
+                <div className="border-l border-emerald-900/40 pl-6">
+                  <div className="text-2xl sm:text-3xl font-black text-emerald-400 font-serif-luxury">
+                    10+
+                  </div>
+                  <div className="text-[10px] sm:text-xs font-bold tracking-wider text-slate-400 uppercase mt-1">
+                    THƯƠNG HIỆU QUỐC TẾ
+                  </div>
+                </div>
+                <div className="border-l border-emerald-900/40 pl-6">
+                  <div className="text-2xl sm:text-3xl font-black text-emerald-400 font-serif-luxury">
+                    40K+
+                  </div>
+                  <div className="text-[10px] sm:text-xs font-bold tracking-wider text-slate-400 uppercase mt-1">
+                    NHÂN SỰ TOÀN HỆ THỐNG
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            {/* RIGHT COLUMN: VISUAL BANNER & COMPOSITE CARDS (5 cols) (Matching Image 1) */}
+            <div className="lg:col-span-5 relative">
+              <div className="relative mx-auto max-w-md lg:max-w-none">
+                
+                {/* Main Floating Card 1: Hands & TBS Logo */}
+                <div className="rounded-3xl overflow-hidden shadow-2xl border border-white/20 bg-gradient-to-br from-emerald-800/90 to-teal-900/90 p-1 backdrop-blur-xl transform transition-transform hover:scale-[1.02] duration-500">
+                  <div className="relative rounded-[22px] bg-gradient-to-br from-[#a3d959] via-[#8dc63f] to-[#5b9627] p-8 text-center text-[#0f2a20] shadow-inner overflow-hidden">
+                    {/* Background Graphic Patterns */}
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.4),transparent_60%)]" />
+                    
+                    {/* Hands Graphic Art Icon */}
+                    <div className="relative z-10 mx-auto w-24 h-24 mb-4 rounded-full bg-white/90 p-3 shadow-lg flex items-center justify-center">
+                      <svg viewBox="0 0 100 100" className="w-full h-full fill-[#1b5238]">
+                        <path d="M20,50 Q40,20 80,30 Q60,80 20,50 Z" />
+                        <path d="M30,65 Q50,35 85,45" stroke="#8dc63f" strokeWidth="6" fill="none" />
+                      </svg>
+                    </div>
+
+                    <div className="relative z-10 font-black text-2xl tracking-tight text-[#0b241b]">
+                      TBS <span className="text-emerald-950 font-normal">GROUP</span>
+                    </div>
+                    <div className="relative z-10 mt-2 font-extrabold text-sm uppercase tracking-widest text-[#0e3023]">
+                      CHUNG SỨC KIẾN TẠO TƯƠNG LAI
+                    </div>
+                  </div>
+                </div>
+
+                {/* Floating Overlay Card 2: City Hall Celebration Badge (Bottom Left) */}
+                <div className="absolute -bottom-8 -left-6 sm:-left-10 w-72 sm:w-80 rounded-2xl bg-white p-4 shadow-2xl border border-slate-200/80 text-slate-900 z-20 transform -rotate-1 hover:rotate-0 transition-transform">
+                  <div className="flex items-center space-x-3">
+                    <div className="h-10 w-10 rounded-lg bg-red-600 flex items-center justify-center text-white shrink-0 shadow-md">
+                      <span className="text-xs font-black">50 NĂM</span>
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-slate-900 leading-snug">
+                        MỪNG KỶ NIỆM 50 NĂM THÀNH PHỐ MANG TÊN BÁC
+                      </div>
+                      <div className="text-[10px] font-semibold text-slate-500 mt-0.5">
+                        02.07.1976 - 02.07.2026
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Floating Overlay Card 3: Dark Green Quote Box (Bottom Right) */}
+                <div className="absolute -bottom-14 -right-4 sm:-right-6 w-60 rounded-2xl bg-[#0d2a20]/95 backdrop-blur-md p-4 shadow-2xl border border-emerald-500/40 text-emerald-100 z-30">
+                  <div className="w-8 h-1 bg-emerald-400 mb-2 rounded-full" />
+                  <p className="text-xs font-serif-luxury italic text-emerald-200 leading-relaxed">
+                    &quot;Chung sức kiến tạo tương lai&quot;
+                  </p>
+                </div>
+
               </div>
             </div>
-            <div className="p-4 border-r border-slate-800/80 last:border-0">
-              <div className="text-2xl sm:text-3xl font-black text-blue-400">2 Giờ</div>
-              <div className="text-[11px] text-slate-400 mt-1 uppercase font-bold tracking-wider">
-                Khoanh vùng & Khắc phục
-              </div>
-            </div>
-            <div className="p-4 border-r border-slate-800/80 last:border-0">
-              <div className="text-2xl sm:text-3xl font-black text-emerald-400">3 Nhóm</div>
-              <div className="text-[11px] text-slate-400 mt-1 uppercase font-bold tracking-wider">
-                Gửi Zalo OA Tự Động
-              </div>
-            </div>
-            <div className="p-4">
-              <div className="text-2xl sm:text-3xl font-black text-cyan-400">{slaRate}%</div>
-              <div className="text-[11px] text-slate-400 mt-1 uppercase font-bold tracking-wider">
-                Tỷ lệ đạt SLA 2 Giờ
-              </div>
-            </div>
+
           </div>
         </div>
       </section>
 
-      {/* Applications & Features Tiles Section (Hệ Thống Ứng Dụng) */}
-      <section id="ung-dung" className="py-16 bg-slate-950">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          <div className="border-b border-slate-800 pb-4">
-            <h2 className="text-2xl font-extrabold text-white tracking-tight uppercase">
-              Danh Mục Hệ Thống Ứng Dụng TBS Skechers KG1
+      {/* FEATURE HIGHLIGHTS & FAST FEEDBACK LOOP EXPLANATION */}
+      <section id="vptx" className="relative z-10 py-16 bg-[#04110c]/80 border-t border-emerald-900/30 backdrop-blur-lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <h2 className="text-2xl sm:text-3xl font-black text-white font-serif-luxury">
+              Hệ Thống 2-Hour Fast Feedback Loop
             </h2>
-            <p className="text-xs text-slate-400 mt-1">
-              {user ? "Truy cập nhanh các phân hệ làm việc theo quyền hạn của bạn." : "Đăng nhập MNV để sử dụng các phân hệ làm việc của nhà máy."}
+            <p className="text-xs sm:text-sm text-emerald-200/80">
+              Quy trình tự động hóa phát hiện sự cố, gửi cảnh báo nhóm Zalo OA và xử lý nguyên nhân 4M+1E tức thì
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            <Link
-              href={user ? "/dashboard/report" : "/login"}
-              className="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-blue-500/60 transition-all group"
-            >
-              <div className="w-10 h-10 rounded-xl bg-blue-950 border border-blue-800 flex items-center justify-center text-blue-400 mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                <ShieldAlert className="w-5 h-5" />
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            {[
+              { step: "01", title: "Phát Hiện Lỗi", desc: "Cán bộ sản xuất nhập phiếu lỗi trực tiếp từ xưởng chặt, may, gò đế", icon: Clock },
+              { step: "02", title: "Cảnh Báo Zalo OA", desc: "Tự động kích hoạt thông báo tức thì tới 3 nhóm Zalo chuyên trách", icon: Zap },
+              { step: "03", title: "Xác Minh 4M+1E", desc: "Phân tích nguyên nhân gốc: Nhân sự, Máy móc, Vật liệu, Môi trường, Phương pháp", icon: ShieldCheck },
+              { step: "04", title: "Khắc Phục & Đóng Lỗi", desc: "Đồng hồ đếm ngược 2 giờ vàng đảm bảo sự cố được giải quyết dứt điểm", icon: CheckCircle2 },
+            ].map((item, index) => (
+              <div key={index} className="p-6 rounded-2xl bg-emerald-950/40 border border-emerald-800/30 hover:border-emerald-500/50 transition-all group">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-xs font-black text-emerald-400 tracking-widest">{item.step}</span>
+                  <item.icon className="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform" />
+                </div>
+                <h3 className="text-base font-bold text-white mb-2">{item.title}</h3>
+                <p className="text-xs text-slate-300/80 leading-relaxed">{item.desc}</p>
               </div>
-              <h3 className="text-base font-bold text-white mb-1">Form Báo Cáo Phiếu CLSK</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Tạo mới phiếu báo lỗi sản phẩm, chọn nhiều size, phân xưởng và tự động gửi ảnh Cloudflare R2.
-              </p>
-              <div className="mt-4 text-[11px] font-bold text-blue-400 flex items-center space-x-1">
-                <span>{user ? "Truy cập Form Báo Lỗi" : "Yêu cầu đăng nhập MNV"}</span>
-                <ArrowRight className="w-3 h-3" />
-              </div>
-            </Link>
-
-            <Link
-              href={user ? "/dashboard/logs" : "/login"}
-              className="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-blue-500/60 transition-all group"
-            >
-              <div className="w-10 h-10 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center text-blue-400 mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                <ClipboardList className="w-5 h-5" />
-              </div>
-              <h3 className="text-base font-bold text-white mb-1">Nhật Ký Sửa Chữa & Khắc Phục</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Lịch sử xử lý sự cố, kết quả khoanh vùng 4M+1E và thời gian đáp ứng thực tế của bộ phận kỹ thuật.
-              </p>
-              <div className="mt-4 text-[11px] font-bold text-blue-400 flex items-center space-x-1">
-                <span>{user ? "Xem Nhật Ký Sửa Chữa" : "Yêu cầu đăng nhập MNV"}</span>
-                <ArrowRight className="w-3 h-3" />
-              </div>
-            </Link>
-
-            <Link
-              href={user ? "/dashboard/bi" : "/login"}
-              className="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-blue-500/60 transition-all group"
-            >
-              <div className="w-10 h-10 rounded-xl bg-indigo-950 border border-indigo-800 flex items-center justify-center text-indigo-400 mb-4 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                <BarChart3 className="w-5 h-5" />
-              </div>
-              <h3 className="text-base font-bold text-white mb-1">BI Analytics (Sếp Tổng)</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Báo cáo tổng quan nhà máy, biểu đồ phân loại lỗi xưởng, chỉ số MTTR và xuất báo cáo Excel/CSV.
-              </p>
-              <div className="mt-4 text-[11px] font-bold text-indigo-400 flex items-center space-x-1">
-                <span>{user ? "Xem BI Dashboard" : "Dành cho Quản lý / Sếp tổng"}</span>
-                <ArrowRight className="w-3 h-3" />
-              </div>
-            </Link>
-
-            <Link
-              href={user ? "/dashboard/admin/preventive-maintenance" : "/login"}
-              className="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-blue-500/60 transition-all group"
-            >
-              <div className="w-10 h-10 rounded-xl bg-amber-950 border border-amber-800 flex items-center justify-center text-amber-400 mb-4 group-hover:bg-amber-600 group-hover:text-white transition-colors">
-                <Wrench className="w-5 h-5" />
-              </div>
-              <h3 className="text-base font-bold text-white mb-1">Bảo Trì Định Kỳ MMTB</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Lập kế hoạch bảo trì phòng ngừa sự cố máy móc, tra dầu định kỳ và kiểm tra cảm biến thiết bị.
-              </p>
-              <div className="mt-4 text-[11px] font-bold text-amber-400 flex items-center space-x-1">
-                <span>{user ? "Lập Lịch Bảo Trì" : "Yêu cầu đăng nhập Admin"}</span>
-                <ArrowRight className="w-3 h-3" />
-              </div>
-            </Link>
-
-            <Link
-              href={user ? "/dashboard/admin/zalo" : "/login"}
-              className="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-blue-500/60 transition-all group"
-            >
-              <div className="w-10 h-10 rounded-xl bg-blue-950 border border-blue-800 flex items-center justify-center text-blue-400 mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                <MessageSquare className="w-5 h-5" />
-              </div>
-              <h3 className="text-base font-bold text-white mb-1">Quản Trị Zalo OA & Group</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Cấu hình danh sách Zalo User ID cho 3 nhóm nhận thông báo tự động (Trực tiếp, Giải pháp, Ban Giám Đốc).
-              </p>
-              <div className="mt-4 text-[11px] font-bold text-blue-400 flex items-center space-x-1">
-                <span>{user ? "Quản Lý Nhóm Zalo" : "Yêu cầu đăng nhập Admin"}</span>
-                <ArrowRight className="w-3 h-3" />
-              </div>
-            </Link>
-
-            <Link
-              href={user ? "/dashboard/training" : "/login"}
-              className="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-blue-500/60 transition-all group"
-            >
-              <div className="w-10 h-10 rounded-xl bg-emerald-950 border border-emerald-800 flex items-center justify-center text-emerald-400 mb-4 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                <BookOpen className="w-5 h-5" />
-              </div>
-              <h3 className="text-base font-bold text-white mb-1">Thư Viện & Đào Tạo Kỹ Thuật</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Sách hướng dẫn vận hành máy, sơ đồ kỹ thuật và tài liệu đào tạo 4M+1E cho nhân sự nhà máy.
-              </p>
-              <div className="mt-4 text-[11px] font-bold text-emerald-400 flex items-center space-x-1">
-                <span>Tra Cứu Tài Liệu</span>
-                <ArrowRight className="w-3 h-3" />
-              </div>
-            </Link>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Workshop Showcase Section (Phân Xưởng Sản Xuất) */}
-      <section id="phan-xuong" className="py-16 bg-slate-900/50 border-t border-slate-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          <div className="border-b border-slate-800 pb-4">
-            <h2 className="text-2xl font-extrabold text-white tracking-tight uppercase">
-              Các Phân Xưởng Sản Xuất TBS Skechers Kiên Giang 1
-            </h2>
-            <p className="text-xs text-slate-400 mt-1">
-              Phản hồi & khoanh vùng sự cố trực tiếp tại 4 phân xưởng chính nhà máy.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800">
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-400 border border-blue-800 uppercase">
-                Phân Xưởng 1
-              </span>
-              <h3 className="text-base font-bold text-white mt-2">Phân Xưởng Chặt (Cutting)</h3>
-              <p className="text-xs text-slate-400 mt-1">Cắt da, vải dệt & định hình chi tiết mũ giày Skechers.</p>
-            </div>
-            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800">
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-400 border border-blue-800 uppercase">
-                Phân Xưởng 2 & 3
-              </span>
-              <h3 className="text-base font-bold text-white mt-2">Phân Xưởng May 1 & May 2</h3>
-              <p className="text-xs text-slate-400 mt-1">Chuyền may mũ giày lập trình tự động Brother & Juki.</p>
-            </div>
-            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800">
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-400 border border-blue-800 uppercase">
-                Phân Xưởng 4
-              </span>
-              <h3 className="text-base font-bold text-white mt-2">Phân Xưởng Gò & Đế (Lasting)</h3>
-              <p className="text-xs text-slate-400 mt-1">Gò mũi, gò gót, ép gầm & dán đế thể thao Skechers.</p>
-            </div>
-            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800">
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-950 text-blue-400 border border-blue-800 uppercase">
-                Phân Xưởng 5
-              </span>
-              <h3 className="text-base font-bold text-white mt-2">Phân Xưởng Hoàn Thiện</h3>
-              <p className="text-xs text-slate-400 mt-1">Kiểm hàng QC final, đóng hộp & đóng container xuất khẩu.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="py-8 bg-slate-950 border-t border-slate-900 text-center text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      {/* FOOTER */}
+      <footer className="relative z-10 py-8 bg-[#030c08] border-t border-emerald-950 text-slate-500 text-xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center space-x-2">
-            <Factory className="w-4 h-4 text-blue-400" />
-            <span className="font-bold text-slate-300">TBS Group • Skechers Kiên Giang 1</span>
+            <span className="font-bold text-white">TBS GROUP</span>
+            <span>•</span>
+            <span>TBS Skechers Kiên Giang 1</span>
           </div>
-          <p>© {new Date().getFullYear()} Hệ thống Phản hồi CLSK (2-Hour Fast Feedback Loop).</p>
+          <div>
+            © {new Date().getFullYear()} TBS Group. All Rights Reserved.
+          </div>
         </div>
       </footer>
+
+      {/* Floating Scroll Down Arrow Button (Matching Image 1) */}
+      <a
+        href="#vptx"
+        aria-label="Scroll Down"
+        className="fixed bottom-6 right-6 z-50 h-12 w-12 rounded-full bg-white text-[#0f2a20] shadow-2xl flex items-center justify-center hover:scale-110 hover:bg-emerald-400 transition-all border border-emerald-200"
+      >
+        <ArrowDown className="w-5 h-5 stroke-[2.5]" />
+      </a>
     </div>
   );
 }

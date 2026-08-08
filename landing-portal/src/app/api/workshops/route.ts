@@ -27,7 +27,7 @@ export async function GET() {
     }
 
     const db = drizzle(d1);
-    const list = await db.select().from(workshops).where(eq(workshops.isActive, true));
+    const list = await db.select().from(workshops).where(eq(workshops.isActive, 1));
     return NextResponse.json({ workshops: list });
   } catch (err: unknown) {
     const error = err as Error;
@@ -55,7 +55,7 @@ export async function POST(req: Request) {
       workshopCode: String(workshopCode).trim().toUpperCase(),
       workshopName: String(workshopName).trim(),
       description: description ? String(description).trim() : null,
-      isActive: true,
+      isActive: 1,
       createdAt: new Date().toISOString(),
     };
 

@@ -58,7 +58,7 @@ export async function POST(request: Request) {
 
     await db
       .update(users)
-      .set({ passwordHash: newHash, updatedAt: now })
+      .set({ passwordHash: newHash })
       .where(eq(users.mnv, userSession.mnv))
       .execute();
 

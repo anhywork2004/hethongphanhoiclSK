@@ -78,8 +78,8 @@ export async function POST(req: Request) {
       workshopName,
       detectionStage,
       description,
-      severity,
-      status: "cho_xu_ly",
+      severity: (severity as any) || "medium",
+      status: "pending",
       createdByMnv: payload.employeeCode,
       createdByName: payload.name || payload.employeeCode,
       createdAt: nowIso,
@@ -90,7 +90,9 @@ export async function POST(req: Request) {
         await db.insert(issueImages).values({
           id: `IMG-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
           issueId,
+          r2Key: String(imgUrl),
           imageUrl: imgUrl,
+          stage: "report",
           createdAt: nowIso,
         });
       }

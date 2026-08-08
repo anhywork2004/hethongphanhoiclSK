@@ -25,8 +25,8 @@ interface IssueData {
   description: string;
   severity: string;
   status: string;
-  createdByName: string;
-  createdByMnv: string;
+  createdByName?: string | null;
+  createdByMnv?: string | null;
   createdAt: string;
   initialDefectQty?: number;
   repairedDefectQty?: number;

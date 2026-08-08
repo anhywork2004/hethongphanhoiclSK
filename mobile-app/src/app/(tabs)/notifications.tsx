@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
 import { useFocusEffect, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import Animated, { FadeInUp } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "@/lib/auth-context";
 import { api, NotificationItem } from "@/lib/api";
@@ -23,15 +23,55 @@ function timeAgo(iso: string) {
 
 const KIND_META: Record<
   NotificationItem["kind"],
-  { icon: string; title: string; color: string }
+  { icon: string; title: string; badgeBg: string; badgeColor: string }
 > = {
-  NEED_INVESTIGATE: { icon: "🔍", title: "Cần điều tra 5M+1E", color: colors.statusPendingText },
-  NEED_ROOT_CAUSE: { icon: "🧩", title: "Cần chốt nguyên nhân gốc", color: colors.statusAcceptedText },
-  NEED_ASSIGN: { icon: "📋", title: "Cần giao việc bảo trì", color: colors.statusAcceptedText },
-  TASK_ASSIGNED: { icon: "🛠️", title: "Có việc cần trợ giúp", color: colors.danger },
-  TASK_ACCEPTED: { icon: "✅", title: "Đã nhận việc", color: colors.primary },
-  NEED_VERIFY: { icon: "⏳", title: "Cần xác nhận hoàn thành", color: colors.statusPendingText },
+  NEED_INVESTIGATE: {
+    icon: "🔍",
+    title: "Cần điều tra 5M+1E",
+    badgeBg: colors.statusPendingBg,
+    badgeColor: colors.statusPendingText,
+  },
+  NEED_ROOT_CAUSE: {
+    icon: "🧩",
+    title: "Cần chốt nguyên nhân gốc",
+    badgeBg: colors.statusAcceptedBg,
+    badgeColor: colors.statusAcceptedText,
+  },
+  NEED_ASSIGN: {
+    icon: "📋",
+    title: "Cần giao việc bảo trì",
+    badgeBg: colors.statusAcceptedBg,
+    badgeColor: colors.statusAcceptedText,
+  },
+  TASK_ASSIGNED: {
+    icon: "🛠️",
+    title: "CẦN TRỢ GIÚP",
+    badgeBg: "#FEE2E2",
+    badgeColor: colors.danger,
+  },
+  TASK_ACCEPTED: {
+    icon: "✅",
+    title: "Đã nhận việc",
+    badgeBg: colors.statusDoneBg,
+    badgeColor: colors.statusDoneText,
+  },
+  NEED_VERIFY: {
+    icon: "⏳",
+    title: "Cần xác nhận hoàn thành",
+    badgeBg: colors.statusPendingBg,
+    badgeColor: colors.statusPendingText,
+  },
 };
+
+function Row({ label, value }: { label: string; value: string }) {
+  if (!value) return null;
+  return (
+    <View style={styles.alertRow}>
+      <Text style={styles.alertLabel}>{label}</Text>
+      <Text style={styles.alertValue}>{value}</Text>
+    </View>
+  );
+}
 
 export default function NotificationsScreen() {
   const router = useRouter();
@@ -86,42 +126,56 @@ export default function NotificationsScreen() {
         }
         renderItem={({ item, index }) => {
           const meta = KIND_META[item.kind];
-          const entering = FadeInDown.delay(Math.min(index, 8) * 45).duration(320);
+          const entering = FadeInUp.delay(Math.min(index, 8) * 45).duration(280);
 
           const issue = "issue" in item ? item.issue : item.task.issue;
-          const issueId = issue.id;
-
-          let bodyText = `PO ${issue.poCode}: ${issue.description}`;
-          if (item.kind === "TASK_ACCEPTED") {
-            bodyText = `${item.task.assignee.name} đã nhận việc lúc ${
-              item.task.acceptedAt
-                ? new Date(item.task.acceptedAt).toLocaleTimeString("vi-VN", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })
-                : ""
-            }`;
-          } else if (item.kind === "NEED_VERIFY") {
-            bodyText = `${item.task.assignee.name} đã hoàn thành sửa chữa — bấm vào xác nhận.`;
-          } else if (item.kind === "NEED_ROOT_CAUSE") {
-            bodyText = `Đủ dữ liệu 5M+1E cho PO ${issue.poCode} — vào chốt nguyên nhân gốc.`;
-          } else if (item.kind === "NEED_ASSIGN") {
-            bodyText = `PO ${issue.poCode} đã có nguyên nhân gốc — vào giao việc cho bảo trì.`;
-          }
+          const task = "task" in item ? item.task : null;
 
           return (
             <Animated.View entering={entering}>
-              <PressableScale style={styles.card} onPress={() => goToIssue(issueId)}>
-                <View style={styles.cardHeaderRow}>
-                  <View style={[styles.avatar, { backgroundColor: meta.color }]}>
-                    <Text style={styles.avatarText}>{meta.icon}</Text>
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.cardTitle}>{meta.title}</Text>
-                    <Text style={styles.cardTime}>{timeAgo(item.createdAt)}</Text>
+              <PressableScale style={styles.card} onPress={() => goToIssue(issue.id)}>
+                <View style={styles.titleRow}>
+                  <Text style={styles.title}>
+                    {meta.icon} {meta.title}
+                  </Text>
+                  <View style={[styles.badge, { backgroundColor: meta.badgeBg }]}>
+                    <Text style={[styles.badgeText, { color: meta.badgeColor }]}>
+                      {timeAgo(item.createdAt)}
+                    </Text>
                   </View>
                 </View>
-                <Text style={styles.cardBody}>{bodyText}</Text>
+
+                <Row label="Mã PO" value={issue.poCode} />
+                <Row label="Người báo" value={issue.reporter?.name || ""} />
+                <Row
+                  label="Tổ / Chuyền"
+                  value={`${issue.team?.name || "-"} / ${issue.productionLine?.name || "-"}`}
+                />
+                {issue.failureCategory && <Row label="Danh mục lỗi" value={issue.failureCategory.name} />}
+                <Row label="Mô tả" value={issue.description} />
+
+                {item.kind === "TASK_ASSIGNED" && task && (
+                  <Row label="Giải pháp" value={issue.solution || "Không có đề xuất"} />
+                )}
+                {item.kind === "TASK_ACCEPTED" && task?.assignee && (
+                  <Row
+                    label="Bảo trì"
+                    value={`${task.assignee.name}${
+                      task.acceptedAt
+                        ? " · " +
+                          new Date(task.acceptedAt).toLocaleTimeString("vi-VN", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : ""
+                    }`}
+                  />
+                )}
+                {item.kind === "NEED_VERIFY" && task?.assignee && (
+                  <Row label="Đã sửa bởi" value={task.assignee.name} />
+                )}
+                {item.kind === "NEED_ROOT_CAUSE" && <Row label="Trạng thái" value="Đủ dữ liệu 5M+1E" />}
+                {item.kind === "NEED_ASSIGN" && <Row label="Nguyên nhân gốc" value={issue.rootCause || ""} />}
               </PressableScale>
             </Animated.View>
           );
@@ -161,19 +215,21 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     borderWidth: 1,
     borderColor: colors.border,
-    padding: 14,
+    padding: 16,
     gap: 8,
   },
-  cardHeaderRow: { flexDirection: "row", alignItems: "center", gap: 10 },
-  avatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+  titleRow: {
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
+    flexWrap: "wrap",
+    gap: 6,
+    marginBottom: 2,
   },
-  avatarText: { fontSize: 16 },
-  cardTitle: { fontWeight: "600", color: colors.text, fontSize: 13 },
-  cardTime: { color: colors.textMuted, fontSize: 11, marginTop: 1 },
-  cardBody: { color: colors.textSecondary, fontSize: 13, lineHeight: 19 },
+  title: { fontWeight: "700", color: colors.text, fontSize: 14.5 },
+  badge: { borderRadius: radius.pill, paddingHorizontal: 8, paddingVertical: 3 },
+  badgeText: { fontSize: 11, fontWeight: "700" },
+  alertRow: { flexDirection: "row", alignItems: "flex-start" },
+  alertLabel: { width: 90, fontSize: 12, fontWeight: "700", color: colors.textMuted },
+  alertValue: { flex: 1, fontSize: 13.5, color: colors.text, lineHeight: 19 },
 });

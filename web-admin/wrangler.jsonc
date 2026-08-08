@@ -21,7 +21,7 @@
     {
       "binding": "DB",
       "database_name": "tbs-htph-clsk-db",
-      "database_id": "REPLACE_AFTER_WRANGLER_D1_CREATE"
+      "database_id": "f16f6633-5d36-457e-945c-bdba8d1b4ce4"
     }
   ],
   "r2_buckets": [

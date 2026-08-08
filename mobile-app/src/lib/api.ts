@@ -43,6 +43,19 @@ export type FiveMOneESubmission = {
   submittedAt: string;
 };
 
+export type ChatTurn = { role: "user" | "model"; text: string };
+export type ChatQuestion = { type: "question"; text: string };
+export type ChatConclusion = {
+  type: "conclusion";
+  rootCause: string;
+  man: string;
+  machine: string;
+  material: string;
+  method: string;
+  measurement: string;
+  environment: string;
+};
+
 export type TaskStatus = "PENDING" | "ACCEPTED" | "DONE";
 export type VerifyStatus = "PENDING" | "CONFIRMED_DONE" | "REJECTED";
 
@@ -163,7 +176,6 @@ export const api = {
   reportIssue: (
     token: string,
     payload: {
-      areaId?: string;
       teamId?: string;
       productionLineId?: string;
       failureCategoryId?: string;
@@ -191,6 +203,13 @@ export const api = {
       method: "POST",
       token,
       body: payload,
+    }),
+
+  investigateChat: (token: string, issueId: string, history: ChatTurn[]) =>
+    request<ChatQuestion | ChatConclusion>(`/api/mobile/issues/${issueId}/investigate-chat`, {
+      method: "POST",
+      token,
+      body: { history },
     }),
 
   decideRootCause: (token: string, issueId: string, payload: { rootCause: string; solution?: string }) =>

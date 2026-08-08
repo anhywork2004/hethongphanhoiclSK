@@ -44,17 +44,26 @@ export async function POST(req: Request) {
   if (response) return response;
   const prisma = await getPrisma();
 
-  const { areaId, teamId, productionLineId, failureCategoryId, poCode, description, images } =
+  const { teamId, productionLineId, failureCategoryId, poCode, description, images } =
     await req.json();
 
   if (!poCode || !description) {
     return NextResponse.json({ error: "Thiếu mã PO hoặc mô tả" }, { status: 400 });
   }
 
+  // Phiếu luôn thuộc khu vực của chính người báo cáo — mọi nhân viên (trừ Admin) đều gắn với
+  // đúng 1 khu vực, dùng để định tuyến thông báo/phân việc cho đúng QA/Trưởng line/Công nghệ/
+  // Trưởng phòng ban/Bảo trì cùng khu vực. Không lấy areaId từ client vì mobile không có picker
+  // chọn khu vực (chỉ chọn Tổ/Chuyền).
+  const reporter = await prisma.user.findUnique({
+    where: { id: payload.userId },
+    select: { areaId: true },
+  });
+
   const issue = await prisma.qualityIssue.create({
     data: {
       reporterId: payload.userId,
-      areaId: areaId || null,
+      areaId: reporter?.areaId ?? null,
       teamId: teamId || null,
       productionLineId: productionLineId || null,
       failureCategoryId: failureCategoryId || null,

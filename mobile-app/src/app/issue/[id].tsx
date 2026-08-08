@@ -21,6 +21,8 @@ import {
   IssueStatus,
   PartCategory,
   User,
+  ChatTurn,
+  ChatConclusion,
   resolveImageUrl,
 } from "@/lib/api";
 import { colors } from "@/constants/colors";
@@ -238,28 +240,82 @@ function FiveMOneEForm({ token, issueId, onDone }: { token: string | null; issue
   const { pick, uploading } = useImagePicker(token);
   const [poCode, setPoCode] = useState("");
   const [images, setImages] = useState<string[]>([]);
+  const [started, setStarted] = useState(false);
+
+  const [messages, setMessages] = useState<ChatTurn[]>([]);
+  const [inputText, setInputText] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+
+  const [conclusion, setConclusion] = useState<ChatConclusion | null>(null);
   const [man, setMan] = useState("");
   const [machine, setMachine] = useState("");
   const [material, setMaterial] = useState("");
   const [method, setMethod] = useState("");
   const [measurement, setMeasurement] = useState("");
   const [environment, setEnvironment] = useState("");
+
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   async function handleAddImage() {
     const url = await pick();
     if (url) setImages((prev) => [...prev, url]);
   }
 
+  async function askAi(history: ChatTurn[]) {
+    if (!token) return;
+    setAiLoading(true);
+    setAiError(null);
+    try {
+      const result = await api.investigateChat(token, issueId, history);
+      if (result.type === "question") {
+        setMessages([...history, { role: "model", text: result.text }]);
+      } else {
+        setMessages([
+          ...history,
+          { role: "model", text: `Đã chốt nguyên nhân gốc rễ: ${result.rootCause}` },
+        ]);
+        setConclusion(result);
+        setMan(result.man);
+        setMachine(result.machine);
+        setMaterial(result.material);
+        setMethod(result.method);
+        setMeasurement(result.measurement);
+        setEnvironment(result.environment);
+      }
+    } catch (e) {
+      setAiError(e instanceof ApiError ? e.message : "Không thể kết nối AI, thử lại");
+    } finally {
+      setAiLoading(false);
+    }
+  }
+
+  async function handleStart() {
+    if (!poCode.trim()) {
+      setAiError("Vui lòng nhập mã PO trước khi bắt đầu");
+      return;
+    }
+    setStarted(true);
+    await askAi([]);
+  }
+
+  async function handleSend() {
+    if (!inputText.trim()) return;
+    const history = [...messages, { role: "user" as const, text: inputText.trim() }];
+    setMessages(history);
+    setInputText("");
+    await askAi(history);
+  }
+
   async function handleSubmit() {
     if (!token) return;
-    if (!poCode.trim() || !man.trim() || !machine.trim() || !material.trim() || !method.trim() || !measurement.trim() || !environment.trim()) {
-      setError("Vui lòng điền đầy đủ các mục");
+    if (!man.trim() || !machine.trim() || !material.trim() || !method.trim() || !measurement.trim() || !environment.trim()) {
+      setSubmitError("Vui lòng điền đầy đủ các mục");
       return;
     }
     setSubmitting(true);
-    setError(null);
+    setSubmitError(null);
     try {
       await api.submit5M1E(token, issueId, {
         poCode: poCode.trim(),
@@ -273,7 +329,7 @@ function FiveMOneEForm({ token, issueId, onDone }: { token: string | null; issue
       });
       await onDone();
     } catch (e) {
-      setError(e instanceof ApiError ? e.message : "Không thể gửi biểu mẫu");
+      setSubmitError(e instanceof ApiError ? e.message : "Không thể gửi biểu mẫu");
     } finally {
       setSubmitting(false);
     }
@@ -281,25 +337,86 @@ function FiveMOneEForm({ token, issueId, onDone }: { token: string | null; issue
 
   return (
     <View style={styles.card}>
-      <Text style={styles.sectionTitle}>Điều tra nguyên nhân (5M+1E)</Text>
-      <Text style={styles.formLabel}>Mã PO</Text>
-      <TextInput value={poCode} onChangeText={setPoCode} style={styles.input} placeholder="VD: PO-2026-001" />
+      <Text style={styles.sectionTitle}>🤖 Điều tra nguyên nhân (AI hỏi xoáy 5 Whys)</Text>
 
-      <Text style={styles.formLabel}>Hình ảnh</Text>
-      <ImageRow images={images} onAdd={handleAddImage} uploading={uploading} />
+      {!started && (
+        <>
+          <Text style={styles.formLabel}>Mã PO</Text>
+          <TextInput value={poCode} onChangeText={setPoCode} style={styles.input} placeholder="VD: PO-2026-001" />
 
-      <LabeledArea label="Man (Con người)" value={man} onChangeText={setMan} />
-      <LabeledArea label="Machine (Máy móc)" value={machine} onChangeText={setMachine} />
-      <LabeledArea label="Material (Nguyên liệu)" value={material} onChangeText={setMaterial} />
-      <LabeledArea label="Method (Phương pháp)" value={method} onChangeText={setMethod} />
-      <LabeledArea label="Measurement (Đo lường)" value={measurement} onChangeText={setMeasurement} />
-      <LabeledArea label="Environment (Môi trường)" value={environment} onChangeText={setEnvironment} />
+          <Text style={styles.formLabel}>Hình ảnh</Text>
+          <ImageRow images={images} onAdd={handleAddImage} uploading={uploading} />
 
-      {error && <Text style={styles.errorText}>{error}</Text>}
+          {aiError && <Text style={styles.errorText}>{aiError}</Text>}
 
-      <PressableScale style={[styles.primaryBtn, submitting && { opacity: 0.6 }]} onPress={handleSubmit} disabled={submitting}>
-        <Text style={styles.primaryBtnText}>{submitting ? "Đang gửi..." : "Gửi biểu mẫu"}</Text>
-      </PressableScale>
+          <PressableScale style={styles.primaryBtn} onPress={handleStart}>
+            <Text style={styles.primaryBtnText}>Bắt đầu điều tra với AI</Text>
+          </PressableScale>
+        </>
+      )}
+
+      {started && (
+        <View style={{ marginTop: 8, gap: 8 }}>
+          {messages.map((m, i) => (
+            <View
+              key={i}
+              style={[styles.chatBubbleWrap, m.role === "user" ? styles.chatBubbleWrapMine : undefined]}
+            >
+              <View style={[styles.chatBubble, m.role === "user" ? styles.chatBubbleMine : styles.chatBubbleOther]}>
+                <Text style={styles.chatBubbleText}>{m.text}</Text>
+              </View>
+            </View>
+          ))}
+          {aiLoading && (
+            <View style={styles.chatBubbleWrap}>
+              <ActivityIndicator color={colors.primary} />
+            </View>
+          )}
+          {aiError && <Text style={styles.errorText}>{aiError}</Text>}
+
+          {!conclusion && (
+            <View style={styles.chatInputRow}>
+              <TextInput
+                value={inputText}
+                onChangeText={setInputText}
+                placeholder="Nhập câu trả lời..."
+                style={[styles.input, { flex: 1 }]}
+                editable={!aiLoading}
+                onSubmitEditing={handleSend}
+              />
+              <TouchableOpacity
+                style={[styles.chatSendBtn, aiLoading && { opacity: 0.5 }]}
+                onPress={handleSend}
+                disabled={aiLoading || !inputText.trim()}
+              >
+                <Text style={styles.chatSendBtnText}>Gửi</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {conclusion && (
+            <View style={{ marginTop: 8 }}>
+              <Text style={styles.sectionTitle}>Kết quả AI tổng hợp — kiểm tra lại trước khi gửi</Text>
+              <LabeledArea label="Man (Con người)" value={man} onChangeText={setMan} />
+              <LabeledArea label="Machine (Máy móc)" value={machine} onChangeText={setMachine} />
+              <LabeledArea label="Material (Nguyên liệu)" value={material} onChangeText={setMaterial} />
+              <LabeledArea label="Method (Phương pháp)" value={method} onChangeText={setMethod} />
+              <LabeledArea label="Measurement (Đo lường)" value={measurement} onChangeText={setMeasurement} />
+              <LabeledArea label="Environment (Môi trường)" value={environment} onChangeText={setEnvironment} />
+
+              {submitError && <Text style={styles.errorText}>{submitError}</Text>}
+
+              <PressableScale
+                style={[styles.primaryBtn, submitting && { opacity: 0.6 }]}
+                onPress={handleSubmit}
+                disabled={submitting}
+              >
+                <Text style={styles.primaryBtnText}>{submitting ? "Đang gửi..." : "Xác nhận & Gửi"}</Text>
+              </PressableScale>
+            </View>
+          )}
+        </View>
+      )}
     </View>
   );
 }
@@ -790,4 +907,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   verifyBtnRejectText: { color: colors.danger, fontWeight: "700" },
+  chatBubbleWrap: { alignItems: "flex-start" },
+  chatBubbleWrapMine: { alignItems: "flex-end" },
+  chatBubble: { maxWidth: "85%", borderRadius: radius.md, paddingHorizontal: 12, paddingVertical: 9 },
+  chatBubbleMine: { backgroundColor: colors.bubbleMine },
+  chatBubbleOther: { backgroundColor: colors.bubbleOther, borderWidth: 1, borderColor: colors.border },
+  chatBubbleText: { color: colors.text, fontSize: 13.5, lineHeight: 19 },
+  chatInputRow: { flexDirection: "row", gap: 8, marginTop: 6 },
+  chatSendBtn: {
+    backgroundColor: colors.primary,
+    borderRadius: radius.sm,
+    paddingHorizontal: 16,
+    justifyContent: "center",
+  },
+  chatSendBtnText: { color: colors.white, fontWeight: "700" },
 });

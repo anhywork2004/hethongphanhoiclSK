@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { CustomUserSession } from "@/lib/auth.config";
 import { redirect } from "next/navigation";
-import { PieChart, BarChart3, TrendingUp, ShieldCheck, Activity, Clock, CheckCircle2 } from "lucide-react";
+import { PieChart, BarChart3, TrendingUp, ShieldCheck, Activity, Clock, CheckCircle2, Download } from "lucide-react";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { getDb } from "@/db";
 import { issues } from "@/db/schema";
@@ -43,7 +43,7 @@ export default async function BIPage() {
 
   return (
     <div className="space-y-8 font-sans">
-      <div className="border-b border-slate-800 pb-5 flex items-center justify-between">
+      <div className="border-b border-slate-800 pb-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-extrabold text-white tracking-tight flex items-center space-x-3">
             <PieChart className="w-7 h-7 text-blue-400" />
@@ -53,9 +53,18 @@ export default async function BIPage() {
             Dành cho Trưởng phòng, Giám đốc & Admin • Giám sát real-time các chỉ số phản hồi 2 giờ nhà máy TBS Skechers Kiên Giang 1.
           </p>
         </div>
-        <div className="px-3 py-1.5 rounded-xl bg-blue-950 border border-blue-800/80 text-blue-300 text-xs font-semibold flex items-center space-x-1.5">
-          <ShieldCheck className="w-4 h-4 text-blue-400" />
-          <span>Role: {user?.role || "Manager"}</span>
+        <div className="flex items-center space-x-3">
+          <a
+            href="/api/admin/export"
+            className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md shadow-blue-600/20 flex items-center space-x-2 transition-all"
+          >
+            <Download className="w-4 h-4" />
+            <span>XUẤT BÁO CÁO (EXCEL / CSV)</span>
+          </a>
+          <div className="px-3 py-2 rounded-xl bg-blue-950 border border-blue-800/80 text-blue-300 text-xs font-semibold flex items-center space-x-1.5">
+            <ShieldCheck className="w-4 h-4 text-blue-400" />
+            <span>Role: {user?.role || "Manager"}</span>
+          </div>
         </div>
       </div>
 

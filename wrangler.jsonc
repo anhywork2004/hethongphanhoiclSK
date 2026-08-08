@@ -5,6 +5,7 @@
   "compatibility_date": "2024-09-23",
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": true,
+  "pages_build_output_dir": "landing-portal/.open-next/assets",
   "triggers": {
     "crons": ["*/5 * * * *"]
   },
